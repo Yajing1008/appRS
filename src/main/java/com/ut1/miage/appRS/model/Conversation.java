@@ -23,6 +23,10 @@ public class Conversation {
     @OneToMany(mappedBy = "conversation")
     private List<Groupe> groupes = new ArrayList<>();
 
+    @OneToMany(mappedBy = "conversation")
+    private List<EtuMessConversation> messagesDansConversation;
+
+
 
     public Long getIdConversation() {
         return idConversation;
@@ -46,6 +50,14 @@ public class Conversation {
 
     public void setGroupes(List<Groupe> groupes) {
         this.groupes = groupes;
+    }
+
+    public List<EtuMessConversation> getMessagesDansConversation() {
+        return messagesDansConversation;
+    }
+
+    public void setMessagesDansConversation(List<EtuMessConversation> messagesDansConversation) {
+        this.messagesDansConversation = messagesDansConversation;
     }
 
     

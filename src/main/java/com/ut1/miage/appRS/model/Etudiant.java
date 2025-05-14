@@ -39,11 +39,14 @@ public class Etudiant {
     private List<Post> postsRepublies = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "idEtudiant")
+    @JoinColumn(name = "id_etudiant")
     private Etudiant createur;
 
     @OneToMany(mappedBy = "etudiant")
     private List<Participer> participations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "etudiant")
+    private List<EtuMessConversation> messagesEnvoyes;
 
     @OneToMany(mappedBy = "etudiant")
     private List<Commenter> commentaires = new ArrayList<>();
@@ -66,6 +69,7 @@ public class Etudiant {
     public void setCommentaires(List<Commenter> commentaires) {
         this.commentaires = commentaires;
     }
+ 
 
     public Long getIdEtudiant() {
         return idEtudiant;
@@ -153,6 +157,14 @@ public class Etudiant {
 
     public void setParticipations(List<Participer> participations) {
         this.participations = participations;
+    }
+
+    public List<EtuMessConversation> getMessagesEnvoyes() {
+        return messagesEnvoyes;
+    }
+
+    public void setMessagesEnvoyes(List<EtuMessConversation> messagesEnvoyes) {
+        this.messagesEnvoyes = messagesEnvoyes;
     }
     
 }

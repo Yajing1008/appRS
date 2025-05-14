@@ -30,11 +30,11 @@ public class Groupe {
     private Boolean estPublicGroupe;
 
     @ManyToOne
-    @JoinColumn(name = "idConversation")
+    @JoinColumn(name = "id_conversation")
     private Conversation conversation;
 
     @ManyToOne
-    @JoinColumn(name = "idEtudiant")
+    @JoinColumn(name = "id_etudiant")
     private Etudiant createur;
 
     @OneToMany(mappedBy = "groupe")
