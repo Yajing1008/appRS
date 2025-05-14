@@ -18,11 +18,11 @@ import jakarta.persistence.ManyToOne;
 public class Evenement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long IdEvenement;
-    @Column(name = "DateHeureEvenement",nullable = false)
-    private LocalDateTime DateHeureEvenement;
-    @Column(name = "NomEvenement",nullable = false)
-    private String NomEvenement;
+    private Long idEvenement;
+    @Column(name = "dateHeureEvenement",nullable = false)
+    private LocalDateTime dateHeureEvenement;
+    @Column(name = "nomEvenement",nullable = false)
+    private String nomEvenement;
 
     @ManyToOne
     @JoinColumn(name = "Id_etudiant")
@@ -42,41 +42,41 @@ public class Evenement {
 
     public Evenement(Long idEvenement, LocalDateTime dateHeureEvenement, String nomEvenement, Etudiant createur,
             List<Etudiant> membreGroupe) {
-        IdEvenement = idEvenement;
-        DateHeureEvenement = dateHeureEvenement;
-        NomEvenement = nomEvenement;
+        idEvenement = idEvenement;
+        dateHeureEvenement = dateHeureEvenement;
+        nomEvenement = nomEvenement;
         this.createur = createur;
         MembreGroupe = membreGroupe;
     }
 
 
-    public Long getIdEvenement() {
-        return IdEvenement;
+    public Long getidEvenement() {
+        return idEvenement;
     }
 
 
-    public void setIdEvenement(Long idEvenement) {
-        IdEvenement = idEvenement;
+    public void setidEvenement(Long idEvenement) {
+        idEvenement = idEvenement;
     }
 
 
-    public LocalDateTime getDateHeureEvenement() {
-        return DateHeureEvenement;
+    public LocalDateTime getdateHeureEvenement() {
+        return dateHeureEvenement;
     }
 
 
-    public void setDateHeureEvenement(LocalDateTime dateHeureEvenement) {
-        DateHeureEvenement = dateHeureEvenement;
+    public void setdateHeureEvenement(LocalDateTime dateHeureEvenement) {
+        dateHeureEvenement = dateHeureEvenement;
     }
 
 
-    public String getNomEvenement() {
-        return NomEvenement;
+    public String getnomEvenement() {
+        return nomEvenement;
     }
 
 
-    public void setNomEvenement(String nomEvenement) {
-        NomEvenement = nomEvenement;
+    public void setnomEvenement(String nomEvenement) {
+        nomEvenement = nomEvenement;
     }
 
 
@@ -104,9 +104,9 @@ public class Evenement {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((IdEvenement == null) ? 0 : IdEvenement.hashCode());
-        result = prime * result + ((DateHeureEvenement == null) ? 0 : DateHeureEvenement.hashCode());
-        result = prime * result + ((NomEvenement == null) ? 0 : NomEvenement.hashCode());
+        result = prime * result + ((idEvenement == null) ? 0 : idEvenement.hashCode());
+        result = prime * result + ((dateHeureEvenement == null) ? 0 : dateHeureEvenement.hashCode());
+        result = prime * result + ((nomEvenement == null) ? 0 : nomEvenement.hashCode());
         result = prime * result + ((createur == null) ? 0 : createur.hashCode());
         result = prime * result + ((MembreGroupe == null) ? 0 : MembreGroupe.hashCode());
         return result;
@@ -122,20 +122,20 @@ public class Evenement {
         if (getClass() != obj.getClass())
             return false;
         Evenement other = (Evenement) obj;
-        if (IdEvenement == null) {
-            if (other.IdEvenement != null)
+        if (idEvenement == null) {
+            if (other.idEvenement != null)
                 return false;
-        } else if (!IdEvenement.equals(other.IdEvenement))
+        } else if (!idEvenement.equals(other.idEvenement))
             return false;
-        if (DateHeureEvenement == null) {
-            if (other.DateHeureEvenement != null)
+        if (dateHeureEvenement == null) {
+            if (other.dateHeureEvenement != null)
                 return false;
-        } else if (!DateHeureEvenement.equals(other.DateHeureEvenement))
+        } else if (!dateHeureEvenement.equals(other.dateHeureEvenement))
             return false;
-        if (NomEvenement == null) {
-            if (other.NomEvenement != null)
+        if (nomEvenement == null) {
+            if (other.nomEvenement != null)
                 return false;
-        } else if (!NomEvenement.equals(other.NomEvenement))
+        } else if (!nomEvenement.equals(other.nomEvenement))
             return false;
         if (createur == null) {
             if (other.createur != null)
