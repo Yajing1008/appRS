@@ -25,14 +25,14 @@ public class Evenement {
     private String nomEvenement;
 
     @ManyToOne
-    @JoinColumn(name = "Id_etudiant")
+    @JoinColumn(name = "id_etudiant")
     private Etudiant createur;
 
     @ManyToMany
     @JoinTable(
         name = "PRENDRE_PART", 
-        joinColumns = @JoinColumn(name = "Id_evenement"),
-        inverseJoinColumns = @JoinColumn(name = "Id_etudiant")
+        joinColumns = @JoinColumn(name = "id_evenement"),
+        inverseJoinColumns = @JoinColumn(name = "id_etudiant")
     )
     private List<Etudiant> membreGroupe = new ArrayList<>();
 

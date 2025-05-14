@@ -3,6 +3,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,7 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -20,6 +20,7 @@ public class Etudiant {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_etudiant")
     private Long idEtudiant;
 
     private String nomEtudiant;
@@ -48,9 +49,8 @@ public class Etudiant {
     @ManyToMany(mappedBy = "etudiant")
     private List<Post> postsRepublies = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "id_etudiant")
-    private Etudiant createur;
+    @OneToMany(mappedBy = "createur")
+    private List<Groupe> groupesCrees = new ArrayList<>();
 
     @OneToMany(mappedBy = "etudiant")
     private List<Participer> participations = new ArrayList<>();
@@ -165,14 +165,6 @@ public class Etudiant {
         this.postsRepublies = postsRepublies;
     }
 
-    public Etudiant getCreateur() {
-        return createur;
-    }
-
-    public void setCreateur(Etudiant createur) {
-        this.createur = createur;
-    }
-
     public List<Participer> getParticipations() {
         return participations;
     }
@@ -227,6 +219,14 @@ public class Etudiant {
 
     public void setEvenementsCreer(List<Evenement> evenementsCreer) {
         this.evenementsCreer = evenementsCreer;
+    }
+
+    public List<Groupe> getGroupesCrees() {
+        return groupesCrees;
+    }
+
+    public void setGroupesCrees(List<Groupe> groupesCrees) {
+        this.groupesCrees = groupesCrees;
     }
     
     
