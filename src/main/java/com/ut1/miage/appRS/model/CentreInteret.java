@@ -8,14 +8,14 @@ public class CentreInteret {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long IdCentreInteret;
-    @Column(name = "NomCentreInteret",nullable = false)
+    @Column(name = "Nom_CentreInteret",nullable = false)
     private String NomCentreInteret;
     
     @ManyToMany
     @JoinTable(
         name = "AVOIR", 
-        joinColumns = @JoinColumn(name = "IdCentreInteret"),
-        inverseJoinColumns = @JoinColumn(name = "IdEtudiant")
+        joinColumns = @JoinColumn(name = "Id_CentreInteret"),
+        inverseJoinColumns = @JoinColumn(name = "Id_Etudiant")
     )
     private List<Etudiant> etudiant = new ArrayList<>();
 
