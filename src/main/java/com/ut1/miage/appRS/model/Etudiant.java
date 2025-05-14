@@ -45,6 +45,28 @@ public class Etudiant {
     @OneToMany(mappedBy = "etudiant")
     private List<Participer> participations = new ArrayList<>();
 
+    @OneToMany(mappedBy = "etudiant")
+    private List<Commenter> commentaires = new ArrayList<>();
+
+    @OneToMany(mappedBy = "etudiant")
+    private List<Reagir> reactions = new ArrayList<>();
+
+    public List<Reagir> getReactions() {
+        return reactions;
+    }
+
+    public void setReactions(List<Reagir> reactions) {
+        this.reactions = reactions;
+    }
+
+    public List<Commenter> getCommentaires() {
+        return commentaires;
+    }
+
+    public void setCommentaires(List<Commenter> commentaires) {
+        this.commentaires = commentaires;
+    }
+
     public Long getIdEtudiant() {
         return idEtudiant;
     }
