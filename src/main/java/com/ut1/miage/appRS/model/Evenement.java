@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 
 @Entity
 public class Evenement {
@@ -22,13 +23,17 @@ public class Evenement {
     @Column(name = "Nom_Evenement",nullable = false)
     private String Nom_Evenement;
 
+    @ManyToOne
+    @JoinColumn(name = "Id_Etudiant")
+    private Etudiant createur;
+
     @ManyToMany
     @JoinTable(
         name = "PRENDRE_PART", 
         joinColumns = @JoinColumn(name = "Id_Evenement"),
         inverseJoinColumns = @JoinColumn(name = "Id_Etudiant")
     )
-    private List<Etudiant> etudiant = new ArrayList<>();
+    private List<Etudiant> MembreGroupe = new ArrayList<>();
 
     // 构造方法
     public Evenement() {}
