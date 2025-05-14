@@ -7,7 +7,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -43,6 +45,11 @@ public class Etudiant {
 
     @ManyToMany(mappedBy = "reactions")
     private List<Post> postsReagis = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "idEtudiant")
+    private Etudiant createur;
+
 
 
     public Long getIdEtudiant() {
@@ -132,5 +139,14 @@ public class Etudiant {
     public void setPostsReagis(List<Post> postsReagis) {
         this.postsReagis = postsReagis;
     }
+
+    public Etudiant getCreateur() {
+        return createur;
+    }
+
+    public void setCreateur(Etudiant createur) {
+        this.createur = createur;
+    }
+    
     
 }
