@@ -16,14 +16,14 @@ public class Universite {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long IdUniv;
-    @Column(name = "NomUniv",nullable = false)
+    @Column(name = "Nom_Univ",nullable = false)
     private String NomUniv;
     
     @ManyToMany
     @JoinTable(
         name = "ETUDIER", 
-        joinColumns = @JoinColumn(name = "IdUniv"),
-        inverseJoinColumns = @JoinColumn(name = "IdEtudiant")
+        joinColumns = @JoinColumn(name = "Id_Univ"),
+        inverseJoinColumns = @JoinColumn(name = "Id_Etudiant")
     )
     private List<Etudiant> etudiant = new ArrayList<>();
 
