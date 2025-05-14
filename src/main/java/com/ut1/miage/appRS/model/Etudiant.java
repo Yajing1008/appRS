@@ -45,6 +45,10 @@ public class Etudiant {
     @OneToMany(mappedBy = "etudiant")
     private List<Participer> participations = new ArrayList<>();
 
+    @OneToMany(mappedBy = "etudiant")
+    private List<EtuMessConversation> messagesEnvoyes;
+
+
     public Long getIdEtudiant() {
         return idEtudiant;
     }
@@ -131,6 +135,14 @@ public class Etudiant {
 
     public void setParticipations(List<Participer> participations) {
         this.participations = participations;
+    }
+
+    public List<EtuMessConversation> getMessagesEnvoyes() {
+        return messagesEnvoyes;
+    }
+
+    public void setMessagesEnvoyes(List<EtuMessConversation> messagesEnvoyes) {
+        this.messagesEnvoyes = messagesEnvoyes;
     }
     
 }
