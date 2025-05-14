@@ -11,10 +11,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "post")
+@Table(name = "POSTS")
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +34,28 @@ public class Post {
     inverseJoinColumns = @JoinColumn(name = "id_etudiant")
     )
     private List<Etudiant> republications = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<Commenter> commentaires = new ArrayList<>();
+
+    @OneToMany(mappedBy = "post")
+    private List<Reagir> reactions = new ArrayList<>();
+
+    public List<Reagir> getReactions() {
+        return reactions;
+    }
+
+    public List<Commenter> getCommentaires() {
+        return commentaires;
+    }
+
+    public void setCommentaires(List<Commenter> commentaires) {
+        this.commentaires = commentaires;
+    }
+
+    public void setReactions(List<Reagir> reactions) {
+        this.reactions = reactions;
+    }
 
     public Etudiant getEtudiant() {
         return etudiant;
