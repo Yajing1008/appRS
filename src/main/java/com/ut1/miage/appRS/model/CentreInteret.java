@@ -7,40 +7,40 @@ import jakarta.persistence.*;
 public class CentreInteret {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long IdCentreInteret;
-    @Column(name = "Nom_CentreInteret",nullable = false)
-    private String NomCentreInteret;
+    private Long idCentreInteret;
+    @Column(name = "nom_centreInteret",nullable = false)
+    private String nomCentreInteret;
     
     @ManyToMany
     @JoinTable(
         name = "AVOIR", 
-        joinColumns = @JoinColumn(name = "Id_CentreInteret"),
-        inverseJoinColumns = @JoinColumn(name = "Id_Etudiant")
+        joinColumns = @JoinColumn(name = "id_centreInteret"),
+        inverseJoinColumns = @JoinColumn(name = "id_etudiant")
     )
     private List<Etudiant> etudiant = new ArrayList<>();
 
     public CentreInteret() {}
 
     public CentreInteret(Long idCentreInteret, String nomCentreInteret, List<Etudiant> etudiant) {
-        IdCentreInteret = idCentreInteret;
-        NomCentreInteret = nomCentreInteret;
+        this.idCentreInteret = idCentreInteret;
+        this.nomCentreInteret = nomCentreInteret;
         this.etudiant = etudiant;
     }
 
     public Long getIdCentreInteret() {
-        return IdCentreInteret;
+        return idCentreInteret;
     }
 
     public void setIdCentreInteret(Long idCentreInteret) {
-        IdCentreInteret = idCentreInteret;
+        this.idCentreInteret = idCentreInteret;
     }
 
     public String getNomCentreInteret() {
-        return NomCentreInteret;
+        return nomCentreInteret;
     }
 
     public void setNomCentreInteret(String nomCentreInteret) {
-        NomCentreInteret = nomCentreInteret;
+        this.nomCentreInteret = nomCentreInteret;
     }
 
     public List<Etudiant> getEtudiant() {
@@ -55,8 +55,8 @@ public class CentreInteret {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((IdCentreInteret == null) ? 0 : IdCentreInteret.hashCode());
-        result = prime * result + ((NomCentreInteret == null) ? 0 : NomCentreInteret.hashCode());
+        result = prime * result + ((idCentreInteret == null) ? 0 : idCentreInteret.hashCode());
+        result = prime * result + ((nomCentreInteret == null) ? 0 : nomCentreInteret.hashCode());
         result = prime * result + ((etudiant == null) ? 0 : etudiant.hashCode());
         return result;
     }
@@ -70,15 +70,15 @@ public class CentreInteret {
         if (getClass() != obj.getClass())
             return false;
         CentreInteret other = (CentreInteret) obj;
-        if (IdCentreInteret == null) {
-            if (other.IdCentreInteret != null)
+        if (idCentreInteret == null) {
+            if (other.idCentreInteret != null)
                 return false;
-        } else if (!IdCentreInteret.equals(other.IdCentreInteret))
+        } else if (!idCentreInteret.equals(other.idCentreInteret))
             return false;
-        if (NomCentreInteret == null) {
-            if (other.NomCentreInteret != null)
+        if (nomCentreInteret == null) {
+            if (other.nomCentreInteret != null)
                 return false;
-        } else if (!NomCentreInteret.equals(other.NomCentreInteret))
+        } else if (!nomCentreInteret.equals(other.nomCentreInteret))
             return false;
         if (etudiant == null) {
             if (other.etudiant != null)
@@ -88,5 +88,6 @@ public class CentreInteret {
         return true;
     }
 
+    
     
 }
