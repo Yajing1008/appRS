@@ -24,7 +24,7 @@ public class Evenement {
 
     @ManyToMany
     @JoinTable(
-        name = "PRENDRE_PART", // 中间表名称
+        name = "PRENDRE_PART", 
         joinColumns = @JoinColumn(name = "Id_Evenement"),
         inverseJoinColumns = @JoinColumn(name = "Id_Etudiant")
     )

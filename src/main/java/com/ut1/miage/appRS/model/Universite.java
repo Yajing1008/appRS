@@ -21,7 +21,7 @@ public class Universite {
     
     @ManyToMany
     @JoinTable(
-        name = "ETUDIER", // 中间表名称
+        name = "ETUDIER", 
         joinColumns = @JoinColumn(name = "Id_Univ"),
         inverseJoinColumns = @JoinColumn(name = "Id_Etudiant")
     )
