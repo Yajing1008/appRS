@@ -34,7 +34,7 @@ public class Evenement {
         joinColumns = @JoinColumn(name = "Id_evenement"),
         inverseJoinColumns = @JoinColumn(name = "Id_etudiant")
     )
-    private List<Etudiant> MembreGroupe = new ArrayList<>();
+    private List<Etudiant> membreGroupe = new ArrayList<>();
 
     
     public Evenement() {}
@@ -46,7 +46,7 @@ public class Evenement {
         dateHeureEvenement = dateHeureEvenement;
         nomEvenement = nomEvenement;
         this.createur = createur;
-        MembreGroupe = membreGroupe;
+        membreGroupe = membreGroupe;
     }
 
 
@@ -90,13 +90,13 @@ public class Evenement {
     }
 
 
-    public List<Etudiant> getMembreGroupe() {
-        return MembreGroupe;
+    public List<Etudiant> getmembreGroupe() {
+        return membreGroupe;
     }
 
 
-    public void setMembreGroupe(List<Etudiant> membreGroupe) {
-        MembreGroupe = membreGroupe;
+    public void setmembreGroupe(List<Etudiant> membreGroupe) {
+        membreGroupe = membreGroupe;
     }
 
 
@@ -108,7 +108,7 @@ public class Evenement {
         result = prime * result + ((dateHeureEvenement == null) ? 0 : dateHeureEvenement.hashCode());
         result = prime * result + ((nomEvenement == null) ? 0 : nomEvenement.hashCode());
         result = prime * result + ((createur == null) ? 0 : createur.hashCode());
-        result = prime * result + ((MembreGroupe == null) ? 0 : MembreGroupe.hashCode());
+        result = prime * result + ((membreGroupe == null) ? 0 : membreGroupe.hashCode());
         return result;
     }
 
@@ -142,10 +142,10 @@ public class Evenement {
                 return false;
         } else if (!createur.equals(other.createur))
             return false;
-        if (MembreGroupe == null) {
-            if (other.MembreGroupe != null)
+        if (membreGroupe == null) {
+            if (other.membreGroupe != null)
                 return false;
-        } else if (!MembreGroupe.equals(other.MembreGroupe))
+        } else if (!membreGroupe.equals(other.membreGroupe))
             return false;
         return true;
     }

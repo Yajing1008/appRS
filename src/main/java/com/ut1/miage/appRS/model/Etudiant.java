@@ -70,7 +70,7 @@ public class Etudiant {
     @ManyToMany(mappedBy = "etudiant")
     private List<CentreInteret> centresInteret = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "MembreGroupe")
+    @ManyToMany(mappedBy = "membreGroupe")
     private List<Evenement> evenementsParticiper = new ArrayList<>();
 
     @OneToMany(mappedBy = "createur")
