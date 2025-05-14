@@ -1,13 +1,14 @@
 package com.ut1.miage.appRS.model;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import jakarta.persistence.Id;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
@@ -24,14 +25,14 @@ public class Evenement {
     private String NomEvenement;
 
     @ManyToOne
-    @JoinColumn(name = "IdEtudiant")
+    @JoinColumn(name = "Id_etudiant")
     private Etudiant createur;
 
     @ManyToMany
     @JoinTable(
         name = "PRENDRE_PART", 
-        joinColumns = @JoinColumn(name = "IdEvenement"),
-        inverseJoinColumns = @JoinColumn(name = "IdEtudiant")
+        joinColumns = @JoinColumn(name = "Id_evenement"),
+        inverseJoinColumns = @JoinColumn(name = "Id_etudiant")
     )
     private List<Etudiant> MembreGroupe = new ArrayList<>();
 

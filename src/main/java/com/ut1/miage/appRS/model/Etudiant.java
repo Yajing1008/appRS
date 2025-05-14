@@ -39,7 +39,7 @@ public class Etudiant {
     private List<Post> postsRepublies = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "idEtudiant")
+    @JoinColumn(name = "id_etudiant")
     private Etudiant createur;
 
     @OneToMany(mappedBy = "etudiant")
