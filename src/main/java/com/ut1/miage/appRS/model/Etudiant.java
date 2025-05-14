@@ -38,19 +38,12 @@ public class Etudiant {
     @ManyToMany(mappedBy = "republications")
     private List<Post> postsRepublies = new ArrayList<>();
 
-
-    @ManyToMany(mappedBy = "commentaires")
-    private List<Post> postsCommentes = new ArrayList<>();
-
-
-    @ManyToMany(mappedBy = "reactions")
-    private List<Post> postsReagis = new ArrayList<>();
-
     @ManyToOne
     @JoinColumn(name = "idEtudiant")
     private Etudiant createur;
 
-
+    @OneToMany(mappedBy = "etudiant")
+    private List<Participer> participations = new ArrayList<>();
 
     public Long getIdEtudiant() {
         return idEtudiant;
@@ -124,22 +117,6 @@ public class Etudiant {
         this.postsRepublies = postsRepublies;
     }
 
-    public List<Post> getPostsCommentes() {
-        return postsCommentes;
-    }
-
-    public void setPostsCommentes(List<Post> postsCommentes) {
-        this.postsCommentes = postsCommentes;
-    }
-
-    public List<Post> getPostsReagis() {
-        return postsReagis;
-    }
-
-    public void setPostsReagis(List<Post> postsReagis) {
-        this.postsReagis = postsReagis;
-    }
-
     public Etudiant getCreateur() {
         return createur;
     }
@@ -147,6 +124,13 @@ public class Etudiant {
     public void setCreateur(Etudiant createur) {
         this.createur = createur;
     }
-    
+
+    public List<Participer> getParticipations() {
+        return participations;
+    }
+
+    public void setParticipations(List<Participer> participations) {
+        this.participations = participations;
+    }
     
 }

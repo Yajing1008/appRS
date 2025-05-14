@@ -1,6 +1,8 @@
 package com.ut1.miage.appRS.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -33,6 +36,10 @@ public class Groupe {
     @ManyToOne
     @JoinColumn(name = "idEtudiant")
     private Etudiant createur;
+
+    @OneToMany(mappedBy = "groupe")
+    private List<Participer> membres = new ArrayList<>();
+
 
     public Long getIdGroupe() {
         return idGroupe;
@@ -88,6 +95,14 @@ public class Groupe {
 
     public void setCreateur(Etudiant createur) {
         this.createur = createur;
+    }
+
+    public List<Participer> getMembres() {
+        return membres;
+    }
+
+    public void setMembres(List<Participer> membres) {
+        this.membres = membres;
     }
 
 }

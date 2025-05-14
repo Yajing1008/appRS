@@ -34,22 +34,6 @@ public class Post {
     )
     private List<Etudiant> republications = new ArrayList<>();
 
-    @ManyToMany
-    @JoinTable(
-    name = "commenter",
-    joinColumns = @JoinColumn(name = "id_post"),
-    inverseJoinColumns = @JoinColumn(name = "id_etudiant")
-    )
-    private List<Etudiant> commentaires = new ArrayList<>();
-
-    @ManyToMany
-    @JoinTable(
-    name = "reagir",
-    joinColumns = @JoinColumn(name = "id_post"),
-    inverseJoinColumns = @JoinColumn(name = "id_etudiant")
-    )
-    private List<Etudiant> reactions = new ArrayList<>();
-
     public Etudiant getEtudiant() {
         return etudiant;
     }
@@ -61,18 +45,6 @@ public class Post {
     }
     public void setRepublications(List<Etudiant> republications) {
         this.republications = republications;
-    }
-    public List<Etudiant> getCommentaires() {
-        return commentaires;
-    }
-    public void setCommentaires(List<Etudiant> commentaires) {
-        this.commentaires = commentaires;
-    }
-    public List<Etudiant> getReactions() {
-        return reactions;
-    }
-    public void setReactions(List<Etudiant> reactions) {
-        this.reactions = reactions;
     }
     public Long getIdPost() {
         return idPost;
