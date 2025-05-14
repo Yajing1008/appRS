@@ -35,7 +35,7 @@ public class Etudiant {
     @OneToMany(mappedBy = "etudiant")
     private List<Post> postsPublies = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "republications")
+    @ManyToMany(mappedBy = "etudiant")
     private List<Post> postsRepublies = new ArrayList<>();
 
     @ManyToOne
