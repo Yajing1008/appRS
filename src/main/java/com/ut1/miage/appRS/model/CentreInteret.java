@@ -7,40 +7,40 @@ import jakarta.persistence.*;
 public class CentreInteret {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long Id_CentreInteret;
-    @Column(name = "Nom_CentreInteret",nullable = false)
-    private String Nom_CentreInteret;
+    private Long IdCentreInteret;
+    @Column(name = "NomCentreInteret",nullable = false)
+    private String NomCentreInteret;
     
     @ManyToMany
     @JoinTable(
         name = "AVOIR", 
-        joinColumns = @JoinColumn(name = "Id_CentreInteret"),
-        inverseJoinColumns = @JoinColumn(name = "Id_Etudiant")
+        joinColumns = @JoinColumn(name = "IdCentreInteret"),
+        inverseJoinColumns = @JoinColumn(name = "IdEtudiant")
     )
     private List<Etudiant> etudiant = new ArrayList<>();
 
     public CentreInteret() {}
 
-    public CentreInteret(Long id_CentreInteret, String nom_CentreInteret, List<Etudiant> etudiant) {
-        Id_CentreInteret = id_CentreInteret;
-        Nom_CentreInteret = nom_CentreInteret;
+    public CentreInteret(Long idCentreInteret, String nomCentreInteret, List<Etudiant> etudiant) {
+        IdCentreInteret = idCentreInteret;
+        NomCentreInteret = nomCentreInteret;
         this.etudiant = etudiant;
     }
 
-    public Long getId_CentreInteret() {
-        return Id_CentreInteret;
+    public Long getIdCentreInteret() {
+        return IdCentreInteret;
     }
 
-    public void setId_CentreInteret(Long id_CentreInteret) {
-        Id_CentreInteret = id_CentreInteret;
+    public void setIdCentreInteret(Long idCentreInteret) {
+        IdCentreInteret = idCentreInteret;
     }
 
-    public String getNom_CentreInteret() {
-        return Nom_CentreInteret;
+    public String getNomCentreInteret() {
+        return NomCentreInteret;
     }
 
-    public void setNom_CentreInteret(String nom_CentreInteret) {
-        Nom_CentreInteret = nom_CentreInteret;
+    public void setNomCentreInteret(String nomCentreInteret) {
+        NomCentreInteret = nomCentreInteret;
     }
 
     public List<Etudiant> getEtudiant() {
@@ -55,8 +55,8 @@ public class CentreInteret {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((Id_CentreInteret == null) ? 0 : Id_CentreInteret.hashCode());
-        result = prime * result + ((Nom_CentreInteret == null) ? 0 : Nom_CentreInteret.hashCode());
+        result = prime * result + ((IdCentreInteret == null) ? 0 : IdCentreInteret.hashCode());
+        result = prime * result + ((NomCentreInteret == null) ? 0 : NomCentreInteret.hashCode());
         result = prime * result + ((etudiant == null) ? 0 : etudiant.hashCode());
         return result;
     }
@@ -70,15 +70,15 @@ public class CentreInteret {
         if (getClass() != obj.getClass())
             return false;
         CentreInteret other = (CentreInteret) obj;
-        if (Id_CentreInteret == null) {
-            if (other.Id_CentreInteret != null)
+        if (IdCentreInteret == null) {
+            if (other.IdCentreInteret != null)
                 return false;
-        } else if (!Id_CentreInteret.equals(other.Id_CentreInteret))
+        } else if (!IdCentreInteret.equals(other.IdCentreInteret))
             return false;
-        if (Nom_CentreInteret == null) {
-            if (other.Nom_CentreInteret != null)
+        if (NomCentreInteret == null) {
+            if (other.NomCentreInteret != null)
                 return false;
-        } else if (!Nom_CentreInteret.equals(other.Nom_CentreInteret))
+        } else if (!NomCentreInteret.equals(other.NomCentreInteret))
             return false;
         if (etudiant == null) {
             if (other.etudiant != null)
