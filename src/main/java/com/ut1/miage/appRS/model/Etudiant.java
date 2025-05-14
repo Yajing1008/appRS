@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -32,6 +33,15 @@ public class Etudiant {
 
     private String motDePass;
 
+    @ManyToMany
+    @JoinTable(
+    name = "ETRE_AMI",
+    joinColumns = @JoinColumn(name = "id_etudiant"),
+    inverseJoinColumns = @JoinColumn(name = "id_etudiant_1")
+    )
+    private List<Etudiant> amis = new ArrayList<>();
+
+
     @OneToMany(mappedBy = "etudiant")
     private List<Post> postsPublies = new ArrayList<>();
 
@@ -53,6 +63,18 @@ public class Etudiant {
 
     @OneToMany(mappedBy = "etudiant")
     private List<Reagir> reactions = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "etudiant")
+    private List<Universite> universites = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "etudiant")
+    private List<CentreInteret> centresInteret = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "MembreGroupe")
+    private List<Evenement> evenementsParticiper = new ArrayList<>();
+
+    @OneToMany(mappedBy = "createur")
+    private List<Evenement> evenementsCreer = new ArrayList<>();
 
     public List<Reagir> getReactions() {
         return reactions;
@@ -166,5 +188,46 @@ public class Etudiant {
     public void setMessagesEnvoyes(List<EtuMessConversation> messagesEnvoyes) {
         this.messagesEnvoyes = messagesEnvoyes;
     }
+
+    public List<Etudiant> getAmis() {
+        return amis;
+    }
+
+    public void setAmis(List<Etudiant> amis) {
+        this.amis = amis;
+    }
+
+    public List<Universite> getUniversites() {
+        return universites;
+    }
+
+    public void setUniversites(List<Universite> universites) {
+        this.universites = universites;
+    }
+
+    public List<CentreInteret> getCentresInteret() {
+        return centresInteret;
+    }
+
+    public void setCentresInteret(List<CentreInteret> centresInteret) {
+        this.centresInteret = centresInteret;
+    }
+
+    public List<Evenement> getEvenementsParticiper() {
+        return evenementsParticiper;
+    }
+
+    public void setEvenementsParticiper(List<Evenement> evenementsParticiper) {
+        this.evenementsParticiper = evenementsParticiper;
+    }
+
+    public List<Evenement> getEvenementsCreer() {
+        return evenementsCreer;
+    }
+
+    public void setEvenementsCreer(List<Evenement> evenementsCreer) {
+        this.evenementsCreer = evenementsCreer;
+    }
+    
     
 }
