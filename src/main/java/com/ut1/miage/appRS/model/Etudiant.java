@@ -1,10 +1,14 @@
 package com.ut1.miage.appRS.model;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,6 +29,21 @@ public class Etudiant {
     private String emailEtudiant;
 
     private String motDePass;
+
+    @OneToMany(mappedBy = "etudiant")
+    private List<Post> postsPublies = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "republications")
+    private List<Post> postsRepublies = new ArrayList<>();
+
+
+    @ManyToMany(mappedBy = "commentaires")
+    private List<Post> postsCommentes = new ArrayList<>();
+
+
+    @ManyToMany(mappedBy = "reactions")
+    private List<Post> postsReagis = new ArrayList<>();
+
 
     public Long getIdEtudiant() {
         return idEtudiant;
@@ -80,6 +99,38 @@ public class Etudiant {
 
     public void setMotDePass(String motDePass) {
         this.motDePass = motDePass;
+    }
+
+    public List<Post> getPostsPublies() {
+        return postsPublies;
+    }
+
+    public void setPostsPublies(List<Post> postsPublies) {
+        this.postsPublies = postsPublies;
+    }
+
+    public List<Post> getPostsRepublies() {
+        return postsRepublies;
+    }
+
+    public void setPostsRepublies(List<Post> postsRepublies) {
+        this.postsRepublies = postsRepublies;
+    }
+
+    public List<Post> getPostsCommentes() {
+        return postsCommentes;
+    }
+
+    public void setPostsCommentes(List<Post> postsCommentes) {
+        this.postsCommentes = postsCommentes;
+    }
+
+    public List<Post> getPostsReagis() {
+        return postsReagis;
+    }
+
+    public void setPostsReagis(List<Post> postsReagis) {
+        this.postsReagis = postsReagis;
     }
     
 }
