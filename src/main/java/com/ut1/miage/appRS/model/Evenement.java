@@ -7,23 +7,35 @@ import java.util.Objects;
 
 import jakarta.persistence.*;
 
+/**
+ * Représente un événement dans le réseau social.
+ * Un événement est créé par un étudiant et peut avoir plusieurs membres (étudiants) qui y participent.
+ */
 @Entity
 public class Evenement {
 
+    /** Identifiant unique de l'événement. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idEvenement;
 
+    /** Date et heure de l'événement. */
     @Column(name = "dateHeureEvenement", nullable = false)
     private LocalDateTime dateHeureEvenement;
 
+    /** Nom de l'événement. */
     @Column(name = "nomEvenement", nullable = false)
     private String nomEvenement;
 
+    /** Étudiant créateur de l'événement. */
     @ManyToOne
     @JoinColumn(name = "id_etudiant")
     private Etudiant createur;
 
+    /**
+     * Liste des étudiants participant à l'événement.
+     * Cette relation est mappée via la table de jointure PRENDRE_PART.
+     */
     @ManyToMany
     @JoinTable(
         name = "PRENDRE_PART",
@@ -32,8 +44,18 @@ public class Evenement {
     )
     private List<Etudiant> membreGroupe = new ArrayList<>();
 
+    /** Constructeur par défaut. */
     public Evenement() {}
 
+    /**
+     * Constructeur avec tous les champs.
+     *
+     * @param idEvenement identifiant de l'événement
+     * @param dateHeureEvenement date et heure de l'événement
+     * @param nomEvenement nom de l'événement
+     * @param createur créateur de l'événement
+     * @param membreGroupe liste des membres participants
+     */
     public Evenement(Long idEvenement, LocalDateTime dateHeureEvenement, String nomEvenement, Etudiant createur,
                      List<Etudiant> membreGroupe) {
         this.idEvenement = idEvenement;
@@ -83,18 +105,17 @@ public class Evenement {
         this.membreGroupe = membreGroupe;
     }
 
+    /**
+     * Génère un hashCode basé sur tous les champs.
+     */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((idEvenement == null) ? 0 : idEvenement.hashCode());
-        result = prime * result + ((dateHeureEvenement == null) ? 0 : dateHeureEvenement.hashCode());
-        result = prime * result + ((nomEvenement == null) ? 0 : nomEvenement.hashCode());
-        result = prime * result + ((createur == null) ? 0 : createur.hashCode());
-        result = prime * result + ((membreGroupe == null) ? 0 : membreGroupe.hashCode());
-        return result;
+        return Objects.hash(idEvenement, dateHeureEvenement, nomEvenement, createur, membreGroupe);
     }
 
+    /**
+     * Compare deux événements pour vérifier s'ils sont égaux.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -103,7 +124,6 @@ public class Evenement {
             return false;
 
         Evenement other = (Evenement) obj;
-
         return Objects.equals(idEvenement, other.idEvenement)
             && Objects.equals(dateHeureEvenement, other.dateHeureEvenement)
             && Objects.equals(nomEvenement, other.nomEvenement)
