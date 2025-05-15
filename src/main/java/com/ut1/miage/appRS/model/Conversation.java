@@ -24,7 +24,7 @@ public class Conversation {
     private List<Groupe> groupes = new ArrayList<>();
 
     @OneToMany(mappedBy = "conversation")
-    private List<EtuMessConversation> messagesDansConversation;
+    private List<EtuMessConversation> messagesDansConversation = new ArrayList<>();
 
 
 
