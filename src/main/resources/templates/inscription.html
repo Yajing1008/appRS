@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription Étudiant</title>
+    <link rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
+</head>
+<body>
+<div class="container mt-5">
+    <h2>Créer un compte étudiant</h2>
+    <form th:action="@{/inscription}" th:object="${etudiant}" method="post" class="mt-4">
+
+        <div th:if="${erreur}" class="alert alert-danger" role="alert">
+            <p th:text="${erreur}"></p>
+        </div>
+
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email" th:field="*{emailEtudiant}" class="form-control" required/>
+        </div>
+
+        <div class="mb-3">
+            <label>Mot de passe</label>
+            <input type="password" th:field="*{motDePass}" class="form-control" required/>
+        </div>
+
+        <button type="submit" class="btn btn-primary">S'inscrire</button>
+    </form>
+</div>
+</body>
+</html>
