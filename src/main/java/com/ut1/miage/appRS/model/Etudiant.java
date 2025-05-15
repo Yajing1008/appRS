@@ -1,23 +1,23 @@
 package com.ut1.miage.appRS.model;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
+/**
+ * Représente un étudiant dans l'application de réseau social.
+ * Un étudiant peut publier des posts, réagir, commenter, participer à des groupes,
+ * à des événements, être ami avec d'autres étudiants, etc.
+ */
 @Entity
 @Table(name = "ETUDIANTS")
 public class Etudiant {
 
+    /**
+     * Identifiant unique de l'étudiant.
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_etudiant")
@@ -25,82 +25,104 @@ public class Etudiant {
 
     private String nomEtudiant;
     private String prenomEtudiant;
-
     private LocalDate dateNaissanceEtudiant;
-
     private String sexeEtudiant;
-
     private String emailEtudiant;
-
     private String motDePass;
 
+    /**
+     * Liste des amis de l'étudiant.
+     */
     @ManyToMany
     @JoinTable(
-    name = "ETRE_AMI",
-    joinColumns = @JoinColumn(name = "id_etudiant"),
-    inverseJoinColumns = @JoinColumn(name = "id_etudiant_1")
+        name = "ETRE_AMI",
+        joinColumns = @JoinColumn(name = "id_etudiant"),
+        inverseJoinColumns = @JoinColumn(name = "id_etudiant_1")
     )
     private List<Etudiant> amis = new ArrayList<>();
 
-
+    /**
+     * Liste des posts publiés par l'étudiant.
+     */
     @OneToMany(mappedBy = "etudiant")
     private List<Post> postsPublies = new ArrayList<>();
 
+    /**
+     * Liste des posts que l'étudiant a republiés.
+     */
     @ManyToMany(mappedBy = "etudiant")
     private List<Post> postsRepublies = new ArrayList<>();
 
+    /**
+     * Groupes créés par l'étudiant.
+     */
     @OneToMany(mappedBy = "createur")
     private List<Groupe> groupesCrees = new ArrayList<>();
 
+    /**
+     * Liste des participations de l'étudiant aux groupes.
+     */
     @OneToMany(mappedBy = "etudiant")
     private List<Participer> participations = new ArrayList<>();
 
+    /**
+     * Messages envoyés dans les conversations.
+     */
     @OneToMany(mappedBy = "etudiant")
     private List<EtuMessConversation> messagesEnvoyes;
 
+    /**
+     * Commentaires faits par l'étudiant.
+     */
     @OneToMany(mappedBy = "etudiant")
     private List<Commenter> commentaires = new ArrayList<>();
 
+    /**
+     * Réactions de l'étudiant aux posts.
+     */
     @OneToMany(mappedBy = "etudiant")
     private List<Reagir> reactions = new ArrayList<>();
 
+    /**
+     * Universités fréquentées par l'étudiant.
+     */
     @ManyToMany(mappedBy = "etudiant")
     private List<Universite> universites = new ArrayList<>();
 
+    /**
+     * Centres d’intérêt de l’étudiant.
+     */
     @ManyToMany(mappedBy = "etudiant")
     private List<CentreInteret> centresInteret = new ArrayList<>();
 
+    /**
+     * Événements auxquels l’étudiant participe.
+     */
     @ManyToMany(mappedBy = "membreGroupe")
     private List<Evenement> evenementsParticiper = new ArrayList<>();
 
+    /**
+     * Événements créés par l’étudiant.
+     */
     @OneToMany(mappedBy = "createur")
     private List<Evenement> evenementsCreer = new ArrayList<>();
 
-    public List<Reagir> getReactions() {
-        return reactions;
-    }
+    // --- Getters / Setters avec JavaDoc ---
 
-    public void setReactions(List<Reagir> reactions) {
-        this.reactions = reactions;
-    }
-
-    public List<Commenter> getCommentaires() {
-        return commentaires;
-    }
-
-    public void setCommentaires(List<Commenter> commentaires) {
-        this.commentaires = commentaires;
-    }
- 
-
+    /**
+     * @return identifiant de l'étudiant
+     */
     public Long getIdEtudiant() {
         return idEtudiant;
     }
 
+    /**
+     * @param idEtudiant identifiant à définir
+     */
     public void setIdEtudiant(Long idEtudiant) {
         this.idEtudiant = idEtudiant;
     }
-
+    
     public String getNomEtudiant() {
         return nomEtudiant;
     }
@@ -149,6 +171,14 @@ public class Etudiant {
         this.motDePass = motDePass;
     }
 
+    public List<Etudiant> getAmis() {
+        return amis;
+    }
+
+    public void setAmis(List<Etudiant> amis) {
+        this.amis = amis;
+    }
+
     public List<Post> getPostsPublies() {
         return postsPublies;
     }
@@ -163,6 +193,14 @@ public class Etudiant {
 
     public void setPostsRepublies(List<Post> postsRepublies) {
         this.postsRepublies = postsRepublies;
+    }
+
+    public List<Groupe> getGroupesCrees() {
+        return groupesCrees;
+    }
+
+    public void setGroupesCrees(List<Groupe> groupesCrees) {
+        this.groupesCrees = groupesCrees;
     }
 
     public List<Participer> getParticipations() {
@@ -181,12 +219,20 @@ public class Etudiant {
         this.messagesEnvoyes = messagesEnvoyes;
     }
 
-    public List<Etudiant> getAmis() {
-        return amis;
+    public List<Commenter> getCommentaires() {
+        return commentaires;
     }
 
-    public void setAmis(List<Etudiant> amis) {
-        this.amis = amis;
+    public void setCommentaires(List<Commenter> commentaires) {
+        this.commentaires = commentaires;
+    }
+
+    public List<Reagir> getReactions() {
+        return reactions;
+    }
+
+    public void setReactions(List<Reagir> reactions) {
+        this.reactions = reactions;
     }
 
     public List<Universite> getUniversites() {
@@ -220,14 +266,4 @@ public class Etudiant {
     public void setEvenementsCreer(List<Evenement> evenementsCreer) {
         this.evenementsCreer = evenementsCreer;
     }
-
-    public List<Groupe> getGroupesCrees() {
-        return groupesCrees;
-    }
-
-    public void setGroupesCrees(List<Groupe> groupesCrees) {
-        this.groupesCrees = groupesCrees;
-    }
-    
-    
 }

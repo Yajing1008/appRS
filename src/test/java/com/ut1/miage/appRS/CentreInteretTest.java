@@ -11,7 +11,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CentreInteretTest {
-
+    
     @Test
     void testConstructeurEtGettersSetters() {
         CentreInteret centre = new CentreInteret();
