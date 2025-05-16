@@ -51,7 +51,7 @@ public class Etudiant {
     /**
      * Liste des posts que l'étudiant a republiés.
      */
-    @ManyToMany(mappedBy = "etudiant")
+    @ManyToMany(mappedBy = "etudiantsRepublieurs")
     private List<Post> postsRepublies = new ArrayList<>();
 
     /**
