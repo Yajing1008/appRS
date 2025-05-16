@@ -1,7 +1,6 @@
 package com.ut1.miage.appRS;
 
 import org.junit.jupiter.api.Test;
-
 import com.ut1.miage.appRS.model.Conversation;
 import com.ut1.miage.appRS.model.EtuMessConversation;
 import com.ut1.miage.appRS.model.Groupe;
@@ -12,8 +11,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de test unitaire pour la classe {@link Conversation}.
+ */
 class ConversationTest {
 
+    /**
+     * Vérifie le bon fonctionnement des getters et setters de base.
+     */
     @Test
     void testGettersAndSetters() {
         Conversation conversation = new Conversation();
@@ -28,6 +33,9 @@ class ConversationTest {
         assertEquals(date, conversation.getDateCommenceConversation());
     }
 
+    /**
+     * Vérifie l'association entre une conversation et ses groupes.
+     */
     @Test
     void testAssociationAvecGroupes() {
         Groupe groupe1 = new Groupe();
@@ -43,6 +51,9 @@ class ConversationTest {
         assertEquals(2, conversation.getGroupes().size());
     }
 
+    /**
+     * Vérifie l'association entre une conversation et ses messages.
+     */
     @Test
     void testAssociationAvecMessages() {
         EtuMessConversation m1 = new EtuMessConversation();
@@ -58,13 +69,15 @@ class ConversationTest {
         assertEquals(2, conversation.getMessagesDansConversation().size());
     }
 
+    /**
+     * Vérifie les valeurs par défaut lors de la création d'une nouvelle conversation.
+     */
     @Test
     void testValeursParDefaut() {
         Conversation conversation = new Conversation();
 
         assertNull(conversation.getDateCommenceConversation());
         assertNotNull(conversation.getGroupes());
-        assertNotNull(conversation.getMessagesDansConversation()); // par défaut à null car non instanciée dans le constructeur
+        assertNotNull(conversation.getMessagesDansConversation());
     }
 }
-

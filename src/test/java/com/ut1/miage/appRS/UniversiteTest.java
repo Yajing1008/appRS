@@ -1,7 +1,6 @@
 package com.ut1.miage.appRS;
 
 import org.junit.jupiter.api.Test;
-
 import com.ut1.miage.appRS.model.Etudiant;
 import com.ut1.miage.appRS.model.Universite;
 
@@ -10,8 +9,17 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de test unitaire pour {@link Universite}.
+ * Elle couvre les constructeurs, les accesseurs (getters/setters),
+ * et les méthodes {@code equals()} et {@code hashCode()}.
+ */
 class UniversiteTest {
 
+    /**
+     * Vérifie que le constructeur avec paramètres initialise
+     * correctement les attributs.
+     */
     @Test
     void testConstructeurAvecParametres() {
         List<Etudiant> etudiants = new ArrayList<>();
@@ -23,15 +31,22 @@ class UniversiteTest {
         assertEquals(etudiants, u.getEtudiant());
     }
 
+    /**
+     * Vérifie que le constructeur par défaut initialise correctement
+     * la liste d'étudiants et laisse les autres champs à {@code null}.
+     */
     @Test
     void testConstructeurParDefaut() {
         Universite u = new Universite();
         assertNull(u.getIdUniv());
         assertNull(u.getNomUniv());
-        assertNotNull(u.getEtudiant()); // initialisé dans la déclaration
+        assertNotNull(u.getEtudiant());
         assertTrue(u.getEtudiant().isEmpty());
     }
 
+    /**
+     * Vérifie que les accesseurs et mutateurs fonctionnent comme prévu.
+     */
     @Test
     void testSettersEtGetters() {
         Universite u = new Universite();
@@ -48,6 +63,10 @@ class UniversiteTest {
         assertEquals(etudiants, u.getEtudiant());
     }
 
+    /**
+     * Vérifie l'implémentation de {@code equals()} et {@code hashCode()}
+     * avec deux objets identiques et un différent.
+     */
     @Test
     void testEqualsEtHashCode() {
         List<Etudiant> etudiants = new ArrayList<>();
@@ -60,6 +79,10 @@ class UniversiteTest {
         assertNotEquals(u1, u3);
     }
 
+    /**
+     * Vérifie le comportement de {@code equals()} avec {@code null}
+     * et un objet d'une autre classe.
+     */
     @Test
     void testEqualsAvecNullEtAutreClasse() {
         Universite u = new Universite(1L, "UT1", new ArrayList<>());

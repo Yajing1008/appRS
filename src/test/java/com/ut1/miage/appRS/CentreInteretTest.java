@@ -10,8 +10,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de test pour l'entité {@link CentreInteret}.
+ * Vérifie les getters, setters, associations, égalité et cohérence des hashCodes.
+ */
 class CentreInteretTest {
-    
+
+    /**
+     * Vérifie que les getters et setters fonctionnent correctement.
+     */
     @Test
     void testConstructeurEtGettersSetters() {
         CentreInteret centre = new CentreInteret();
@@ -22,6 +29,9 @@ class CentreInteretTest {
         assertEquals("Musique", centre.getNomCentreInteret());
     }
 
+    /**
+     * Vérifie que l'association avec une liste d'étudiants fonctionne correctement.
+     */
     @Test
     void testAssociationEtudiants() {
         Etudiant e1 = new Etudiant();
@@ -41,6 +51,9 @@ class CentreInteretTest {
         assertEquals(10L, centre.getEtudiant().get(0).getIdEtudiant());
     }
 
+    /**
+     * Vérifie que deux objets {@link CentreInteret} avec les mêmes attributs sont considérés comme égaux.
+     */
     @Test
     void testEqualsEtHashCode() {
         CentreInteret c1 = new CentreInteret();
@@ -55,6 +68,9 @@ class CentreInteretTest {
         assertEquals(c1.hashCode(), c2.hashCode());
     }
 
+    /**
+     * Vérifie que deux objets {@link CentreInteret} différents ne sont pas égaux.
+     */
     @Test
     void testNonEquals() {
         CentreInteret c1 = new CentreInteret(1L, "Lecture", new ArrayList<>());
@@ -63,6 +79,9 @@ class CentreInteretTest {
         assertNotEquals(c1, c2);
     }
 
+    /**
+     * Vérifie que deux objets ayant le même id ont le même hashCode.
+     */
     @Test
     void testHashCodeConsistanceAvecId() {
         CentreInteret c1 = new CentreInteret();
@@ -74,6 +93,9 @@ class CentreInteretTest {
         assertEquals(c1.hashCode(), c2.hashCode());
     }
 
+    /**
+     * Vérifie que le hashCode change si le nom du centre d'intérêt change.
+     */
     @Test
     void testHashCodeChangeAvecNom() {
         CentreInteret c1 = new CentreInteret();

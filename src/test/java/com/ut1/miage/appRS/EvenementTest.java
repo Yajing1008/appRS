@@ -10,8 +10,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de test unitaire pour la classe {@link Evenement}.
+ */
 class EvenementTest {
 
+    /**
+     * Teste les accesseurs (getters/setters) de la classe {@link Evenement}.
+     */
     @Test
     void testGettersAndSetters() {
         Etudiant createur = new Etudiant();
@@ -33,6 +39,9 @@ class EvenementTest {
         assertEquals(1, evenement.getMembreGroupe().size());
     }
 
+    /**
+     * Vérifie que le constructeur avec arguments initialise correctement tous les champs.
+     */
     @Test
     void testConstructeurAvecArguments() {
         Etudiant createur = new Etudiant();
@@ -50,6 +59,9 @@ class EvenementTest {
         assertSame(membres, evenement.getMembreGroupe());
     }
 
+    /**
+     * Vérifie les valeurs par défaut d'une instance de {@link Evenement}.
+     */
     @Test
     void testDefaultValues() {
         Evenement evenement = new Evenement();
@@ -61,6 +73,9 @@ class EvenementTest {
         assertTrue(evenement.getMembreGroupe().isEmpty());
     }
 
+    /**
+     * Vérifie la méthode equals et hashCode avec deux objets identiques.
+     */
     @Test
     void testEqualsEtHashCode() {
         LocalDateTime date = LocalDateTime.now();

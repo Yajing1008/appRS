@@ -1,13 +1,18 @@
 package com.ut1.miage.appRS;
 
 import org.junit.jupiter.api.Test;
-
 import com.ut1.miage.appRS.model.ParticiperId;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de test unitaire pour la classe {@link ParticiperId}.
+ */
 class ParticiperIdTest {
 
+    /**
+     * Vérifie le bon fonctionnement du constructeur par défaut.
+     */
     @Test
     void testConstructeurParDefaut() {
         ParticiperId id = new ParticiperId();
@@ -15,6 +20,9 @@ class ParticiperIdTest {
         assertNull(id.getIdGroupe());
     }
 
+    /**
+     * Vérifie que le constructeur avec paramètres initialise correctement les champs.
+     */
     @Test
     void testConstructeurAvecParametres() {
         ParticiperId id = new ParticiperId(1L, 2L);
@@ -22,6 +30,9 @@ class ParticiperIdTest {
         assertEquals(2L, id.getIdGroupe());
     }
 
+    /**
+     * Vérifie que les getters et setters fonctionnent correctement.
+     */
     @Test
     void testSettersEtGetters() {
         ParticiperId id = new ParticiperId();
@@ -32,6 +43,9 @@ class ParticiperIdTest {
         assertEquals(20L, id.getIdGroupe());
     }
 
+    /**
+     * Vérifie l'implémentation correcte de equals() et hashCode().
+     */
     @Test
     void testEqualsEtHashCode() {
         ParticiperId id1 = new ParticiperId(1L, 2L);
@@ -45,6 +59,9 @@ class ParticiperIdTest {
         assertNotEquals(id1.hashCode(), id3.hashCode());
     }
 
+    /**
+     * Vérifie que equals() retourne false avec un null ou un objet d'un autre type.
+     */
     @Test
     void testEqualsAvecNullEtAutresTypes() {
         ParticiperId id = new ParticiperId(1L, 2L);

@@ -1,17 +1,7 @@
 package com.ut1.miage.appRS;
 
 import org.junit.jupiter.api.Test;
-
-import com.ut1.miage.appRS.model.CentreInteret;
-import com.ut1.miage.appRS.model.Commenter;
-import com.ut1.miage.appRS.model.EtuMessConversation;
-import com.ut1.miage.appRS.model.Etudiant;
-import com.ut1.miage.appRS.model.Evenement;
-import com.ut1.miage.appRS.model.Groupe;
-import com.ut1.miage.appRS.model.Participer;
-import com.ut1.miage.appRS.model.Post;
-import com.ut1.miage.appRS.model.Reagir;
-import com.ut1.miage.appRS.model.Universite;
+import com.ut1.miage.appRS.model.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -19,8 +9,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de tests unitaires pour la classe {@link Etudiant}.
+ */
 public class EtudiantTest {
 
+    /**
+     * Teste les accesseurs de base (getters/setters) pour les champs simples de l'entité Etudiant.
+     */
     @Test
     void testGettersAndSetters() {
         Etudiant etudiant = new Etudiant();
@@ -42,6 +38,9 @@ public class EtudiantTest {
         assertEquals("secret123", etudiant.getMotDePass());
     }
 
+    /**
+     * Vérifie que les listes sont correctement initialisées et non nulles à la création d'un étudiant.
+     */
     @Test
     void testInitialListsNotNull() {
         Etudiant etudiant = new Etudiant();
@@ -59,6 +58,9 @@ public class EtudiantTest {
         assertNotNull(etudiant.getEvenementsCreer());
     }
 
+    /**
+     * Teste l'ajout manuel d'un ami dans la liste d'amis.
+     */
     @Test
     void testAddAmi() {
         Etudiant e1 = new Etudiant();
@@ -70,6 +72,9 @@ public class EtudiantTest {
         assertSame(e2, e1.getAmis().get(0));
     }
 
+    /**
+     * Vérifie l'affectation des commentaires à un étudiant.
+     */
     @Test
     void testSetCommentaires() {
         Etudiant etudiant = new Etudiant();
@@ -79,6 +84,9 @@ public class EtudiantTest {
         assertEquals(commentaires, etudiant.getCommentaires());
     }
 
+    /**
+     * Vérifie l'affectation des réactions à un étudiant.
+     */
     @Test
     void testSetReactions() {
         Etudiant etudiant = new Etudiant();
@@ -88,6 +96,9 @@ public class EtudiantTest {
         assertEquals(reactions, etudiant.getReactions());
     }
 
+    /**
+     * Vérifie l'affectation des publications d'un étudiant.
+     */
     @Test
     void testSetPostsPublies() {
         Etudiant etudiant = new Etudiant();
@@ -97,6 +108,9 @@ public class EtudiantTest {
         assertEquals(posts, etudiant.getPostsPublies());
     }
 
+    /**
+     * Vérifie l'affectation des republications d'un étudiant.
+     */
     @Test
     void testSetPostsRepublies() {
         Etudiant etudiant = new Etudiant();
@@ -106,6 +120,9 @@ public class EtudiantTest {
         assertEquals(republies, etudiant.getPostsRepublies());
     }
 
+    /**
+     * Vérifie l'affectation des participations de groupe d'un étudiant.
+     */
     @Test
     void testSetParticipations() {
         Etudiant etudiant = new Etudiant();
@@ -115,6 +132,9 @@ public class EtudiantTest {
         assertEquals(participations, etudiant.getParticipations());
     }
 
+    /**
+     * Vérifie l'affectation des messages envoyés dans les conversations.
+     */
     @Test
     void testSetMessagesEnvoyes() {
         Etudiant etudiant = new Etudiant();
@@ -124,6 +144,9 @@ public class EtudiantTest {
         assertEquals(messages, etudiant.getMessagesEnvoyes());
     }
 
+    /**
+     * Vérifie l'affectation d'une liste d'amis complète.
+     */
     @Test
     void testSetAmis() {
         Etudiant etudiant = new Etudiant();
@@ -133,6 +156,9 @@ public class EtudiantTest {
         assertEquals(amis, etudiant.getAmis());
     }
 
+    /**
+     * Vérifie l'affectation des universités associées à un étudiant.
+     */
     @Test
     void testSetUniversites() {
         Etudiant etudiant = new Etudiant();
@@ -142,6 +168,9 @@ public class EtudiantTest {
         assertEquals(universites, etudiant.getUniversites());
     }
 
+    /**
+     * Vérifie l'affectation des centres d’intérêt d’un étudiant.
+     */
     @Test
     void testSetCentresInteret() {
         Etudiant etudiant = new Etudiant();
@@ -151,6 +180,9 @@ public class EtudiantTest {
         assertEquals(centres, etudiant.getCentresInteret());
     }
 
+    /**
+     * Vérifie l'affectation des événements auxquels l'étudiant participe.
+     */
     @Test
     void testSetEvenementsParticiper() {
         Etudiant etudiant = new Etudiant();
@@ -160,6 +192,9 @@ public class EtudiantTest {
         assertEquals(evenements, etudiant.getEvenementsParticiper());
     }
 
+    /**
+     * Vérifie l'affectation des événements créés par l'étudiant.
+     */
     @Test
     void testSetEvenementsCreer() {
         Etudiant etudiant = new Etudiant();
@@ -169,6 +204,9 @@ public class EtudiantTest {
         assertEquals(evenements, etudiant.getEvenementsCreer());
     }
 
+    /**
+     * Vérifie l'affectation des groupes créés par l'étudiant.
+     */
     @Test
     void testSetGroupesCrees() {
         Etudiant etudiant = new Etudiant();

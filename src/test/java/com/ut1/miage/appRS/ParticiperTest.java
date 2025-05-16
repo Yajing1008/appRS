@@ -5,8 +5,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de test unitaire pour {@link Participer}.
+ */
 class ParticiperTest {
 
+    /**
+     * Vérifie que les getters et setters fonctionnent correctement.
+     */
     @Test
     void testGettersAndSetters() {
         Etudiant etudiant = new Etudiant();
@@ -26,11 +32,14 @@ class ParticiperTest {
         assertEquals("Administrateur", participer.getRole());
     }
 
+    /**
+     * Vérifie les valeurs par défaut après instanciation avec le constructeur vide.
+     */
     @Test
     void testDefaultConstructorValues() {
         Participer participer = new Participer();
 
-        assertNotNull(participer.getId()); // id est initialisé par défaut
+        assertNotNull(participer.getId()); // id est initialisé automatiquement
         assertNull(participer.getEtudiant());
         assertNull(participer.getGroupe());
         assertNull(participer.getRole());
