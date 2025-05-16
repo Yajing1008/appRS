@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.Optional;
 
 @Controller
 public class ProfilController {
@@ -65,20 +66,42 @@ public class ProfilController {
      * @throws IOException En cas d’erreur lors de la lecture du fichier photo.
      */
 
-    // 保存修改
     @PostMapping("/profil/modifier")
     public String saveProfile(@ModelAttribute Etudiant etudiant,
-                              @RequestParam("photo") MultipartFile photoFile) throws IOException {
-        // 如果上传了图片，转换格式保存
-        if (!photoFile.isEmpty()) {
-            byte[] photoBytes = photoFile.getBytes();
-            String base64 = Base64.getEncoder().encodeToString(photoBytes);
-            etudiant.setPhotoEtudiant("data:image/jpeg;base64," + base64);
+                              @RequestParam("photo") MultipartFile photoFile,
+                              HttpSession session) throws IOException {
+
+        System.out.println(etudiant);
+        // 🔍 先查找这个学生
+        Optional<Etudiant> optionalEtudiant =  etudiantRepository.findByEmailEtudiant(etudiant.getEmailEtudiant());
+
+        if (optionalEtudiant.isPresent()) {
+            Etudiant existingEtudiant = optionalEtudiant.get();
+
+            // 更新字段
+            existingEtudiant.setNomEtudiant(etudiant.getNomEtudiant());
+            existingEtudiant.setPrenomEtudiant(etudiant.getPrenomEtudiant());
+            existingEtudiant.setEmailEtudiant(etudiant.getEmailEtudiant());
+            existingEtudiant.setDateNaissanceEtudiant(etudiant.getDateNaissanceEtudiant());
+            existingEtudiant.setSexeEtudiant(etudiant.getSexeEtudiant());
+            existingEtudiant.setDescriptionEtudiant(etudiant.getDescriptionEtudiant());
+
+            // 更新照片（如果上传了新照片）
+            if (!photoFile.isEmpty()) {
+                byte[] photoBytes = photoFile.getBytes();
+                String base64 = Base64.getEncoder().encodeToString(photoBytes);
+                existingEtudiant.setPhotoEtudiant("data:image/jpeg;base64," + base64);
+            }
+
+            // 保存更新后的实体
+            etudiantRepository.save(existingEtudiant);
+            session.setAttribute("etudiantConnecte", existingEtudiant);
         }
 
-        etudiantRepository.save(etudiant);
-        return "profil"; // 重定向到只读页面
+
+        return "redirect:/profil";
     }
+
 
 
 }

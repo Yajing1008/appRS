@@ -30,7 +30,7 @@ public class Etudiant {
     private String emailEtudiant;
     private String motDePass;
     @Lob
-    private String photoEtudiant;
+    private String photoEtudiant = "";
     private String descriptionEtudiant;
 
     /**

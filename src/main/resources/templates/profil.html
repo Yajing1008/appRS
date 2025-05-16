@@ -6,13 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sociala - Social Network App HTML Template </title>
 
-    <link rel="stylesheet" href="css/themify-icons.css">
-    <link rel="stylesheet" href="css/feather.css">
+    <link rel="stylesheet" th:href="@{/css/themify-icons.css}">
+    <link rel="stylesheet" th:href="@{/css/feather.css}">
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/images/favicon.png}">
     <!-- Custom Stylesheet -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/lightbox.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/lightbox.css}">
 
 </head>
 
@@ -193,7 +193,7 @@
                             <li><a href="default-badge.html" class="nav-content-bttn open-font" ><i class="feather-award btn-round-md bg-red-gradiant me-3"></i><span>Badges</span></a></li>
                             <li><a href="default-storie.html" class="nav-content-bttn open-font" ><i class="feather-globe btn-round-md bg-gold-gradiant me-3"></i><span>Explore Stories</span></a></li>
                             <li><a href="default-group.html" class="nav-content-bttn open-font" ><i class="feather-zap btn-round-md bg-mini-gradiant me-3"></i><span>Popular Groups</span></a></li>
-                            <li><a href="Profil.html" class="nav-content-bttn open-font"><i class="feather-user btn-round-md bg-primary-gradiant me-3"></i><span>Author Profile </span></a></li>
+                            <li><a href="profil.html" class="nav-content-bttn open-font"><i class="feather-user btn-round-md bg-primary-gradiant me-3"></i><span>Author Profile </span></a></li>
                         </ul>
                     </div>
 
@@ -232,7 +232,7 @@
 
                                 <div class="card-body p-0 position-relative">
 
-                                    <!-- ✅ 已登录 -->
+                                    <!-- 已登录 -->
                                     <div th:if="${etudiant != null}">
                                         <figure class="avatar position-absolute w100 z-index-1" style="top:-40px; left: 30px;">
                                             <img th:src="${etudiant.photoEtudiant != null ? etudiant.photoEtudiant : '/assets/img/user-default.jpg'}"
@@ -241,17 +241,16 @@
                                         </figure>
 
                                         <h4 class="fw-700 font-sm mt-2 mb-lg-5 mb-4 pl-15">
-                                            <span>Modifier votre profil</span>
+                                            <span th:text="${etudiant.prenomEtudiant + ' ' + etudiant.nomEtudiant}">Nom Prénom</span>
                                             <span class="fw-500 font-xssss text-grey-500 mt-1 mb-3 d-block" th:text="${etudiant.emailEtudiant}">email@example.com</span>
                                         </h4>
 
-                                        <!-- 🔙 可选：返回按钮 -->
                                         <div class="d-flex align-items-center justify-content-center position-absolute-md right-15 top-0 me-2">
-                                            <a th:href="@{/profil}" class="bg-grey text-dark p-3 z-index-1 rounded-3 font-xsssss text-uppercase fw-700 ls-3">Retour</a>
+                                            <a th:href="@{/profil/modifier}" class="bg-primary text-white p-3 z-index-1 rounded-3 font-xsssss text-uppercase fw-700 ls-3">Modifier</a>
                                         </div>
                                     </div>
 
-                                    <!-- ❌ 未登录 -->
+                                    <!-- 未登录 -->
                                     <div th:unless="${etudiant != null}">
                                         <figure class="avatar position-absolute w100 z-index-1" style="top:-40px; left: 30px;">
                                             <img src="/assets/img/user-default.jpg" alt="default user" class="float-right p-1 bg-white rounded-circle w-100">
@@ -267,7 +266,6 @@
                                     </div>
 
                                 </div>
-
 
 
 
@@ -310,81 +308,75 @@
                             </div>
 
 
+
+
                             <div class="card w-100 shadow-xss rounded-xxl border-0 mb-3">
                                 <div class="card-body d-block p-4">
-                                    <h4 class="fw-700 mb-3 font-xsss text-grey-900">Modifier mon profil</h4>
+                                    <h4 class="fw-700 mb-3 font-xsss text-grey-900">Profil</h4>
 
-                                    <!-- Si l'utilisateur est connecté -->
-                                    <div th:if="${etudiant != null}">
-                                        <form th:action="@{/profil/modifier}" th:object="${etudiant}" method="post" enctype="multipart/form-data">
-                                            <!-- photo -->
-                                            <div class="text-center mb-4">
-                                                <img th:src="${etudiant.photoEtudiant != null ? etudiant.photoEtudiant : '/assets/img/user-default.jpg'}"
-                                                     class="rounded-circle bg-white p-1 shadow-xss"
-                                                     alt="Photo de profil" width="120" height="120">
-                                                <div class="mt-2">
-                                                    <label class="font-xssss fw-600 text-grey-700">Changer la photo</label>
-                                                    <input type="file" name="photo" class="form-control font-xssss">
-                                                </div>
-                                            </div>
-
-                                            <!-- nom & prénom -->
-                                            <div class="row">
-                                                <div class="col-md-6 mb-3">
-                                                    <label class="font-xssss fw-600 text-grey-700">Nom</label>
-                                                    <input type="text" th:field="*{etudiant.nomEtudiant}" class="form-control font-xssss">
-                                                </div>
-                                                <div class="col-md-6 mb-3">
-                                                    <label class="font-xssss fw-600 text-grey-700">Prénom</label>
-                                                    <input type="text" th:field="*{etudiant.prenomEtudiant}" class="form-control font-xssss">
-                                                </div>
-                                            </div>
-
-                                            <!-- email -->
-                                            <div class="mb-3">
-                                                <label class="font-xssss fw-600 text-grey-700">Email</label>
-                                                <input type="email" th:field="*{etudiant.emailEtudiant}" class="form-control font-xssss">
-                                            </div>
-
-                                            <!-- naissance + sexe -->
-                                            <div class="row">
-                                                <div class="col-md-6 mb-3">
-                                                    <label class="font-xssss fw-600 text-grey-700">Date de naissance</label>
-                                                    <input type="date" th:field="*{etudiant.dateNaissanceEtudiant}" class="form-control font-xssss">
-                                                </div>
-                                                <div class="col-md-6 mb-3">
-                                                    <label class="font-xssss fw-600 text-grey-700">Sexe</label>
-                                                    <select th:field="*{etudiant.sexeEtudiant}" class="form-control font-xssss">
-                                                        <option value="Homme">Homme</option>
-                                                        <option value="Femme">Femme</option>
-                                                        <option value="Autre">Autre</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <!-- description -->
-                                            <div class="mb-3">
-                                                <label class="font-xssss fw-600 text-grey-700">Description</label>
-                                                <input type="text" th:field="*{etudiant.descriptionEtudiant}" class="form-control font-xssss">
-                                            </div>
-
-                                            <!-- boutons -->
-                                            <div class="text-end mt-4">
-                                                <button type="submit" class="bg-primary text-white p-2 ps-4 pe-4 lh-24 font-xssss rounded-xl fw-700 text-uppercase">Enregistrer</button>
-                                                <a th:href="@{/profil}" class="bg-grey text-grey-800 p-2 ps-4 pe-4 lh-24 font-xssss rounded-xl fw-700 text-uppercase ms-2">Annuler</a>
-                                            </div>
-                                        </form>
+                                    <!-- 检查是否所有字段都为空 -->
+                                    <div th:if="${#strings.isEmpty(etudiant.prenomEtudiant) and
+                     #strings.isEmpty(etudiant.nomEtudiant) and
+                     #strings.isEmpty(etudiant.descriptionEtudiant) and
+                     etudiant.dateNaissanceEtudiant == null and
+                     #strings.isEmpty(etudiant.sexeEtudiant) and
+                     #strings.isEmpty(etudiant.emailEtudiant)}" class="text-center">
+                                        <p class="text-danger font-xssss mb-3">Votre profil est vide. Veuillez le remplir.</p>
+                                        <a th:href="@{/profil/modifier}" class="bg-primary text-white p-2 ps-4 pe-4 lh-24 font-xssss rounded-xl fw-700 border-0">Compléter le profil</a>
                                     </div>
 
-                                    <!-- Si l'utilisateur N'EST PAS connecté -->
-                                    <div th:unless="${etudiant != null}" class="text-center">
-                                        <i class="feather-lock text-grey-500 font-lg mb-2 d-block"></i>
-                                        <p class="fw-600 text-grey-500 font-xssss">Veuillez vous connecter pour modifier votre profil.</p>
+                                    <!-- 正常显示信息内容 -->
+                                    <div th:unless="${#strings.isEmpty(etudiant.prenomEtudiant) and
+                         #strings.isEmpty(etudiant.nomEtudiant) and
+                         #strings.isEmpty(etudiant.descriptionEtudiant) and
+                         etudiant.dateNaissanceEtudiant == null and
+                         #strings.isEmpty(etudiant.sexeEtudiant) and
+                         #strings.isEmpty(etudiant.emailEtudiant)}">
+
+                                        <div class="text-center mb-4">
+                                            <img th:src="${etudiant.photoEtudiant != '' ? etudiant.photoEtudiant : '/assets/img/user-default.jpg'}"
+                                                 class="rounded-circle bg-white p-1 shadow-xss"
+                                                 alt="Photo de profil" width="120" height="120">
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="font-xssss text-grey-700 fw-700">Prénom</label>
+                                                <p class="font-xssss text-grey-900" th:text="${etudiant.prenomEtudiant}">-</p>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="font-xssss text-grey-700 fw-700">Nom</label>
+                                                <p class="font-xssss text-grey-900" th:text="${etudiant.nomEtudiant}">-</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="font-xssss text-grey-700 fw-700">Description</label>
+                                            <p class="font-xssss text-grey-900" th:text="${etudiant.descriptionEtudiant}">-</p>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-6 mb-3">
+                                                <label class="font-xssss text-grey-700 fw-700">Date de naissance</label>
+                                                <p class="font-xssss text-grey-900" th:text="${etudiant.dateNaissanceEtudiant}">-</p>
+                                            </div>
+                                            <div class="col-md-6 mb-3">
+                                                <label class="font-xssss text-grey-700 fw-700">Sexe</label>
+                                                <p class="font-xssss text-grey-900" th:text="${etudiant.sexeEtudiant}">-</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label class="font-xssss text-grey-700 fw-700">Email</label>
+                                            <p class="font-xssss text-grey-900" th:text="${etudiant.emailEtudiant}">-</p>
+                                        </div>
+
+                                        <div class="text-end mt-4">
+                                            <a th:href="@{/profil/modifier}" class="bg-primary text-white p-2 ps-4 pe-4 lh-24 font-xssss rounded-xl fw-700 border-0">Creer mon profil</a>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-
-
 
 
 
@@ -873,10 +865,10 @@
     </div>
 
 
-    <script src="js/plugin.js"></script>
-    <script src="js/lightbox.js"></script>
-    <script src="js/scripts.js"></script>
-    <script src="js/jquery.easypiechart.min.js"></script> 
+    <script th:src="@{/js/plugin.js}"></script>
+    <script th:src="@{/js/lightbox.js}"></script>
+    <script th:src="@{/js/scripts.js}"></script>
+    <script th:src="@{/js/jquery.easypiechart.min.js}"></script>
     <script>
         $('.chart').easyPieChart({
             easing: 'easeOutElastic',
