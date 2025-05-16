@@ -1,10 +1,10 @@
 package com.ut1.miage.appRS.model;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.*;
 
 /**
  * Représente un étudiant dans l'application de réseau social.
@@ -29,6 +29,9 @@ public class Etudiant {
     private String sexeEtudiant;
     private String emailEtudiant;
     private String motDePass;
+    @Lob
+    private String photoEtudiant;
+    private String descriptionEtudiant;
 
     /**
      * Liste des amis de l'étudiant.
@@ -50,7 +53,7 @@ public class Etudiant {
     /**
      * Liste des posts que l'étudiant a republiés.
      */
-    @ManyToMany(mappedBy = "etudiant")
+    @ManyToMany(mappedBy = "republications")
     private List<Post> postsRepublies = new ArrayList<>();
 
     /**
@@ -265,5 +268,21 @@ public class Etudiant {
 
     public void setEvenementsCreer(List<Evenement> evenementsCreer) {
         this.evenementsCreer = evenementsCreer;
+    }
+
+    public String getPhotoEtudiant() {
+        return photoEtudiant;
+    }
+
+    public void setPhotoEtudiant(String photoEtudiant) {
+        this.photoEtudiant = photoEtudiant;
+    }
+
+    public String getDescriptionEtudiant() {
+        return descriptionEtudiant;
+    }
+
+    public void setDescriptionEtudiant(String descriptionEtudiant) {
+        this.descriptionEtudiant = descriptionEtudiant;
     }
 }
