@@ -3,155 +3,131 @@ package com.ut1.miage.appRS.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
+/**
+ * Représente un événement dans le réseau social.
+ * Un événement est créé par un étudiant et peut avoir plusieurs membres (étudiants) qui y participent.
+ */
 @Entity
 public class Evenement {
+
+    /** Identifiant unique de l'événement. */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idEvenement;
-    @Column(name = "dateHeureEvenement",nullable = false)
+
+    /** Date et heure de l'événement. */
+    @Column(name = "dateHeureEvenement", nullable = false)
     private LocalDateTime dateHeureEvenement;
-    @Column(name = "nomEvenement",nullable = false)
+
+    /** Nom de l'événement. */
+    @Column(name = "nomEvenement", nullable = false)
     private String nomEvenement;
 
+    /** Étudiant créateur de l'événement. */
     @ManyToOne
     @JoinColumn(name = "id_etudiant")
     private Etudiant createur;
 
+    /**
+     * Liste des étudiants participant à l'événement.
+     * Cette relation est mappée via la table de jointure PRENDRE_PART.
+     */
     @ManyToMany
     @JoinTable(
-        name = "PRENDRE_PART", 
+        name = "PRENDRE_PART",
         joinColumns = @JoinColumn(name = "id_evenement"),
         inverseJoinColumns = @JoinColumn(name = "id_etudiant")
     )
     private List<Etudiant> membreGroupe = new ArrayList<>();
 
-    
+    /** Constructeur par défaut. */
     public Evenement() {}
 
-
+    /**
+     * Constructeur avec tous les champs.
+     *
+     * @param idEvenement identifiant de l'événement
+     * @param dateHeureEvenement date et heure de l'événement
+     * @param nomEvenement nom de l'événement
+     * @param createur créateur de l'événement
+     * @param membreGroupe liste des membres participants
+     */
     public Evenement(Long idEvenement, LocalDateTime dateHeureEvenement, String nomEvenement, Etudiant createur,
-            List<Etudiant> membreGroupe) {
-        idEvenement = idEvenement;
-        dateHeureEvenement = dateHeureEvenement;
-        nomEvenement = nomEvenement;
+                     List<Etudiant> membreGroupe) {
+        this.idEvenement = idEvenement;
+        this.dateHeureEvenement = dateHeureEvenement;
+        this.nomEvenement = nomEvenement;
         this.createur = createur;
-        membreGroupe = membreGroupe;
+        this.membreGroupe = membreGroupe;
     }
 
-
-    public Long getidEvenement() {
+    public Long getIdEvenement() {
         return idEvenement;
     }
 
-
-    public void setidEvenement(Long idEvenement) {
-        idEvenement = idEvenement;
+    public void setIdEvenement(Long idEvenement) {
+        this.idEvenement = idEvenement;
     }
 
-
-    public LocalDateTime getdateHeureEvenement() {
+    public LocalDateTime getDateHeureEvenement() {
         return dateHeureEvenement;
     }
 
-
-    public void setdateHeureEvenement(LocalDateTime dateHeureEvenement) {
-        dateHeureEvenement = dateHeureEvenement;
+    public void setDateHeureEvenement(LocalDateTime dateHeureEvenement) {
+        this.dateHeureEvenement = dateHeureEvenement;
     }
 
-
-    public String getnomEvenement() {
+    public String getNomEvenement() {
         return nomEvenement;
     }
 
-
-    public void setnomEvenement(String nomEvenement) {
-        nomEvenement = nomEvenement;
+    public void setNomEvenement(String nomEvenement) {
+        this.nomEvenement = nomEvenement;
     }
-
 
     public Etudiant getCreateur() {
         return createur;
     }
 
-
     public void setCreateur(Etudiant createur) {
         this.createur = createur;
     }
 
-
-    public List<Etudiant> getmembreGroupe() {
+    public List<Etudiant> getMembreGroupe() {
         return membreGroupe;
     }
 
-
-    public void setmembreGroupe(List<Etudiant> membreGroupe) {
-        membreGroupe = membreGroupe;
+    public void setMembreGroupe(List<Etudiant> membreGroupe) {
+        this.membreGroupe = membreGroupe;
     }
 
-
+    /**
+     * Génère un hashCode basé sur tous les champs.
+     */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((idEvenement == null) ? 0 : idEvenement.hashCode());
-        result = prime * result + ((dateHeureEvenement == null) ? 0 : dateHeureEvenement.hashCode());
-        result = prime * result + ((nomEvenement == null) ? 0 : nomEvenement.hashCode());
-        result = prime * result + ((createur == null) ? 0 : createur.hashCode());
-        result = prime * result + ((membreGroupe == null) ? 0 : membreGroupe.hashCode());
-        return result;
+        return Objects.hash(idEvenement, dateHeureEvenement, nomEvenement, createur, membreGroupe);
     }
 
-
+    /**
+     * Compare deux événements pour vérifier s'ils sont égaux.
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
+        if (obj == null || getClass() != obj.getClass())
             return false;
-        if (getClass() != obj.getClass())
-            return false;
+
         Evenement other = (Evenement) obj;
-        if (idEvenement == null) {
-            if (other.idEvenement != null)
-                return false;
-        } else if (!idEvenement.equals(other.idEvenement))
-            return false;
-        if (dateHeureEvenement == null) {
-            if (other.dateHeureEvenement != null)
-                return false;
-        } else if (!dateHeureEvenement.equals(other.dateHeureEvenement))
-            return false;
-        if (nomEvenement == null) {
-            if (other.nomEvenement != null)
-                return false;
-        } else if (!nomEvenement.equals(other.nomEvenement))
-            return false;
-        if (createur == null) {
-            if (other.createur != null)
-                return false;
-        } else if (!createur.equals(other.createur))
-            return false;
-        if (membreGroupe == null) {
-            if (other.membreGroupe != null)
-                return false;
-        } else if (!membreGroupe.equals(other.membreGroupe))
-            return false;
-        return true;
+        return Objects.equals(idEvenement, other.idEvenement)
+            && Objects.equals(dateHeureEvenement, other.dateHeureEvenement)
+            && Objects.equals(nomEvenement, other.nomEvenement)
+            && Objects.equals(createur, other.createur)
+            && Objects.equals(membreGroupe, other.membreGroupe);
     }
-    
-
-    
-
-    
 }

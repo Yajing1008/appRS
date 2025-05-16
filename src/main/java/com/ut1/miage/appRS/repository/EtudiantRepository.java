@@ -1,0 +1,9 @@
+package com.ut1.miage.appRS.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ut1.miage.appRS.model.Etudiant;
+
+public interface EtudiantRepository extends JpaRepository<Etudiant, Long> {
+    boolean existsByEmailEtudiant(String emailEtudiant);
+}

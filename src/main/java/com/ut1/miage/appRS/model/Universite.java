@@ -2,23 +2,27 @@ package com.ut1.miage.appRS.model;
 
 import java.util.*;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 
+/**
+ * Représente une université dans le système.  
+ * Une université peut être liée à plusieurs étudiants via la relation "ETUDIER".
+ */
 @Entity
 public class Universite {
+
+    /** Identifiant unique de l'université (clé primaire). */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUniv;
-    @Column(name = "nom_univ",nullable = false)
+
+    /** Nom de l'université (champ obligatoire). */
+    @Column(name = "nom_univ", nullable = false)
     private String nomUniv;
-    
+
+    /**
+     * Liste des étudiants associés à cette université via la table de jointure "ETUDIER".
+     */
     @ManyToMany
     @JoinTable(
         name = "ETUDIER", 
@@ -27,38 +31,81 @@ public class Universite {
     )
     private List<Etudiant> etudiant = new ArrayList<>();
 
+    /** Constructeur sans argument requis pour JPA. */
     public Universite() {}
 
+    /**
+     * Constructeur avec paramètres.
+     * 
+     * @param idUniv l'identifiant de l'université
+     * @param nomUniv le nom de l'université
+     * @param etudiant la liste des étudiants associés
+     */
     public Universite(Long idUniv, String nomUniv, List<Etudiant> etudiant) {
         this.idUniv = idUniv;
         this.nomUniv = nomUniv;
         this.etudiant = etudiant;
     }
 
+    /**
+     * Retourne l'identifiant de l'université.
+     * 
+     * @return identifiant de l'université
+     */
     public Long getIdUniv() {
         return idUniv;
     }
 
+    /**
+     * Définit l'identifiant de l'université.
+     * 
+     * @param idUniv identifiant de l'université
+     */
     public void setIdUniv(Long idUniv) {
         this.idUniv = idUniv;
     }
 
+    /**
+     * Retourne le nom de l'université.
+     * 
+     * @return nom de l'université
+     */
     public String getNomUniv() {
         return nomUniv;
     }
 
+    /**
+     * Définit le nom de l'université.
+     * 
+     * @param nomUniv nom de l'université
+     */
     public void setNomUniv(String nomUniv) {
         this.nomUniv = nomUniv;
     }
 
+    /**
+     * Retourne la liste des étudiants associés à cette université.
+     * 
+     * @return liste des étudiants
+     */
     public List<Etudiant> getEtudiant() {
         return etudiant;
     }
 
+    /**
+     * Définit la liste des étudiants associés à cette université.
+     * 
+     * @param etudiant liste des étudiants
+     */
     public void setEtudiant(List<Etudiant> etudiant) {
         this.etudiant = etudiant;
     }
 
+    /**
+     * Calcule le hash code de l'objet Universite.
+     * 
+     * @return le hash code basé sur l'id, le nom et les étudiants
+     */
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -69,35 +116,21 @@ public class Universite {
         return result;
     }
 
+    /**
+     * Compare cette université à un autre objet.
+     * 
+     * @param obj l'objet à comparer
+     * @return true si les objets sont égaux, sinon false
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
         Universite other = (Universite) obj;
-        if (idUniv == null) {
-            if (other.idUniv != null)
-                return false;
-        } else if (!idUniv.equals(other.idUniv))
-            return false;
-        if (nomUniv == null) {
-            if (other.nomUniv != null)
-                return false;
-        } else if (!nomUniv.equals(other.nomUniv))
-            return false;
-        if (etudiant == null) {
-            if (other.etudiant != null)
-                return false;
-        } else if (!etudiant.equals(other.etudiant))
-            return false;
-        return true;
+        return Objects.equals(idUniv, other.idUniv)
+            && Objects.equals(nomUniv, other.nomUniv)
+            && Objects.equals(etudiant, other.etudiant);
     }
-
-   
-    
-    
-    
 }
