@@ -1,8 +1,6 @@
-
 package com.ut1.miage.appRS;
 
 import org.junit.jupiter.api.Test;
-
 import com.ut1.miage.appRS.model.Conversation;
 import com.ut1.miage.appRS.model.EtuMessConversation;
 import com.ut1.miage.appRS.model.Etudiant;
@@ -11,8 +9,14 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de test unitaire pour {@link EtuMessConversation}.
+ */
 class EtuMessConversationTest {
 
+    /**
+     * Vérifie le bon fonctionnement des accesseurs (getters/setters) de la classe EtuMessConversation.
+     */
     @Test
     void testGettersAndSetters() {
         Etudiant etudiant = new Etudiant();
@@ -31,6 +35,9 @@ class EtuMessConversationTest {
         assertEquals(now, emc.getDateHeureMessage());
     }
 
+    /**
+     * Vérifie que l'identifiant composite (EmbeddedId) est correctement initialisé à la création.
+     */
     @Test
     void testEmbeddedIdInitialization() {
         EtuMessConversation emc = new EtuMessConversation();

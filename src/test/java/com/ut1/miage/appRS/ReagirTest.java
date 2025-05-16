@@ -1,15 +1,21 @@
 package com.ut1.miage.appRS;
 
 import org.junit.jupiter.api.Test;
-
 import com.ut1.miage.appRS.model.Etudiant;
 import com.ut1.miage.appRS.model.Post;
 import com.ut1.miage.appRS.model.Reagir;
-
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de test unitaire pour la classe {@link Reagir}.
+ * Elle vérifie le bon fonctionnement des accesseurs, mutateurs et des valeurs par défaut.
+ */
 class ReagirTest {
 
+    /**
+     * Vérifie que les getters et setters fonctionnent correctement
+     * pour les attributs {@code etudiant}, {@code post} et {@code statut}.
+     */
     @Test
     void testGettersAndSetters() {
         Reagir reagir = new Reagir();
@@ -27,6 +33,10 @@ class ReagirTest {
         assertEquals("like", reagir.getStatut());
     }
 
+    /**
+     * Vérifie que les valeurs par défaut des attributs de {@link Reagir}
+     * sont null juste après instanciation.
+     */
     @Test
     void testValeursParDefaut() {
         Reagir reagir = new Reagir();

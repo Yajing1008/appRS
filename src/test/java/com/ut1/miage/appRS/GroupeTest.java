@@ -9,8 +9,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de tests unitaires pour la classe {@link Groupe}.
+ */
 class GroupeTest {
 
+    /**
+     * Vérifie que tous les accesseurs et mutateurs (getters/setters) fonctionnent correctement.
+     */
     @Test
     void testGettersAndSetters() {
         Groupe groupe = new Groupe();
@@ -43,6 +49,9 @@ class GroupeTest {
         assertEquals(1, groupe.getMembres().size());
     }
 
+    /**
+     * Vérifie que les valeurs par défaut du constructeur sont correctes.
+     */
     @Test
     void testValeursParDefaut() {
         Groupe groupe = new Groupe();
@@ -58,6 +67,9 @@ class GroupeTest {
         assertTrue(groupe.getMembres().isEmpty());
     }
 
+    /**
+     * Vérifie que l'ajout de membres dans la liste fonctionne correctement.
+     */
     @Test
     void testAjoutDeMembres() {
         Groupe groupe = new Groupe();

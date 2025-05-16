@@ -1,7 +1,6 @@
 package com.ut1.miage.appRS;
 
 import org.junit.jupiter.api.Test;
-
 import com.ut1.miage.appRS.model.Commenter;
 import com.ut1.miage.appRS.model.Etudiant;
 import com.ut1.miage.appRS.model.Post;
@@ -12,8 +11,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Classe de test unitaire pour l'entité {@link Post}.
+ */
 class PostTest {
 
+    /**
+     * Vérifie que les getters et setters de la classe {@link Post} fonctionnent correctement,
+     * notamment pour les champs de base, les associations avec {@link Etudiant}, {@link Commenter} et {@link Reagir}.
+     */
     @Test
     void testGettersAndSetters() {
         Post post = new Post();
@@ -46,6 +52,10 @@ class PostTest {
         assertEquals(1, post.getReactions().size());
     }
 
+    /**
+     * Vérifie les valeurs par défaut après la création d'une instance {@link Post}
+     * sans initialisation des champs.
+     */
     @Test
     void testValeursParDefaut() {
         Post post = new Post();
