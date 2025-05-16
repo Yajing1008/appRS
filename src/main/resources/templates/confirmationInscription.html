@@ -3,13 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>Inscription réussie</title>
-    <link rel="stylesheet" th:href="@{/assets/vendor/bootstrap/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/themify-icons.css}">
+    <link rel="stylesheet" th:href="@{/css/feather.css}">
 </head>
-<body>
-    <div class="container mt-5 text-center">
-        <h2>Inscription réussie 🎉</h2>
-        <p>Votre compte étudiant a bien été créé.</p>
-        <a th:href="@{'/'}" class="btn btn-primary mt-3">Retour à l'accueil</a>
+<body class="color-theme-blue mont-font">
+
+<div class="main-content bg-lightblue">
+    <div class="middle-sidebar-bottom">
+        <div class="middle-sidebar-left">
+            <div class="card w-100 shadow-xss rounded-xxl border-0 p-5 text-center bg-white mt-5">
+                <h2 class="fw-700 mb-4 text-grey-900 font-xxl">Inscription réussie 🎉</h2>
+                <p class="fw-500 text-grey-600 font-xsss mb-4">Votre compte étudiant a bien été créé.</p>
+                <a th:href="@{'/'}" class="p-2 lh-20 w150 bg-primary-gradiant text-white text-center font-xssss fw-600 ls-1 rounded-xl d-inline-block">Retour à l'accueil</a>
+            </div>
+        </div>
     </div>
+</div>
+
 </body>
 </html>

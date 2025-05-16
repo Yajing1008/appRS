@@ -1,7 +1,8 @@
 package com.ut1.miage.appRS.repository;
 
-import com.ut1.miage.appRS.model.Etudiant;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.ut1.miage.appRS.model.Etudiant;
 
 import java.util.Optional;
 
