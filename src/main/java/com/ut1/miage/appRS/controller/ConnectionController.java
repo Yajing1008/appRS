@@ -2,6 +2,11 @@ package com.ut1.miage.appRS.controller;
 
 import com.ut1.miage.appRS.model.Etudiant;
 import com.ut1.miage.appRS.repository.EtudiantRepository;
+
+import jakarta.servlet.http.HttpSession;
+
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +33,32 @@ public class ConnectionController {
         }
 
         etudiantRepository.save(etudiant);
-        return "confirmationInscription"; // ou vers une page de confirmation
+        return "confirmationInscription"; 
+    }
+
+    @GetMapping("/connexion")
+    public String afficherFormulaireConnexion() {
+        return "connexion";
+    }
+
+    @PostMapping("/connexion")
+    public String connecterEtudiant(@RequestParam String email, 
+                                    @RequestParam String motDePasse, 
+                                    HttpSession session, 
+                                    Model model) {
+        Optional<Etudiant> etudiant = etudiantRepository.findByEmailEtudiant(email);
+        if (etudiant.isPresent() && etudiant.get().getMotDePass().equals(motDePasse)) {
+            session.setAttribute("etudiantConnecte", etudiant.get());
+            return "redirect:/"; // redirection après connexion réussie
+        } else {
+            model.addAttribute("erreur", "Identifiants invalides.");
+            return "connexion"; // on revient sur le formulaire avec le message d’erreur
+        }
+    }
+
+    @GetMapping("/deconnexion")
+    public String logout(HttpSession session) {
+        session.invalidate();
+        return "redirect:/";
     }
 }
