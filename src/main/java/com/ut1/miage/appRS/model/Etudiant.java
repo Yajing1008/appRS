@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Représente un étudiant dans l'application de réseau social.
@@ -53,7 +54,7 @@ public class Etudiant {
     /**
      * Liste des posts que l'étudiant a republiés.
      */
-    @ManyToMany(mappedBy = "republications")
+    @ManyToMany(mappedBy = "etudiantsRepublieurs")
     private List<Post> postsRepublies = new ArrayList<>();
 
     /**
@@ -269,6 +270,20 @@ public class Etudiant {
     public void setEvenementsCreer(List<Evenement> evenementsCreer) {
         this.evenementsCreer = evenementsCreer;
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Etudiant)) return false;
+        Etudiant e = (Etudiant) o;
+        return idEtudiant != null && idEtudiant.equals(e.getIdEtudiant());
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(idEtudiant);
+    }
+    
 
     public String getPhotoEtudiant() {
         return photoEtudiant;
