@@ -76,8 +76,14 @@
                 </div>
             </div>
             <div class="card-body d-flex align-items-center pt-0 ps-4 pe-4 pb-4">
-                <a href="#" class="p-2 lh-20 w100 bg-primary-gradiant me-2 text-white text-center font-xssss fw-600 ls-1 rounded-xl">Connecter</a>
-                <a th:href="@{/inscription}" class="p-2 lh-20 w100 bg-grey text-grey-800 text-center font-xssss fw-600 ls-1 rounded-xl">S'inscrire</a>
+                <div th:if="${session.etudiantConnecte  == null}">
+                    <a th:href="@{/connexion}" class="p-2 lh-20 w100 bg-primary-gradiant me-2 text-white text-center font-xssss fw-600 ls-1 rounded-xl">Connecter</a>
+                    <a th:href="@{/inscription}" class="p-2 lh-20 w100 bg-grey text-grey-800 text-center font-xssss fw-600 ls-1 rounded-xl">S'inscrire</a>
+                </div>
+                <div th:if="${session.etudiantConnecte  != null}">
+                    <span th:text="'Bienvenue ! '" class="me-2 text-grey-900 font-xssss fw-600"></span>
+                    <a th:href="@{/deconnexion}" class="p-2 lh-20 w100 bg-danger text-white text-center font-xssss fw-600 ls-1 rounded-xl">Se déconnecter</a>
+                </div>
             </div>
             <a href="#" class="p-2 text-center ms-3 menu-icon chat-active-btn"><i class="feather-message-square font-xl text-current"></i></a>
             <div class="p-2 text-center ms-3 position-relative dropdown-menu-icon menu-icon cursor-pointer">
@@ -201,7 +207,7 @@
                             <li><a href="default-badge.html" class="nav-content-bttn open-font" ><i class="feather-award btn-round-md bg-red-gradiant me-3"></i><span>Badges</span></a></li>
                             <li><a href="default-storie.html" class="nav-content-bttn open-font" ><i class="feather-globe btn-round-md bg-gold-gradiant me-3"></i><span>Explore Stories</span></a></li>
                             <li><a href="default-group.html" class="nav-content-bttn open-font" ><i class="feather-zap btn-round-md bg-mini-gradiant me-3"></i><span>Popular Groups</span></a></li>
-                            <li><a href="user-page.html" class="nav-content-bttn open-font"><i class="feather-user btn-round-md bg-primary-gradiant me-3"></i><span>Author Profile </span></a></li>                        
+                            <li><a href="profil" class="nav-content-bttn open-font"><i class="feather-user btn-round-md bg-primary-gradiant me-3"></i><span>Author Profile </span></a></li>
                         </ul>
                     </div>
 

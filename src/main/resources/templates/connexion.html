@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion</title>
+    <link rel="stylesheet" th:href="@{/css/themify-icons.css}">
+    <link rel="stylesheet" th:href="@{/css/feather.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/emoji.css}">
+    <link rel="stylesheet" th:href="@{/css/lightbox.css}">
+</head>
+
+<body class="color-theme-blue mont-font">
+
+<div class="main-wrapper">
+
+    
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="middle-sidebar-bottom">
+            <div class="middle-sidebar-left">
+                <div class="card w-100 border-0 bg-white shadow-xs p-4 mb-3 rounded-xxl">
+                    <h2 class="fw-700 mb-4 text-center">Connexion Étudiant</h2>
+
+                    <form th:action="@{/connexion}" method="post" class="form-group">
+
+                        <div th:if="${erreur}" class="alert alert-danger text-center" role="alert">
+                            <p th:text="${erreur}"></p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control" placeholder="Adresse e-mail" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Mot de passe</label>
+                            <input type="password" name="motDePasse" class="form-control" placeholder="Mot de passe" required>
+                        </div>
+
+                        <div class="text-center">
+                            <button type="submit" class="btn bg-primary text-white fw-600 rounded-xl px-5">Se connecter</button>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <a th:href="@{/inscription}" class="font-xsss text-grey-700">Pas encore inscrit ? Créer un compte</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="js/plugin.js"></script>
+<script src="js/lightbox.js"></script>
+<script src="js/scripts.js"></script>
+</body>
+</html>
