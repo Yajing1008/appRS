@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Créer un groupe</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+    <div class="container mt-5">
+        <h2>Créer un nouveau groupe</h2>
+        <form th:action="@{/groupe/nouveau}" th:object="${groupe}" method="post">
+            <div class="form-group">
+                <label>Nom du groupe</label>
+                <input type="text" th:field="*{nomGroupe}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea th:field="*{descriptionGroupe}" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Visibilité</label><br/>
+                <input type="radio" th:field="*{estPublicGroupe}" value="true"> Public<br/>
+                <input type="radio" th:field="*{estPublicGroupe}" value="false"> Privé
+            </div>
+            <button type="submit" class="btn btn-success mt-3">Créer</button>
+        </form>
+    </div>
+</body>
+</html>
