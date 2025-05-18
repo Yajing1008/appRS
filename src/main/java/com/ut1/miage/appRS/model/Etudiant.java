@@ -54,7 +54,7 @@ public class Etudiant {
     /**
      * Liste des posts que l'étudiant a republiés.
      */
-    @ManyToMany(mappedBy = "etudiantsRepublieurs")
+    @ManyToMany(mappedBy = "republications")
     private List<Post> postsRepublies = new ArrayList<>();
 
     /**
@@ -281,10 +281,39 @@ public class Etudiant {
     
     @Override
     public int hashCode() {
-        return Objects.hash(idEtudiant);
+        int result = Objects.hashCode(getIdEtudiant());
+        result = 31 * result + Objects.hashCode(getNomEtudiant());
+        result = 31 * result + Objects.hashCode(getPrenomEtudiant());
+        result = 31 * result + Objects.hashCode(getDateNaissanceEtudiant());
+        result = 31 * result + Objects.hashCode(getSexeEtudiant());
+        result = 31 * result + Objects.hashCode(getEmailEtudiant());
+        result = 31 * result + Objects.hashCode(getMotDePass());
+        result = 31 * result + Objects.hashCode(getPhotoEtudiant());
+        result = 31 * result + Objects.hashCode(getDescriptionEtudiant());
+        result = 31 * result + Objects.hashCode(getAmis());
+        result = 31 * result + Objects.hashCode(getPostsPublies());
+        result = 31 * result + Objects.hashCode(getPostsRepublies());
+        result = 31 * result + Objects.hashCode(getGroupesCrees());
+        result = 31 * result + Objects.hashCode(getParticipations());
+        result = 31 * result + Objects.hashCode(getMessagesEnvoyes());
+        result = 31 * result + Objects.hashCode(getCommentaires());
+        result = 31 * result + Objects.hashCode(getReactions());
+        result = 31 * result + Objects.hashCode(getUniversites());
+        result = 31 * result + Objects.hashCode(getCentresInteret());
+        result = 31 * result + Objects.hashCode(getEvenementsParticiper());
+        result = 31 * result + Objects.hashCode(getEvenementsCreer());
+        return result;
     }
     
-
+    @Override
+    public String toString() {
+        return "Etudiant{" +
+                "idEtudiant=" + idEtudiant +
+                ", nomEtudiant='" + nomEtudiant + '\'' +
+                ", prenomEtudiant='" + prenomEtudiant + '\'' +
+                '}';
+    }
+    
     public String getPhotoEtudiant() {
         return photoEtudiant;
     }

@@ -18,26 +18,30 @@ public class AmiController {
 	private EtudiantRepository etudiantRepository;
 	
 	@GetMapping("/ami")
-	public String showAmiPage(@RequestParam(name = "search", required = false) String search,
-	                          Model model,
-	                          HttpSession session) {
+	public String showAmiPage(Model model, HttpSession session) {
 		
 		Etudiant utilisateurConnecte = (Etudiant) session.getAttribute("etudiantConnecte");
+		
 		if (utilisateurConnecte == null) {
-			return "index";//il faut modifier en connexion apres pull!!
+			return "connexion";
 		}
 		
-		List<Etudiant> resultat;
+		List<Etudiant> allEtudiants = etudiantRepository.findAllExceptSelf(utilisateurConnecte.getIdEtudiant());
+		List<Etudiant> amis = etudiantRepository.findFriends(utilisateurConnecte.getIdEtudiant());
 		
-		if (search != null && !search.trim().isEmpty()) {
-			resultat = etudiantRepository.searchEtudiantsExceptSelf(search.trim(), utilisateurConnecte.getIdEtudiant());
-		} else {
-			resultat = etudiantRepository.findAllExceptSelf(utilisateurConnecte.getIdEtudiant());
-		}
-		
-		model.addAttribute("etudiants", resultat);
-		model.addAttribute("amis", utilisateurConnecte.getAmis());
-		
+		session.setAttribute("allEtudiants", allEtudiants);
+		session.setAttribute("amis", amis);
+		return "ami";
+	}
+	
+	
+	@GetMapping("/searchAmis")
+	public String searchAmis(@RequestParam String search, HttpSession session, Model model) {
+		Etudiant etudiantConnecte = (Etudiant) session.getAttribute("etudiantConnecte");
+		System.out.println("search = " + search);
+		List<Etudiant> etudiantsDB = etudiantRepository.searchEtudiantsExceptSelf(search, etudiantConnecte.getIdEtudiant());
+
+		model.addAttribute("etudiants_trouves", etudiantsDB);
 		return "ami";
 	}
 	
