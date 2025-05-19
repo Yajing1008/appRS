@@ -33,7 +33,9 @@ public class ProfilController {
     public String afficherProfil(Model model, HttpSession session) {
         // 尝试从 session 获取登录的学生
         Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
-
+        if(etudiant == null){
+            return "connexion";
+        }
         // 无论是否为 null 都传入视图，由 Thymeleaf 判断是否显示内容
         model.addAttribute("etudiant", etudiant);
 

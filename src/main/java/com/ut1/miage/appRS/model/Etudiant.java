@@ -110,7 +110,16 @@ public class Etudiant {
      */
     @OneToMany(mappedBy = "createur")
     private List<Evenement> evenementsCreer = new ArrayList<>();
-
+    
+    //en tant que demandeur
+    @OneToMany(mappedBy = "demandeur", cascade = CascadeType.ALL)
+    private List<DemandeAmi> demandesEnvoyees = new ArrayList<>();
+    
+    // en tant que receveur
+    @OneToMany(mappedBy = "receveur", cascade = CascadeType.ALL)
+    private List<DemandeAmi> demandesRecues = new ArrayList<>();
+    
+    
     // --- Getters / Setters avec JavaDoc ---
 
     /**
@@ -271,6 +280,66 @@ public class Etudiant {
         this.evenementsCreer = evenementsCreer;
     }
 
+    
+    public List<DemandeAmi> getDemandesEnvoyees() {
+        return demandesEnvoyees;
+    }
+    
+    public void setDemandesEnvoyees(List<DemandeAmi> demandesEnvoyees) {
+        this.demandesEnvoyees = demandesEnvoyees;
+    }
+    
+    public List<DemandeAmi> getDemandesRecues() {
+        return demandesRecues;
+    }
+    
+    public void setDemandesRecues(List<DemandeAmi> demandesRecues) {
+        this.demandesRecues = demandesRecues;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Etudiant)) return false;
+        Etudiant e = (Etudiant) o;
+        return idEtudiant != null && idEtudiant.equals(e.getIdEtudiant());
+    }
+    
+    @Override
+    public int hashCode() {
+        int result = Objects.hashCode(getIdEtudiant());
+        result = 31 * result + Objects.hashCode(getNomEtudiant());
+        result = 31 * result + Objects.hashCode(getPrenomEtudiant());
+        result = 31 * result + Objects.hashCode(getDateNaissanceEtudiant());
+        result = 31 * result + Objects.hashCode(getSexeEtudiant());
+        result = 31 * result + Objects.hashCode(getEmailEtudiant());
+        result = 31 * result + Objects.hashCode(getMotDePass());
+        result = 31 * result + Objects.hashCode(getPhotoEtudiant());
+        result = 31 * result + Objects.hashCode(getDescriptionEtudiant());
+        result = 31 * result + Objects.hashCode(getAmis());
+        result = 31 * result + Objects.hashCode(getPostsPublies());
+        result = 31 * result + Objects.hashCode(getPostsRepublies());
+        result = 31 * result + Objects.hashCode(getGroupesCrees());
+        result = 31 * result + Objects.hashCode(getParticipations());
+        result = 31 * result + Objects.hashCode(getMessagesEnvoyes());
+        result = 31 * result + Objects.hashCode(getCommentaires());
+        result = 31 * result + Objects.hashCode(getReactions());
+        result = 31 * result + Objects.hashCode(getUniversites());
+        result = 31 * result + Objects.hashCode(getCentresInteret());
+        result = 31 * result + Objects.hashCode(getEvenementsParticiper());
+        result = 31 * result + Objects.hashCode(getEvenementsCreer());
+        return result;
+    }
+    
+    @Override
+    public String toString() {
+        return "Etudiant{" +
+                "idEtudiant=" + idEtudiant +
+                ", nomEtudiant='" + nomEtudiant + '\'' +
+                ", prenomEtudiant='" + prenomEtudiant + '\'' +
+                '}';
+    }
+    
     public String getPhotoEtudiant() {
         return photoEtudiant;
     }
@@ -285,17 +354,5 @@ public class Etudiant {
 
     public void setDescriptionEtudiant(String descriptionEtudiant) {
         this.descriptionEtudiant = descriptionEtudiant;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Etudiant etudiant = (Etudiant) o;
-        return Objects.equals(getIdEtudiant(), etudiant.getIdEtudiant()) && Objects.equals(getNomEtudiant(), etudiant.getNomEtudiant()) && Objects.equals(getPrenomEtudiant(), etudiant.getPrenomEtudiant()) && Objects.equals(getDateNaissanceEtudiant(), etudiant.getDateNaissanceEtudiant()) && Objects.equals(getSexeEtudiant(), etudiant.getSexeEtudiant()) && Objects.equals(getEmailEtudiant(), etudiant.getEmailEtudiant()) && Objects.equals(getMotDePass(), etudiant.getMotDePass()) && Objects.equals(getPhotoEtudiant(), etudiant.getPhotoEtudiant()) && Objects.equals(getDescriptionEtudiant(), etudiant.getDescriptionEtudiant()) && Objects.equals(getAmis(), etudiant.getAmis()) && Objects.equals(getPostsPublies(), etudiant.getPostsPublies()) && Objects.equals(getPostsRepublies(), etudiant.getPostsRepublies()) && Objects.equals(getGroupesCrees(), etudiant.getGroupesCrees()) && Objects.equals(getParticipations(), etudiant.getParticipations()) && Objects.equals(getMessagesEnvoyes(), etudiant.getMessagesEnvoyes()) && Objects.equals(getCommentaires(), etudiant.getCommentaires()) && Objects.equals(getReactions(), etudiant.getReactions()) && Objects.equals(getUniversites(), etudiant.getUniversites()) && Objects.equals(getCentresInteret(), etudiant.getCentresInteret()) && Objects.equals(getEvenementsParticiper(), etudiant.getEvenementsParticiper()) && Objects.equals(getEvenementsCreer(), etudiant.getEvenementsCreer());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getIdEtudiant(), getNomEtudiant(), getPrenomEtudiant(), getDateNaissanceEtudiant(), getSexeEtudiant(), getEmailEtudiant(), getMotDePass(), getPhotoEtudiant(), getDescriptionEtudiant(), getAmis(), getPostsPublies(), getPostsRepublies(), getGroupesCrees(), getParticipations(), getMessagesEnvoyes(), getCommentaires(), getReactions(), getUniversites(), getCentresInteret(), getEvenementsParticiper(), getEvenementsCreer());
     }
 }
