@@ -110,7 +110,16 @@ public class Etudiant {
      */
     @OneToMany(mappedBy = "createur")
     private List<Evenement> evenementsCreer = new ArrayList<>();
-
+    
+    //en tant que demandeur
+    @OneToMany(mappedBy = "demandeur", cascade = CascadeType.ALL)
+    private List<DemandeAmi> demandesEnvoyees = new ArrayList<>();
+    
+    // en tant que receveur
+    @OneToMany(mappedBy = "receveur", cascade = CascadeType.ALL)
+    private List<DemandeAmi> demandesRecues = new ArrayList<>();
+    
+    
     // --- Getters / Setters avec JavaDoc ---
 
     /**
@@ -269,6 +278,22 @@ public class Etudiant {
 
     public void setEvenementsCreer(List<Evenement> evenementsCreer) {
         this.evenementsCreer = evenementsCreer;
+    }
+    
+    public List<DemandeAmi> getDemandesEnvoyees() {
+        return demandesEnvoyees;
+    }
+    
+    public void setDemandesEnvoyees(List<DemandeAmi> demandesEnvoyees) {
+        this.demandesEnvoyees = demandesEnvoyees;
+    }
+    
+    public List<DemandeAmi> getDemandesRecues() {
+        return demandesRecues;
+    }
+    
+    public void setDemandesRecues(List<DemandeAmi> demandesRecues) {
+        this.demandesRecues = demandesRecues;
     }
     
     @Override
