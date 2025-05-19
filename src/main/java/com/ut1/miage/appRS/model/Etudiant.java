@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Représente un étudiant dans l'application de réseau social.
@@ -284,5 +285,17 @@ public class Etudiant {
 
     public void setDescriptionEtudiant(String descriptionEtudiant) {
         this.descriptionEtudiant = descriptionEtudiant;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Etudiant etudiant = (Etudiant) o;
+        return Objects.equals(getIdEtudiant(), etudiant.getIdEtudiant()) && Objects.equals(getNomEtudiant(), etudiant.getNomEtudiant()) && Objects.equals(getPrenomEtudiant(), etudiant.getPrenomEtudiant()) && Objects.equals(getDateNaissanceEtudiant(), etudiant.getDateNaissanceEtudiant()) && Objects.equals(getSexeEtudiant(), etudiant.getSexeEtudiant()) && Objects.equals(getEmailEtudiant(), etudiant.getEmailEtudiant()) && Objects.equals(getMotDePass(), etudiant.getMotDePass()) && Objects.equals(getPhotoEtudiant(), etudiant.getPhotoEtudiant()) && Objects.equals(getDescriptionEtudiant(), etudiant.getDescriptionEtudiant()) && Objects.equals(getAmis(), etudiant.getAmis()) && Objects.equals(getPostsPublies(), etudiant.getPostsPublies()) && Objects.equals(getPostsRepublies(), etudiant.getPostsRepublies()) && Objects.equals(getGroupesCrees(), etudiant.getGroupesCrees()) && Objects.equals(getParticipations(), etudiant.getParticipations()) && Objects.equals(getMessagesEnvoyes(), etudiant.getMessagesEnvoyes()) && Objects.equals(getCommentaires(), etudiant.getCommentaires()) && Objects.equals(getReactions(), etudiant.getReactions()) && Objects.equals(getUniversites(), etudiant.getUniversites()) && Objects.equals(getCentresInteret(), etudiant.getCentresInteret()) && Objects.equals(getEvenementsParticiper(), etudiant.getEvenementsParticiper()) && Objects.equals(getEvenementsCreer(), etudiant.getEvenementsCreer());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdEtudiant(), getNomEtudiant(), getPrenomEtudiant(), getDateNaissanceEtudiant(), getSexeEtudiant(), getEmailEtudiant(), getMotDePass(), getPhotoEtudiant(), getDescriptionEtudiant(), getAmis(), getPostsPublies(), getPostsRepublies(), getGroupesCrees(), getParticipations(), getMessagesEnvoyes(), getCommentaires(), getReactions(), getUniversites(), getCentresInteret(), getEvenementsParticiper(), getEvenementsCreer());
     }
 }
