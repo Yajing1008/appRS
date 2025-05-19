@@ -59,34 +59,30 @@
            aria-haspopup="true" aria-expanded="false" data-bs-toggle="dropdown"><span
                 class="dot-count bg-warning"></span><i class="feather-bell font-xl text-current"></i></a>
         <div class="dropdown-menu dropdown-menu-end p-4 rounded-3 border-0 shadow-lg" aria-labelledby="dropdownMenu3">
+            <h4 class="fw-700 font-xss mb-4">Notifications</h4>
 
-            <h4 class="fw-700 font-xss mb-4">Notification</h4>
-            <div class="card bg-transparent-card w-100 border-0 ps-5 mb-3">
-                <img src="images/user-8.png" alt="user" class="w40 position-absolute left-0">
-                <h5 class="font-xsss text-grey-900 mb-1 mt-0 fw-700 d-block">Hendrix Stamp <span
-                        class="text-grey-400 font-xsssss fw-600 float-right mt-1"> 3 min</span></h5>
-                <h6 class="text-grey-500 fw-500 font-xssss lh-4">There are many variations of pass..</h6>
-            </div>
-            <div class="card bg-transparent-card w-100 border-0 ps-5 mb-3">
-                <img src="images/user-4.png" alt="user" class="w40 position-absolute left-0">
-                <h5 class="font-xsss text-grey-900 mb-1 mt-0 fw-700 d-block">Goria Coast <span
-                        class="text-grey-400 font-xsssss fw-600 float-right mt-1"> 2 min</span></h5>
-                <h6 class="text-grey-500 fw-500 font-xssss lh-4">Mobile Apps UI Designer is require..</h6>
+            <div th:if="${#lists.isEmpty(session.demandesRecues)}">
+                <p class="text-grey-600">Aucune nouvelle demande.</p>
             </div>
 
-            <div class="card bg-transparent-card w-100 border-0 ps-5 mb-3">
-                <img src="images/user-7.png" alt="user" class="w40 position-absolute left-0">
-                <h5 class="font-xsss text-grey-900 mb-1 mt-0 fw-700 d-block">Surfiya Zakir <span
-                        class="text-grey-400 font-xsssss fw-600 float-right mt-1"> 1 min</span></h5>
-                <h6 class="text-grey-500 fw-500 font-xssss lh-4">Mobile Apps UI Designer is require..</h6>
-            </div>
-            <div class="card bg-transparent-card w-100 border-0 ps-5">
-                <img src="images/user-6.png" alt="user" class="w40 position-absolute left-0">
-                <h5 class="font-xsss text-grey-900 mb-1 mt-0 fw-700 d-block">Victor Exrixon <span
-                        class="text-grey-400 font-xsssss fw-600 float-right mt-1"> 30 sec</span></h5>
-                <h6 class="text-grey-500 fw-500 font-xssss lh-4">Mobile Apps UI Designer is require..</h6>
+            <div th:each="demande : ${session.demandesRecues}" class="card bg-transparent-card w-100 border-0 ps-5 mb-3">
+                <img th:src="@{/images/user-7.png}" alt="user" class="w40 position-absolute left-0">
+                <h5 class="font-xsss text-grey-900 mb-1 mt-0 fw-700 d-block"
+                    th:text="${demande.demandeur.prenomEtudiant + ' ' + demande.demandeur.nomEtudiant}">Nom Demandeur
+                    <span class="text-grey-400 font-xsssss fw-600 float-right mt-1">Just now</span>
+                </h5>
+                <h6 class="text-grey-500 fw-500 font-xssss lh-4">
+                    a envoyé une demande d'ami
+                </h6>
+
+                <!-- Boutons Accepter / Refuser -->
+                <div class="mt-2">
+                    <a th:href="@{/accepterDemande(idDemande=${demande.idDemande})}" class="btn btn-sm btn-success me-1">Accepter</a>
+                    <a th:href="@{/refuserDemande(idDemande=${demande.idDemande})}" class="btn btn-sm btn-danger">Refuser</a>
+                </div>
             </div>
         </div>
+
         <a href="#" class="p-2 text-center ms-3 menu-icon chat-active-btn"><i
                 class="feather-message-square font-xl text-current"></i></a>
         <div class="p-2 text-center ms-3 position-relative dropdown-menu-icon menu-icon cursor-pointer">
@@ -300,7 +296,7 @@
                           rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white">
                                             FRIEND
                                         </a>
-                                        <a href="#" th:if="${!#lists.contains(session.amis, etudiant)}"
+                                        <a th:href="@{/envoyerDemande(idReceveur=${etudiant.idEtudiant})}" th:if="${!#lists.contains(session.amis, etudiant)}"
                                            class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 d-inline-block
                           rounded-xl bg-success font-xsssss fw-700 ls-lg text-white">
                                             ADD FRIEND
@@ -329,7 +325,7 @@
                           rounded-xl bg-danger font-xsssss fw-700 ls-lg text-white">
                                             FRIEND
                                         </a>
-                                        <a href="#" th:if="${!#lists.contains(session.amis, etudiant)}"
+                                        <a th:href="@{/envoyerDemande(idReceveur=${etudiant.idEtudiant})}" th:if="${!#lists.contains(session.amis, etudiant)}"
                                            class="mt-0 btn pt-2 pb-2 ps-3 pe-3 lh-24 ms-1 ls-3 d-inline-block
                           rounded-xl bg-success font-xsssss fw-700 ls-lg text-white">
                                             ADD FRIEND
