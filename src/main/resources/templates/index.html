@@ -49,9 +49,30 @@
             <a th:href="@{/ami}" class="p-2 text-center ms-0 menu-icon center-menu-icon"><i class="feather-user font-lg bg-greylight btn-round-lg theme-dark-bg text-grey-500 "></i></a>
             <a href="shop-2.html" class="p-2 text-center ms-0 menu-icon center-menu-icon"><i class="feather-shopping-bag font-lg bg-greylight btn-round-lg theme-dark-bg text-grey-500 "></i></a>
 
+            <div class="card-body d-flex align-items-center pt-0 ps-4 pe-4 pb-4 gap-2">
+                <div th:if="${session.etudiantConnecte == null}" class="d-flex gap-2 align-items-center">
+                    <a th:href="@{/connexion}"
+                       class="btn btn-primary bg-primary-gradiant text-white fw-600 font-xssss px-4 py-2 rounded-pill border-0">
+                        Connecter
+                    </a>
+                    <a th:href="@{/inscription}"
+                       class="btn btn-light bg-grey text-grey-800 fw-600 font-xssss px-4 py-2 rounded-pill border-0">
+                        S'inscrire
+                    </a>
+                </div>
+
+                <div th:if="${session.etudiantConnecte != null}" class="d-flex gap-2 align-items-center">
+                    <span class="text-grey-900 font-xssss fw-600 me-2" th:text="'Bienvenue !'"></span>
+                    <a th:href="@{/deconnexion}"
+                       class="btn btn-danger bg-danger text-white fw-600 font-xssss px-4 py-2 rounded-pill border-0">
+                        Se déconnecter
+                    </a>
+                </div>
+            </div>
+
             <a href="#" class="p-2 text-center ms-auto menu-icon" id="dropdownMenu3" data-bs-toggle="dropdown" aria-expanded="false"><span class="dot-count bg-warning"></span><i class="feather-bell font-xl text-current"></i></a>
             <div class="dropdown-menu dropdown-menu-end p-4 rounded-3 border-0 shadow-lg" aria-labelledby="dropdownMenu3">
-                
+
                 <h4 class="fw-700 font-xss mb-4">Notification</h4>
                 <div class="card bg-transparent-card w-100 border-0 ps-5 mb-3">
                     <img src="images/user-8.png" alt="user" class="w40 position-absolute left-0">
@@ -73,16 +94,6 @@
                     <img src="images/user-6.png" alt="user" class="w40 position-absolute left-0">
                     <h5 class="font-xsss text-grey-900 mb-1 mt-0 fw-700 d-block">Victor Exrixon <span class="text-grey-400 font-xsssss fw-600 float-right mt-1"> 30 sec</span></h5>
                     <h6 class="text-grey-500 fw-500 font-xssss lh-4">Mobile Apps UI Designer is require..</h6>
-                </div>
-            </div>
-            <div class="card-body d-flex align-items-center pt-0 ps-4 pe-4 pb-4">
-                <div th:if="${session.etudiantConnecte  == null}">
-                    <a th:href="@{/connexion}" class="p-2 lh-20 w100 bg-primary-gradiant me-2 text-white text-center font-xssss fw-600 ls-1 rounded-xl">Connecter</a>
-                    <a th:href="@{/inscription}" class="p-2 lh-20 w100 bg-grey text-grey-800 text-center font-xssss fw-600 ls-1 rounded-xl">S'inscrire</a>
-                </div>
-                <div th:if="${session.etudiantConnecte  != null}">
-                    <span th:text="'Bienvenue ! '" class="me-2 text-grey-900 font-xssss fw-600"></span>
-                    <a th:href="@{/deconnexion}" class="p-2 lh-20 w100 bg-danger text-white text-center font-xssss fw-600 ls-1 rounded-xl">Se déconnecter</a>
                 </div>
             </div>
             <a href="#" class="p-2 text-center ms-3 menu-icon chat-active-btn"><i class="feather-message-square font-xl text-current"></i></a>
@@ -882,36 +893,48 @@
                         <div class="col-xl-4 col-xxl-3 col-lg-4 ps-lg-0">
                             <div class="card w-100 shadow-xss rounded-xxl border-0 mb-3">
                                 <div class="card-body d-flex align-items-center p-4">
-                                    <h4 class="fw-700 mb-0 font-xssss text-grey-900">Friend Request</h4>
-                                    <a href="default-member.html" class="fw-600 ms-auto font-xssss text-primary">See all</a>
-                                </div>
-                                <div class="card-body d-flex pt-4 ps-4 pe-4 pb-0 border-top-xs bor-0">
-                                    <figure class="avatar me-3"><img src="images/user-7.png" alt="image" class="shadow-sm rounded-circle w45"></figure>
-                                    <h4 class="fw-700 text-grey-900 font-xssss mt-1">Anthony Daugloi <span class="d-block font-xssss fw-500 mt-1 lh-3 text-grey-500">12 mutual friends</span></h4>
-                                </div>
-                                <div class="card-body d-flex align-items-center pt-0 ps-4 pe-4 pb-4">
-                                    <a href="#" class="p-2 lh-20 w100 bg-primary-gradiant me-2 text-white text-center font-xssss fw-600 ls-1 rounded-xl">Confirm</a>
-                                    <a href="#" class="p-2 lh-20 w100 bg-grey text-grey-800 text-center font-xssss fw-600 ls-1 rounded-xl">Delete</a>
+                                    <h4 class="fw-700 mb-0 font-xssss text-grey-900">Mes amis</h4>
                                 </div>
 
-                                <div class="card-body d-flex pt-0 ps-4 pe-4 pb-0">
-                                    <figure class="avatar me-3"><img src="images/user-8.png" alt="image" class="shadow-sm rounded-circle w45"></figure>
-                                    <h4 class="fw-700 text-grey-900 font-xssss mt-1">Mohannad Zitoun <span class="d-block font-xssss fw-500 mt-1 lh-3 text-grey-500">12 mutual friends</span></h4>
-                                </div>
-                                <div class="card-body d-flex align-items-center pt-0 ps-4 pe-4 pb-4">
-                                    <a href="#" class="p-2 lh-20 w100 bg-primary-gradiant me-2 text-white text-center font-xssss fw-600 ls-1 rounded-xl">Confirm</a>
-                                    <a href="#" class="p-2 lh-20 w100 bg-grey text-grey-800 text-center font-xssss fw-600 ls-1 rounded-xl">Delete</a>
+                                <div th:if="${session.etudiantConnecte == null}" class="card-body text-center text-grey-600">
+                                    <p>Veuillez vous connecter pour voir vos amis.</p>
                                 </div>
 
-                                <div class="card-body d-flex pt-0 ps-4 pe-4 pb-0">
-                                    <figure class="avatar me-3"><img src="images/user-12.png" alt="image" class="shadow-sm rounded-circle w45"></figure>
-                                    <h4 class="fw-700 text-grey-900 font-xssss mt-1">Mohannad Zitoun <span class="d-block font-xssss fw-500 mt-1 lh-3 text-grey-500">12 mutual friends</span></h4>
-                                </div>
-                                <div class="card-body d-flex align-items-center pt-0 ps-4 pe-4 pb-4">
-                                    <a href="#" class="p-2 lh-20 w100 bg-primary-gradiant me-2 text-white text-center font-xssss fw-600 ls-1 rounded-xl">Confirm</a>
-                                    <a href="#" class="p-2 lh-20 w100 bg-grey text-grey-800 text-center font-xssss fw-600 ls-1 rounded-xl">Delete</a>
+                                <div th:if="${session.etudiantConnecte != null}">
+                                    <div th:if="${#lists.isEmpty(session.amis)}" class="card-body text-center text-grey-600">
+                                        <p>Vous n'avez pas encore d'amis.</p>
+                                    </div>
+
+                                    <div th:each="ami : ${session.amis}">
+                                        <div class="card-body d-flex pt-0 ps-4 pe-4 pb-0 align-items-center">
+                                            <figure class="avatar me-3">
+                                                <img th:src="${ami.photoEtudiant != '' ? ami.photoEtudiant : '/images/default.png'}"
+                                                     alt="image" class="shadow-sm rounded-circle w45">
+                                            </figure>
+
+                                            <div>
+                                                <h4 class="fw-700 text-grey-900 font-xssss mb-0" th:text="${ami.prenomEtudiant + ' ' + ami.nomEtudiant}">Nom Ami</h4>
+                                                <span class="d-block font-xssss fw-500 lh-1 text-grey-500"
+                                                      th:text="${ami.emailEtudiant}">email@example.com</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body d-flex align-items-center pt-0 ps-4 pe-4 pb-4">
+                                            <a th:href="@{/conversation/{id}(id=${ami.idEtudiant})}"
+                                               class="p-2 lh-20 w100 bg-primary-gradiant me-2 text-white text-center font-xssss fw-600 ls-1 rounded-xl">
+                                                Message
+                                            </a>
+                                            <a th:href="@{/supprimerAmi(id=${ami.idEtudiant})}"
+                                               onclick="return confirm('Voulez-vous vraiment supprimer cet ami ?');"
+                                               class="p-2 lh-20 w100 bg-grey text-grey-800 text-center font-xssss fw-600 ls-1 rounded-xl">
+                                                Supprimer
+                                            </a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
+
 
                             <div class="card w-100 shadow-xss rounded-xxl border-0 p-0 ">
                                 <div class="card-body d-flex align-items-center p-4 mb-0">
