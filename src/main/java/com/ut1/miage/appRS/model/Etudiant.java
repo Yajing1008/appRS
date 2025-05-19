@@ -279,6 +279,7 @@ public class Etudiant {
     public void setEvenementsCreer(List<Evenement> evenementsCreer) {
         this.evenementsCreer = evenementsCreer;
     }
+
     
     public List<DemandeAmi> getDemandesEnvoyees() {
         return demandesEnvoyees;

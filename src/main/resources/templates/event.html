@@ -1,17 +1,23 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sociala - Social Network App HTML Template </title>
 
-    <link rel="stylesheet" href="css/themify-icons.css">
-    <link rel="stylesheet" href="css/feather.css">
+    <link rel="stylesheet" th:href="@{/css/themify-icons.css}">
+    <link rel="stylesheet" th:href="@{/css/feather.css}">
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/images/favicon.png}">
     <!-- Custom Stylesheet -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- FullCalendar -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
 
 </head>
 
@@ -192,7 +198,7 @@
                             <li><a href="default-badge.html" class="nav-content-bttn open-font" ><i class="feather-award btn-round-md bg-red-gradiant me-3"></i><span>Badges</span></a></li>
                             <li><a href="default-storie.html" class="nav-content-bttn open-font" ><i class="feather-globe btn-round-md bg-gold-gradiant me-3"></i><span>Explore Stories</span></a></li>
                             <li><a href="default-group.html" class="nav-content-bttn open-font" ><i class="feather-zap btn-round-md bg-mini-gradiant me-3"></i><span>Popular Groups</span></a></li>
-                            <li><a href="profil.html" class="nav-content-bttn open-font"><i class="feather-user btn-round-md bg-primary-gradiant me-3"></i><span>Author Profile </span></a></li>
+                            <li><a href="profil" class="nav-content-bttn open-font"><i class="feather-user btn-round-md bg-primary-gradiant me-3"></i><span>Author Profile </span></a></li>
                         </ul>
                     </div>
 
@@ -201,7 +207,7 @@
                         <ul class="mb-3">
                             <li><a href="default-email-box.html" class="nav-content-bttn open-font"><i class="font-xl text-current feather-inbox me-3"></i><span>Email Box</span><span class="circle-count bg-warning mt-1">584</span></a></li>
                             <li><a href="default-hotel.html" class="nav-content-bttn open-font"><i class="font-xl text-current feather-home me-3"></i><span>Near Hotel</span></a></li>
-                            <li><a href="default-event.html" class="nav-content-bttn open-font"><i class="font-xl text-current feather-map-pin me-3"></i><span>Latest Event</span></a></li>
+                            <li><a href="event" class="nav-content-bttn open-font"><i class="font-xl text-current feather-map-pin me-3"></i><span>Evenement</span></a></li>
                             <li><a href="default-live-stream.html" class="nav-content-bttn open-font"><i class="font-xl text-current feather-youtube me-3"></i><span>Live Stream</span></a></li>                        
                         </ul>
                     </div>
@@ -220,256 +226,228 @@
         <!-- navigation left -->
         <!-- main content -->
         <div class="main-content right-chat-active">
-            
             <div class="middle-sidebar-bottom">
                 <div class="middle-sidebar-left">
-                    <div class="row">
+
+                    <!-- 日历区域 -->
+                    <div class="row mb-4">
                         <div class="col-xl-12">
-                            <div class="card w-100 border-0 shadow-none rounded-xxl border-0 mb-3 overflow-hidden ">
-                                <div id="map" class="rounded-3 h400"></div>
-                                <script src="http://www.google.cn/maps/api/js?key=AIzaSyCOdKtT5fapH3_OfhV3HFeZjqFs4OfNIew&callback=mapinitialize" type="text/javascript"></script>
-                                <script type="text/javascript">
+                            <div id="calendar" class="rounded-3 bg-white p-4" style="height: 500px;">
 
-                                    
-
-                                
-                                var icons = { parking: { icon: 'images/map-marker.png' } };
-
-
-                                // REPLACE WITH DATA FROM API
-                                //TITLE | POSITION - LAT , LNG | ICON | TITLE | CONTENT
-                                var airports = [
-                                    { 
-                                        position: { 
-                                            lat: 53.3588026, 
-                                            lng: -2.274919 }, 
-                                        icon: 'parking',    
-                                        content: '<div id="content"><div id="siteNotice"></div><h5 id="firstHeading" class="firstHeading"><b>Right here Right Now - Improv Comedy</b> </h5></div>'
-                                    },
-                                    { 
-                                        position: { 
-                                            lat: 53.8679434, 
-                                            lng: -1.6637193 }, 
-                                        icon: 'parking',    
-                                        content: '<div id="content"><div id="siteNotice"></div><h5 id="firstHeading" class="firstHeading"><b>Open Mic-Stand up Comedy and Poetry</b></h5></div>'
-                                    },
-                                    { 
-                                        position: { 
-                                            lat: 54.661781, 
-                                            lng: -6.2184331 }, 
-                                        icon: 'parking',    
-                                        content: '<div id="content"><div id="siteNotice"></div><h5 id="firstHeading" class="firstHeading"><b>Mohd Suhels Guide to the Galaxy</b></h5></div>'
-                                    },
-                                    { 
-                                        position: { 
-                                            lat: 55.950785, 
-                                            lng: -3.3636419 }, 
-                                        icon: 'parking',    
-                                        content: '<div id="content"><div id="siteNotice"></div><h5 id="firstHeading" class="firstHeading"><b>Charlotte De Witte India Tour- Goa</b></h5></div>'
-                                    },
-                                    { 
-                                        position: { 
-                                            lat: 51.3985498, 
-                                            lng: -3.3416461 }, 
-                                        icon: 'parking',    
-                                        content: '<div id="content"><div id="siteNotice"></div><h5 id="firstHeading" class="firstHeading"><b>A Stand-up Comedy Show by Rahul Dua </b></h5></div>'
-                                    },
-                                    { 
-                                        position: { 
-                                            lat: 51.4700223, 
-                                            lng: -0.4542955 }, 
-                                        icon: 'parking',    
-                                        content: '<div id="content"><div id="siteNotice"></div><h5 id="firstHeading" class="firstHeading"><b>Sunburn Holi Weekend 2021 ft Vini Vici- Goa </b></h5></div>'}
-                                ];
-
-                                function initMap() {
-                                    
-                                    var uk = { 
-                                        lat: 53.990221, 
-                                        lng: -3.911132 
-                                    };
-                                    
-                                    var map = new google.maps.Map( document.getElementById('map'), {
-                                      zoom: 6,
-                                      center: uk, 
-                                      disableDefaultUI: true,
-                                      styles: [{"featureType":"all","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#444444"}]},{"featureType":"administrative.province","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"administrative.locality","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"administrative.neighborhood","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"administrative.land_parcel","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"administrative.land_parcel","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#f2f2f2"}]},{"featureType":"landscape.man_made","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"},{"color":"#cee9de"},{"saturation":"2"},{"weight":"0.80"}]},{"featureType":"poi.attraction","elementType":"geometry.fill","stylers":[{"visibility":"off"}]},{"featureType":"poi.park","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"visibility":"on"},{"color":"#f5d6d6"}]},{"featureType":"road.highway","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"road.highway","elementType":"labels.icon","stylers":[{"hue":"#ff0000"},{"visibility":"on"}]},{"featureType":"road.highway.controlled_access","elementType":"labels.text","stylers":[{"visibility":"simplified"}]},{"featureType":"road.highway.controlled_access","elementType":"labels.icon","stylers":[{"visibility":"on"},{"hue":"#0064ff"},{"gamma":"1.44"},{"lightness":"-3"},{"weight":"1.69"}]},{"featureType":"road.arterial","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"road.arterial","elementType":"labels.text","stylers":[{"visibility":"off"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"road.local","elementType":"all","stylers":[{"visibility":"on"}]},{"featureType":"road.local","elementType":"labels.text","stylers":[{"visibility":"simplified"},{"weight":"0.31"},{"gamma":"1.43"},{"lightness":"-5"},{"saturation":"-22"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"transit.line","elementType":"all","stylers":[{"visibility":"on"},{"hue":"#ff0000"}]},{"featureType":"transit.station.airport","elementType":"all","stylers":[{"visibility":"simplified"},{"hue":"#ff0045"}]},{"featureType":"transit.station.bus","elementType":"all","stylers":[{"visibility":"on"},{"hue":"#00d1ff"}]},{"featureType":"transit.station.bus","elementType":"labels.text","stylers":[{"visibility":"simplified"}]},{"featureType":"transit.station.rail","elementType":"all","stylers":[{"visibility":"simplified"},{"hue":"#00cbff"}]},{"featureType":"transit.station.rail","elementType":"labels.text","stylers":[{"visibility":"simplified"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#46bcec"},{"visibility":"on"}]},{"featureType":"water","elementType":"geometry.fill","stylers":[{"weight":"1.61"},{"color":"#cde2e5"},{"visibility":"on"}]}]
-                                    });
-                                          
-                                    var InfoWindows = new google.maps.InfoWindow({});
-                                    
-                                    airports.forEach(function(airport) {    
-                                        var marker = new google.maps.Marker({
-                                          position: { lat: airport.position.lat, lng: airport.position.lng },
-                                          map: map,
-                                          icon: icons[airport.icon].icon,
-                                          title: airport.title
-                                        });
-                                        marker.addListener('mouseover', function() {
-                                          InfoWindows.open(map, this);
-                                          InfoWindows.setContent(airport.content);
-                                        });
-                                    });
-                                }
-
-                                initMap();
-
-
-
-
-                                </script>
                             </div>
-                            <div class="row">
-                                <div class="col-lg-4 col-md-6 pe-2 ps-2">
-                                    <div class="card p-3 bg-white w-100 hover-card border-0 shadow-xss rounded-xxl border-0 mb-3 overflow-hidden ">
-                                        <div class="card-image w-100">
-                                            <img src="images/e-1.jpg" alt="event" class="w-100 rounded-3">
-                                        </div>
-                                        <div class="card-body d-flex ps-0 pe-0 pb-0">
-                                            <div class="bg-greylight me-3 p-3 border-light-md rounded-xxl theme-dark-bg"><h4 class="fw-700 font-lg ls-3 text-grey-900 mb-0"><span class="ls-3 d-block font-xsss text-grey-500 fw-500">FEB</span>22</h4></div>
-                                            <h2 class="fw-700 lh-3 font-xss">Right here Right Now -  Comedy 
-                                                <span class="d-flex font-xssss fw-500 mt-2 lh-3 text-grey-500"> <i class="ti-location-pin me-1"></i> Goa, Mumbai </span>
-                                            </h2>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <ul class="memberlist mt-4 mb-2 ms-0 d-inline-block">
-                                                <li><a href="#"><img src="images/user-6.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-7.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-8.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-3.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li class="last-member"><a href="#" class="bg-greylight fw-600 text-grey-500 font-xssss ls-3 text-center">+2</a></li>
-                                            </ul>
-                                            <a href="#" class="font-xsssss fw-700 ps-3 pe-3 lh-32 float-right mt-4 text-uppercase rounded-3 ls-2 bg-success d-inline-block text-white me-1">APPLY</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-6 pe-2 ps-2">
-                                    <div class="card p-3 bg-white w-100 hover-card border-0 shadow-xss rounded-xxl border-0 mb-3 overflow-hidden ">
-                                        <div class="card-image w-100">
-                                            <img src="images/e-2.jpg" alt="event" class="w-100 rounded-3">
-                                        </div>
-                                        <div class="card-body d-flex ps-0 pe-0 pb-0">
-                                            <div class="bg-greylight me-3 p-3 border-light-md rounded-xxl theme-dark-bg"><h4 class="fw-700 font-lg ls-3 text-grey-900 mb-0"><span class="ls-3 d-block font-xsss text-grey-500 fw-500">FEB</span>22</h4></div>
-                                            <h2 class="fw-700 lh-3 font-xss">Open Mic-Stand up Comedy and Poetry
-                                                <span class="d-flex font-xssss fw-500 mt-2 lh-3 text-grey-500"> <i class="ti-location-pin me-1"></i> Goa, Mumbai </span>
-                                            </h2>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <ul class="memberlist mt-4 mb-2 ms-0 d-inline-block">
-                                                <li><a href="#"><img src="images/user-6.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-7.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-8.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-3.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li class="last-member"><a href="#" class="bg-greylight fw-600 text-grey-500 font-xssss ls-3 text-center">+2</a></li>
-                                            </ul>
-                                            <a href="#" class="font-xsssss fw-700 ps-3 pe-3 lh-32 float-right mt-4 text-uppercase rounded-3 ls-2 bg-success d-inline-block text-white me-1">APPLY</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6 pe-2 ps-2">
-                                    <div class="card p-3 bg-white w-100 hover-card border-0 shadow-xss rounded-xxl border-0 mb-3 overflow-hidden ">
-                                        <div class="card-image w-100">
-                                            <img src="images/e-3.jpg" alt="event" class="w-100 rounded-3">
-                                        </div>
-                                        <div class="card-body d-flex ps-0 pe-0 pb-0">
-                                            <div class="bg-greylight me-3 p-3 border-light-md rounded-xxl theme-dark-bg"><h4 class="fw-700 font-lg ls-3 text-grey-900 mb-0"><span class="ls-3 d-block font-xsss text-grey-500 fw-500">FEB</span>22</h4></div>
-                                            <h2 class="fw-700 lh-3 font-xss">Mohd Suhel's Guide to the Galaxy
-                                                <span class="d-flex font-xssss fw-500 mt-2 lh-3 text-grey-500"> <i class="ti-location-pin me-1"></i> Goa, Mumbai </span>
-                                            </h2>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <ul class="memberlist mt-4 mb-2 ms-0 d-inline-block">
-                                                <li><a href="#"><img src="images/user-6.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-7.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-8.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-3.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li class="last-member"><a href="#" class="bg-greylight fw-600 text-grey-500 font-xssss ls-3 text-center">+2</a></li>
-                                            </ul>
-                                            <a href="#" class="font-xsssss fw-700 ps-3 pe-3 lh-32 float-right mt-4 text-uppercase rounded-3 ls-2 bg-success d-inline-block text-white me-1">APPLY</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6 pe-2 ps-2">
-                                    <div class="card p-3 bg-white w-100 hover-card border-0 shadow-xss rounded-xxl border-0 mb-3 overflow-hidden ">
-                                        <div class="card-image w-100">
-                                            <img src="images/e-4.jpg" alt="event" class="w-100 rounded-3">
-                                        </div>
-                                        <div class="card-body d-flex ps-0 pe-0 pb-0">
-                                            <div class="bg-greylight me-3 p-3 border-light-md rounded-xxl theme-dark-bg"><h4 class="fw-700 font-lg ls-3 text-grey-900 mb-0"><span class="ls-3 d-block font-xsss text-grey-500 fw-500">FEB</span>22</h4></div>
-                                            <h2 class="fw-700 lh-3 font-xss">Charlotte De Witte India Tour
-                                                <span class="d-flex font-xssss fw-500 mt-2 lh-3 text-grey-500"> <i class="ti-location-pin me-1"></i> Goa, Mumbai </span>
-                                            </h2>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <ul class="memberlist mt-4 mb-2 ms-0 d-inline-block">
-                                                <li><a href="#"><img src="images/user-6.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-7.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-8.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-3.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li class="last-member"><a href="#" class="bg-greylight fw-600 text-grey-500 font-xssss ls-3 text-center">+2</a></li>
-                                            </ul>
-                                            <a href="#" class="font-xsssss fw-700 ps-3 pe-3 lh-32 float-right mt-4 text-uppercase rounded-3 ls-2 bg-success d-inline-block text-white me-1">APPLY</a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-6 pe-2 ps-2">
-                                    <div class="card p-3 bg-white w-100 hover-card border-0 shadow-xss rounded-xxl border-0 mb-3 overflow-hidden ">
-                                        <div class="card-image w-100">
-                                            <img src="images/e-5.jpg" alt="event" class="w-100 rounded-3">
-                                        </div>
-                                        <div class="card-body d-flex ps-0 pe-0 pb-0">
-                                            <div class="bg-greylight me-3 p-3 border-light-md rounded-xxl theme-dark-bg"><h4 class="fw-700 font-lg ls-3 text-grey-900 mb-0"><span class="ls-3 d-block font-xsss text-grey-500 fw-500">FEB</span>22</h4></div>
-                                            <h2 class="fw-700 lh-3 font-xss">A Stand-up Comedy Show by Rahul
-                                                <span class="d-flex font-xssss fw-500 mt-2 lh-3 text-grey-500"> <i class="ti-location-pin me-1"></i> Goa, Mumbai </span>
-                                            </h2>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <ul class="memberlist mt-4 mb-2 ms-0 d-inline-block">
-                                                <li><a href="#"><img src="images/user-6.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-7.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-8.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-3.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li class="last-member"><a href="#" class="bg-greylight fw-600 text-grey-500 font-xssss ls-3 text-center">+2</a></li>
-                                            </ul>
-                                            <a href="#" class="font-xsssss fw-700 ps-3 pe-3 lh-32 float-right mt-4 text-uppercase rounded-3 ls-2 bg-success d-inline-block text-white me-1">APPLY</a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6 pe-2 ps-2">
-                                    <div class="card p-3 bg-white w-100 hover-card border-0 shadow-xss rounded-xxl border-0 mb-3 overflow-hidden ">
-                                        <div class="card-image w-100">
-                                            <img src="images/e-6.jpg" alt="event" class="w-100 rounded-3">
-                                        </div>
-                                        <div class="card-body d-flex ps-0 pe-0 pb-0">
-                                            <div class="bg-greylight me-3 p-3 border-light-md rounded-xxl theme-dark-bg"><h4 class="fw-700 font-lg ls-3 text-grey-900 mb-0"><span class="ls-3 d-block font-xsss text-grey-500 fw-500">FEB</span>22</h4></div>
-                                            <h2 class="fw-700 lh-3 font-xss">Sunburn Holi Weekend 2021  
-                                                <span class="d-flex font-xssss fw-500 mt-2 lh-3 text-grey-500"> <i class="ti-location-pin me-1"></i> Goa, Mumbai </span>
-                                            </h2>
-                                        </div>
-                                        <div class="card-body p-0">
-                                            <ul class="memberlist mt-4 mb-2 ms-0 d-inline-block">
-                                                <li><a href="#"><img src="images/user-6.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-7.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-8.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li><a href="#"><img src="images/user-3.png" alt="user" class="w30 d-inline-block"></a></li>
-                                                <li class="last-member"><a href="#" class="bg-greylight fw-600 text-grey-500 font-xssss ls-3 text-center">+2</a></li>
-                                            </ul>
-                                            <a href="#" class="font-xsssss fw-700 ps-3 pe-3 lh-32 float-right mt-4 text-uppercase rounded-3 ls-2 bg-success d-inline-block text-white me-1">APPLY</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>               
-
+                        </div>
                     </div>
+
+
+                    <div class="row">
+                        <!-- 显示提示 -->
+                        <div th:if="${success}" class="alert alert-success text-center" role="alert">
+                            <span th:text="${success}">Opération réussie</span>
+                        </div>
+
+                        <div th:if="${error}" class="alert alert-danger text-center" role="alert">
+                            <span th:text="${error}">Une erreur est survenue</span>
+                        </div>
+
+                        <div class="col-xl-12">
+                            <div th:if="${utilisateurConnecte == null}" class="text-center mt-5">
+                                <h4 class="text-grey-700 mb-3">Veuillez vous connecter pour voir vos événements.</h4>
+                                <a th:href="@{/connexion}" class="btn btn-primary">Se connecter</a>
+                            </div>
+
+                            <div th:if="${utilisateurConnecte != null}">
+                                <!-- 创建的活动 -->
+                                <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+                                    <h4 class="fw-700">Mes événements créés</h4>
+                                    <a th:href="@{/evenement/creer}" class="btn btn-primary rounded-3">
+                                        <i class="ti-plus me-2"></i>Créer un événement
+                                    </a>
+                                </div>
+
+                                <div th:if="${#lists.isEmpty(mesCreations)}" class="text-center">
+                                    <p class="text-grey-600">Vous n'avez encore créé aucun événement.</p>
+                                </div>
+
+                                <div th:if="${!#lists.isEmpty(mesCreations)}" class="row">
+                                    <div class="col-lg-4 col-md-6 pe-2 ps-2" th:each="event : ${mesCreations}">
+                                        <div class="card p-3 bg-white w-100 hover-card border-0 shadow-xss rounded-xxl mb-3 overflow-hidden">
+                                            <div class="card-image w-100">
+                                                <img th:if="${event.imageUrlEvenement != null and event.imageUrlEvenement != ''}"
+                                                     th:src="${event.imageUrlEvenement}"
+                                                     alt="Événement" class="w-100 rounded-3 img-fluid" />
+                                                <img th:unless="${event.imageUrlEvenement != null and event.imageUrlEvenement != ''}"
+                                                     th:src="@{/images/e-2.jpg}"
+                                                     alt="Événement" class="w-100 rounded-3 img-fluid" />
+                                            </div>
+                                            <div class="card-body d-flex ps-0 pe-0 pb-0">
+                                                <div class="bg-greylight me-3 p-3 rounded-xxl theme-dark-bg">
+                                                    <h4 class="fw-700 font-lg text-grey-900 mb-0">
+                        <span class="d-block font-xsss text-grey-500 fw-500"
+                              th:text="${#temporals.format(event.dateHeureDebutEvenement, 'MMM').toUpperCase()}">JAN</span>
+                                                        <span th:text="${#temporals.format(event.dateHeureDebutEvenement, 'dd')}">01</span>
+                                                    </h4>
+                                                </div>
+                                                <div class="ps-2">
+                                                    <h2 class="fw-700 lh-3 font-xss" th:text="${event.nomEvenement}">Nom</h2>
+                                                    <span class="d-flex font-xssss fw-500 mt-2 text-grey-500">
+                        <i class="ti-user me-1"></i>
+                        <span th:text="${event.createur.nomEtudiant}">Créateur</span>
+                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="card-body p-0">
+                                                <div class="ps-3 pe-3 mt-2">
+                                                    <p class="font-xssss text-grey-600 mb-1">
+                                                        <i class="ti-location-pin me-1"></i>
+                                                        <span th:text="${event.lieuEvenement}">Lieu</span>
+                                                    </p>
+                                                    <p class="font-xssss text-grey-600 mb-2">
+                                                        <i class="ti-time me-1"></i>
+                                                        <span th:text="${#temporals.format(event.dateHeureDebutEvenement, 'dd/MM/yyyy HH:mm')}"></span>
+                                                        -
+                                                        <span th:text="${#temporals.format(event.dateHeureFinEvenement, 'dd/MM/yyyy HH:mm')}"></span>
+                                                    </p>
+                                                    <p class="font-xssss text-grey-600 mb-2">
+                                                        <i class="ti-info-alt me-1"></i>
+                                                        <span th:text="${event.descriptionEvenement}">Description de l'événement</span>
+                                                    </p>
+                                                </div>
+                                                <ul class="memberlist mt-2 mb-2 ms-3 d-inline-block">
+                                                    <li th:each="membre, iterStat : ${event.membreGroupe}" th:if="${iterStat.index < 4}">
+                                                        <a href="#">
+                                                            <img th:if="${membre.photoEtudiant != null and membre.photoEtudiant != ''}"
+                                                                 th:src="${membre.photoEtudiant}" alt="user" class="w30 d-inline-block" />
+                                                            <img th:unless="${membre.photoEtudiant != null and membre.photoEtudiant != ''}"
+                                                                 th:src="@{/images/female-profile.png}" alt="user" class="w30 d-inline-block" />
+                                                        </a>
+                                                    </li>
+                                                    <li th:if="${event.membreGroupe.size() > 4}" class="last-member">
+                                                        <a href="#" class="bg-greylight fw-600 text-grey-500 font-xssss ls-3 text-center">
+                                                            +<span th:text="${event.membreGroupe.size() - 4}">2</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                                <div class="d-flex justify-content-start ps-3 pe-3 gap-2">
+                                                    <div class="w-50">
+                                                        <a th:href="@{'/evenement/modifier/' + ${event.idEvenement}}" class="btn btn-warning w-100 mt-3">Modifier</a>
+
+
+                                                    </div>
+                                                    <div class="w-50">
+                                                        <form th:action="@{/evenement/annuler}" method="post">
+                                                            <input type="hidden" name="idEvenement" th:value="${event.idEvenement}" />
+                                                            <button type="submit" onclick="return confirm('Êtes-vous sûr de vouloir annuler cet événement ?');"
+                                                                    class="btn btn-danger w-100 mt-3">Annuler</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                                <!-- 我参与的活动 -->
+                                <div class="d-flex justify-content-between align-items-center mt-5 mb-2">
+                                    <h4 class="fw-700">Événements auxquels je participe</h4>
+                                    <a th:href="@{/evenement/liste}" class="btn btn-success rounded-3">
+                                        <i class="ti-search me-2"></i>Rejoindre un événement
+                                    </a>
+                                </div>
+
+                                <div th:if="${#lists.isEmpty(mesParticipations)}" class="text-center">
+                                    <p class="text-grey-600">Vous ne participez à aucun événement pour l'instant.</p>
+                                </div>
+
+                                <div th:if="${!#lists.isEmpty(mesParticipations)}" class="row">
+                                    <div class="col-lg-4 col-md-6 pe-2 ps-2" th:each="event : ${mesParticipations}">
+                                        <div class="card p-3 bg-white w-100 hover-card border-0 shadow-xss rounded-xxl mb-3 overflow-hidden">
+                                            <div class="card-image w-100">
+                                                <img th:if="${event.imageUrlEvenement != null and event.imageUrlEvenement != ''}"
+                                                     th:src="${event.imageUrlEvenement}"
+                                                     alt="Événement" class="w-100 rounded-3 img-fluid" />
+                                                <img th:unless="${event.imageUrlEvenement != null and event.imageUrlEvenement != ''}"
+                                                     th:src="@{/images/e-2.jpg}"
+                                                     alt="Événement" class="w-100 rounded-3 img-fluid" />
+                                            </div>
+                                            <div class="card-body d-flex ps-0 pe-0 pb-0">
+                                                <div class="bg-greylight me-3 p-3 rounded-xxl theme-dark-bg">
+                                                    <h4 class="fw-700 font-lg text-grey-900 mb-0">
+                                    <span class="d-block font-xsss text-grey-500 fw-500"
+                                          th:text="${#temporals.format(event.dateHeureDebutEvenement, 'MMM').toUpperCase()}">JAN</span>
+                                                        <span th:text="${#temporals.format(event.dateHeureDebutEvenement, 'dd')}">01</span>
+                                                    </h4>
+                                                </div>
+                                                <div class="ps-2">
+                                                    <h2 class="fw-700 lh-3 font-xss" th:text="${event.nomEvenement}">Nom</h2>
+                                                    <span class="d-flex font-xssss fw-500 mt-2 text-grey-500">
+                                    <i class="ti-user me-1"></i>
+                                    <span th:text="${event.createur.nomEtudiant}">Créateur</span>
+                                </span>
+                                                </div>
+                                            </div>
+                                            <div class="card-body p-0">
+                                                <div class="ps-3 pe-3 mt-2">
+                                                    <p class="font-xssss text-grey-600 mb-1">
+                                                        <i class="ti-location-pin me-1"></i>
+                                                        <span th:text="${event.lieuEvenement}">Lieu</span>
+                                                    </p>
+                                                    <p class="font-xssss text-grey-600 mb-2">
+                                                        <i class="ti-time me-1"></i>
+                                                        <span th:text="${#temporals.format(event.dateHeureDebutEvenement, 'dd/MM/yyyy HH:mm')}"></span>
+                                                        -
+                                                        <span th:text="${#temporals.format(event.dateHeureFinEvenement, 'dd/MM/yyyy HH:mm')}"></span>
+                                                    </p>
+                                                    <p class="font-xssss text-grey-600 mb-2">
+                                                        <i class="ti-info-alt me-1"></i>
+                                                        <span th:text="${event.descriptionEvenement}">Description de l'événement</span>
+                                                    </p>
+                                                </div>
+                                                <ul class="memberlist mt-2 mb-2 ms-3 d-inline-block">
+                                                    <li th:each="membre, iterStat : ${event.membreGroupe}" th:if="${iterStat.index < 4}">
+                                                        <a href="#">
+                                                            <img th:if="${membre.photoEtudiant != null and membre.photoEtudiant != ''}"
+                                                                 th:src="${membre.photoEtudiant}" alt="user" class="w30 d-inline-block" />
+                                                            <img th:unless="${membre.photoEtudiant != null and membre.photoEtudiant != ''}"
+                                                                 th:src="@{/images/female-profile.png}" alt="user" class="w30 d-inline-block" />
+                                                        </a>
+                                                    </li>
+                                                    <li th:if="${event.membreGroupe.size() > 4}" class="last-member">
+                                                        <a href="#" class="bg-greylight fw-600 text-grey-500 font-xssss ls-3 text-center">
+                                                            +<span th:text="${event.membreGroupe.size() - 4}">2</span>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                                <div class="px-3 mt-3">
+                                                    <form th:action="@{'/evenement/quitter/' + ${event.idEvenement}}" method="get">
+                                                        <button type="submit"
+                                                                onclick="return confirm('Êtes-vous sûr de vouloir quitter cet événement ?');"
+                                                                class="btn btn-danger w-100">
+                                                            Quitter l'événement
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- 已登录部分结束 -->
+                        </div>
+                    </div>
+
+
+
+
                 </div>
-                 
-            </div>            
+            </div>
         </div>
+
         <!-- main content -->
+
+
+
+
+
 
         <!-- right chat -->
         <div class="right-chat nav-wrap mt-2 right-scroll-bar">
@@ -637,7 +615,12 @@
             </div>
         </div>
 
-        
+
+
+
+
+
+
         <!-- right chat -->
         
         <div class="app-footer border-0 shadow-lg bg-primary-gradiant">
@@ -714,16 +697,63 @@
         </div> 
     </div>
 
-     
-
-    
-
-   
 
 
-    <script src="js/plugin.js"></script>
-    <script src="js/scripts.js"></script>
-    
+
+    <script th:src="@{/js/plugin.js}"></script>
+    <script th:src="@{/js/scripts.js}"></script>
+
+    <!-- ✅ 引入 Bootstrap（必须最先） -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ✅ 引入你自己的脚本 -->
+
+
+    <!-- ✅ FullCalendar -->
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js"></script>
+
+    <!-- ✅ FullCalendar 日历初始化 -->
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
+            const events = /*[[${eventJson}]]*/ [];
+            const eventsObjects = JSON.parse(events);
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,listWeek'
+                },
+                events: eventsObjects,
+                eventClick: function (info) {
+                    if (info.event.url) {
+                        window.open(info.event.url, "_blank");
+                        info.jsEvent.preventDefault();
+                    }
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
+
+    <!-- ✅ Modal 弹窗逻辑 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const confirmModal = document.getElementById('confirmCancelModal');
+            confirmModal.addEventListener('show.bs.modal', function (event) {
+                const button = event.relatedTarget;
+                const eventId = button.getAttribute('data-id');
+                const inputField = document.getElementById('modalEventId');
+                inputField.value = eventId;
+            });
+        });
+    </script>
+
+
+
+
 </body>
 
 </html>

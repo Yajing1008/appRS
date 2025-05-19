@@ -1,18 +1,22 @@
-﻿
-<!DOCTYPE html>
-<html lang="en">
+﻿<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Sociala - Social Network App HTML Template </title>
 
-    <link rel="stylesheet" href="css/themify-icons.css">
-    <link rel="stylesheet" href="css/feather.css">
+    <link rel="stylesheet" th:href="@{/css/themify-icons.css}">
+    <link rel="stylesheet" th:href="@{/css/feather.css}">
     <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/images/favicon.png}">
     <!-- Custom Stylesheet -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- FullCalendar -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>
+
+
 
 </head>
 
@@ -39,11 +43,11 @@
                     <input type="text" placeholder="Start typing to search.." class="bg-grey border-0 lh-32 pt-2 pb-2 ps-5 pe-3 font-xssss fw-500 rounded-xl w350 theme-dark-bg">
                 </div>
             </form>
-            <a href="index.html" class="p-2 text-center ms-3 menu-icon center-menu-icon"><i class="feather-home font-lg bg-greylight btn-round-lg theme-dark-bg text-grey-500 "></i></a>
+            <a href="index.html" class="p-2 text-center ms-3 menu-icon center-menu-icon"><i class="feather-home font-lg alert-primary btn-round-lg theme-dark-bg text-current "></i></a>
             <a href="default-storie.html" class="p-2 text-center ms-0 menu-icon center-menu-icon"><i class="feather-zap font-lg bg-greylight btn-round-lg theme-dark-bg text-grey-500 "></i></a>
             <a href="default-video.html" class="p-2 text-center ms-0 menu-icon center-menu-icon"><i class="feather-video font-lg bg-greylight btn-round-lg theme-dark-bg text-grey-500 "></i></a>
             <a href="default-group.html" class="p-2 text-center ms-0 menu-icon center-menu-icon"><i class="feather-user font-lg bg-greylight btn-round-lg theme-dark-bg text-grey-500 "></i></a>
-            <a href="shop-2.html" class="p-2 text-center ms-0 menu-icon center-menu-icon"><i class="feather-shopping-bag font-lg alert-primary btn-round-lg theme-dark-bg text-current "></i></a>
+            <a href="shop-2.html" class="p-2 text-center ms-0 menu-icon center-menu-icon"><i class="feather-shopping-bag font-lg bg-greylight btn-round-lg theme-dark-bg text-grey-500 "></i></a>
 
             <a href="#" class="p-2 text-center ms-auto menu-icon" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-bs-toggle="dropdown"><span class="dot-count bg-warning"></span><i class="feather-bell font-xl text-current"></i></a>
             <div class="dropdown-menu dropdown-menu-end p-4 rounded-3 border-0 shadow-lg" aria-labelledby="dropdownMenu3">
@@ -193,7 +197,7 @@
                             <li><a href="default-badge.html" class="nav-content-bttn open-font" ><i class="feather-award btn-round-md bg-red-gradiant me-3"></i><span>Badges</span></a></li>
                             <li><a href="default-storie.html" class="nav-content-bttn open-font" ><i class="feather-globe btn-round-md bg-gold-gradiant me-3"></i><span>Explore Stories</span></a></li>
                             <li><a href="default-group.html" class="nav-content-bttn open-font" ><i class="feather-zap btn-round-md bg-mini-gradiant me-3"></i><span>Popular Groups</span></a></li>
-                            <li><a href="profil.html" class="nav-content-bttn open-font"><i class="feather-user btn-round-md bg-primary-gradiant me-3"></i><span>Author Profile </span></a></li>
+                            <li><a href="profil" class="nav-content-bttn open-font"><i class="feather-user btn-round-md bg-primary-gradiant me-3"></i><span>Author Profile </span></a></li>
                         </ul>
                     </div>
 
@@ -202,7 +206,7 @@
                         <ul class="mb-3">
                             <li><a href="default-email-box.html" class="nav-content-bttn open-font"><i class="font-xl text-current feather-inbox me-3"></i><span>Email Box</span><span class="circle-count bg-warning mt-1">584</span></a></li>
                             <li><a href="default-hotel.html" class="nav-content-bttn open-font"><i class="font-xl text-current feather-home me-3"></i><span>Near Hotel</span></a></li>
-                            <li><a href="event.html" class="nav-content-bttn open-font"><i class="font-xl text-current feather-map-pin me-3"></i><span>Latest Event</span></a></li>
+                            <li><a href="event" class="nav-content-bttn open-font"><i class="font-xl text-current feather-map-pin me-3"></i><span>Latest Event</span></a></li>
                             <li><a href="default-live-stream.html" class="nav-content-bttn open-font"><i class="font-xl text-current feather-youtube me-3"></i><span>Live Stream</span></a></li>                        
                         </ul>
                     </div>
@@ -219,284 +223,94 @@
             </div>
         </nav>
         <!-- navigation left -->
+
+
         <!-- main content -->
-        <div class="main-content bg-white right-chat-active">
-            
+        <div class="main-content right-chat-active">
             <div class="middle-sidebar-bottom">
-                <div class="middle-sidebar-left pe-0">
+                <div class="middle-sidebar-left">
                     <div class="row">
                         <div class="col-xl-12">
-                            <div class="row">
-                                <div class="col-lg-12">
-                                    
-                                    <div class="banner-wrapper bg-greylight overflow-hidden rounded-3">
-                                        <div class="banner-slider owl-carousel owl-theme dot-style2 owl-nav-link link-style3 overflow-hidden">
-                                             <div class="owl-items style1 d-flex align-items-center bg-lightblue" >
-                                                <div class="row">
-                                                    <div class="col-lg-6 p-lg-5 ps-5 pe-5 pt-4" style="padding-right: 20px !important;">
-                                                        <div class="card w-100 border-0 ps-lg-5 ps-0 bg-transparent bg-transparent-card">
-                                                            <h4 class="font-xssss text-danger ls-3 fw-700 ms-0 mt-4 mb-3">TRENDING</h4>
-                                                            <h2 class="fw-300 display2-size display2-md-size lh-2 text-grey-900">New Arrival Buds <br> <b class="fw-700">Collection</b></h2>
-                                                            <p class="fw-500 text-grey-500 lh-26 font-xssss pe-lg-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi nulla dolor, ornare at commodo non, feugiat non nisi. Phasellus faucibus mollis pharetra.</p>
-                                                            <a href="#" class="fw-700 text-white rounded-xl bg-primary-gradiant font-xsssss text-uppercase ls-3 lh-30 mt-0 text-center d-inline-block p-2 w150">Shop Now</a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-6"><img src="images/pl-22.png" alt="image" class="img-fluid p-md-5 p-4"></div>
-                                                </div>
-                                            </div>
-                                            <div class="owl-items style1 d-flex align-items-center bg-cyan" >
-                                                <div class="row">
-                                                    <div class="col-lg-6 p-lg-5 ps-5 pe-5 pt-4" style="padding-right: 20px !important;">
-                                                        <div class="card w-100 border-0 ps-lg-5 ps-0 bg-transparent bg-transparent-card">
-                                                            <h4 class="font-xssss text-white ls-3 fw-700 ms-0 mt-4 mb-3">TRENDING</h4>
-                                                            <h2 class="fw-300 display2-size display2-md-size lh-2 text-white">New Arrival Buds <br> <b class="fw-700">Collection</b></h2>
-                                                            <p class="fw-500 text-grey-100 lh-26 font-xssss pe-lg-5">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi nulla dolor, ornare at commodo non, feugiat non nisi. Phasellus faucibus mollis pharetra.</p>
-                                                            <a href="#" class="fw-700 text-grey-900 rounded-xl bg-white font-xsssss text-uppercase ls-3 lh-30 mt-0 text-center d-inline-block p-2 w150">Shop Now</a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-6"><img src="images/pl-23.png" alt="image" class="img-fluid p-md-5 p-4"></div>
-                                                </div>
-                                            </div>
-                                           
-                                        </div>
-                                    </div>
-                                </div>
-                            
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card w-100 border-0 mt-4">
-                                        <div class="card-image w-100 p-0 text-center bg-greylight rounded-3 mb-2">
-                                            <a href="single-product.html"><img src="images/pp-9.png" alt="product-image" class="w-100 mt-0 mb-0 p-5"></a>
-                                        </div>
-                                        <div class="card-body w-100 p-0 text-center">
-                                            <div class="star w-100 d-block text-left mt-0 text-center">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star-disable.png" alt="star" class="w15 me-1 me-2">
-                                            </div>
-                                            <h2 class="mt-1 mb-1"><a href="single-product.html" class="text-black fw-700 font-xsss lh-26">Textured Sleeveless Camisole</a></h2>
-                                            <h6 class="font-xsss fw-600 text-grey-500 ls-2">$449</h6>
-                                        </div>                                
-                                    </div>
+                            <div class="card p-4 bg-white shadow-xss rounded-xxl border-0 mb-3">
+
+                                <!-- ✅ 判断是否登录（使用 session 中的变量） -->
+                                <div th:if="${session.etudiantConnecte == null}">
+                                    <h2 class="fw-700 mb-4 font-lg">Veuillez vous connecter pour modifier un événement</h2>
+                                    <a href="/connexion" class="btn btn-primary text-white fw-600 text-uppercase px-4 py-2 rounded-3">
+                                        Se connecter
+                                    </a>
                                 </div>
 
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card w-100 border-0 mt-4">
-                                        <div class="card-image w-100 p-0 text-center bg-greylight rounded-3 mb-2">
-                                            <a href="single-product.html"><img src="images/pp-10.png" alt="product-image" class="w-100 mt-0 mb-0 p-5"></a>
+                                <!-- ✅ 如果已登录，显示表单 -->
+                                <div th:if="${session.etudiantConnecte != null}">
+                                    <h2 class="fw-700 mb-4 font-lg">Modifier l'Événement</h2>
+
+                                    <!-- ✅ 显示头像并允许上传 -->
+                                    <div class="text-center mb-4">
+                                        <img th:src="${(session.etudiantConnecte.photoEtudiant != null and session.etudiantConnecte.photoEtudiant != '')
+   ? session.etudiantConnecte.photoEtudiant
+   : '/images/e-2.jpg'}"
+                                             class="rounded-circle bg-white p-1 shadow-xss"
+                                             alt="Photo de profil"
+                                             width="120" height="120" />
+
+                                        <div class="mt-2">
+                                            <label class="font-xssss fw-600 text-grey-700">Changer la photo</label>
+                                            <input type="file" name="photo" class="form-control font-xssss" accept="image/*" />
                                         </div>
-                                        <div class="card-body w-100 p-0 text-center">
-                                            <div class="star w-100 d-block text-left mt-0 text-center">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star-disable.png" alt="star" class="w15 me-1 me-2">
-                                            </div>
-                                            <h2 class="mt-1 mb-1"><a href="single-product.html" class="text-black fw-700 font-xsss lh-26">Adjustable Shoulder Straps</a></h2>
-                                            <h6 class="font-xsss fw-600 text-grey-500 ls-2">$449</h6>
-                                        </div>                                
                                     </div>
+
+                                    <!-- ✅ 表单 -->
+                                    <form th:action="@{/evenement/update}" th:object="${evenement}" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" th:field="${evenement.idEvenement}" />
+                                        <div class="row">
+
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Nom de l'événement</label>
+                                                <input type="text" th:field="${evenement.nomEvenement}" class="form-control" placeholder="Nom de l'événement" required>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Lieu</label>
+                                                <input type="text" th:field="${evenement.lieuEvenement}" class="form-control" placeholder="Lieu de l'événement">
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Date et heure de début</label>
+                                                <input type="datetime-local" th:field="${evenement.dateHeureDebutEvenement}" class="form-control" required>
+                                            </div>
+
+                                            <div class="col-md-6 mb-3">
+                                                <label class="form-label">Date et heure de fin</label>
+                                                <input type="datetime-local" th:field="${evenement.dateHeureFinEvenement}" class="form-control" required>
+                                            </div>
+
+                                            <div class="col-md-12 mb-3">
+                                                <label class="form-label">Description</label>
+                                                <textarea th:field="${evenement.descriptionEvenement}" class="form-control" rows="4" placeholder="Description de l'événement"></textarea>
+                                            </div>
+
+                                            <div class="col-md-12 text-end">
+                                                <button type="submit" class="btn btn-warning text-white fw-600 text-uppercase px-4 py-2 rounded-3">Modifier</button>
+                                            </div>
+
+                                        </div>
+                                    </form>
                                 </div>
 
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card w-100 border-0 mt-4">
-                                        <div class="card-image w-100 p-0 text-center bg-greylight rounded-3 mb-2">
-                                            <a href="single-product.html"><img src="images/pp-13.png" alt="product-image" class="w-100 mt-0 mb-0 p-5"></a>
-                                        </div>
-                                        <div class="card-body w-100 p-0 text-center">
-                                            <div class="star w-100 d-block text-left mt-0 text-center">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star-disable.png" alt="star" class="w15 me-1 me-2">
-                                            </div>
-                                            <h2 class="mt-1 mb-1"><a href="single-product.html" class="text-black fw-700 font-xsss lh-26">Neck Strappy Camisole</a></h2>
-                                            <h6 class="font-xsss fw-600 text-grey-500 ls-2">$449</h6>
-                                        </div>                                
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card w-100 border-0 mt-4">
-                                        <div class="card-image w-100 p-0 text-center bg-greylight rounded-3 mb-2">
-                                            <a href="single-product.html"><img src="images/pp-14.png" alt="product-image" class="w-100 mt-0 mb-0 p-5"></a>
-                                        </div>
-                                        <div class="card-body w-100 p-0 text-center">
-                                            <div class="star w-100 d-block text-left mt-0 text-center">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star-disable.png" alt="star" class="w15 me-1 me-2">
-                                            </div>
-                                            <h2 class="mt-1 mb-1"><a href="single-product.html" class="text-black fw-700 font-xsss lh-26">Scoop-Neck Strappy</a></h2>
-                                            <h6 class="font-xsss fw-600 text-grey-500 ls-2">$449</h6>
-                                        </div>                                
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card w-100 border-0 mt-4">
-                                        <div class="card-image w-100 p-0 text-center bg-greylight rounded-3 mb-2">
-                                            <a href="single-product.html"><img src="images/pp-8.png" alt="product-image" class="w-100 mt-0 mb-0 p-5"></a>
-                                        </div>
-                                        <div class="card-body w-100 p-0 text-center">
-                                            <div class="star w-100 d-block text-left mt-0 text-center">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star-disable.png" alt="star" class="w15 me-1 me-2">
-                                            </div>
-                                            <h2 class="mt-1 mb-1"><a href="single-product.html" class="text-black fw-700 font-xsss lh-26">Butler Stool Ladder</a></h2>
-                                            <h6 class="font-xsss fw-600 text-grey-500 ls-2">$449</h6>
-                                        </div>                                
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card w-100 border-0 mt-4">
-                                        <div class="card-image w-100 p-0 text-center bg-greylight rounded-3 mb-2">
-                                            <a href="single-product.html"><img src="images/pp-22.png" alt="product-image" class="w-100 mt-0 mb-0 p-5"></a>
-                                        </div>
-                                        <div class="card-body w-100 p-0 text-center">
-                                            <div class="star w-100 d-block text-left mt-0 text-center">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star-disable.png" alt="star" class="w15 me-1 me-2">
-                                            </div>
-                                            <h2 class="mt-1 mb-1"><a href="single-product.html" class="text-black fw-700 font-xsss lh-26">Butler Stool Ladder</a></h2>
-                                            <h6 class="font-xsss fw-600 text-grey-500 ls-2">$449</h6>
-                                        </div>                                
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card w-100 border-0 mt-4">
-                                        <div class="card-image w-100 p-0 text-center bg-greylight rounded-3 mb-2">
-                                            <a href="single-product.html"><img src="images/pp-23.png" alt="product-image" class="w-100 mt-0 mb-0 p-5"></a>
-                                        </div>
-                                        <div class="card-body w-100 p-0 text-center">
-                                            <div class="star w-100 d-block text-left mt-0 text-center">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star-disable.png" alt="star" class="w15 me-1 me-2">
-                                            </div>
-                                            <h2 class="mt-1 mb-1"><a href="single-product.html" class="text-black fw-700 font-xsss lh-26">Butler Stool Ladder</a></h2>
-                                            <h6 class="font-xsss fw-600 text-grey-500 ls-2">$449</h6>
-                                        </div>                                
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card w-100 border-0 mt-4">
-                                        <div class="card-image w-100 p-0 text-center bg-greylight rounded-3 mb-2">
-                                            <a href="single-product.html"><img src="images/pp-8.png" alt="product-image" class="w-100 mt-0 mb-0 p-5"></a>
-                                        </div>
-                                        <div class="card-body w-100 p-0 text-center">
-                                            <div class="star w-100 d-block text-left mt-0 text-center">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star-disable.png" alt="star" class="w15 me-1 me-2">
-                                            </div>
-                                            <h2 class="mt-1 mb-1"><a href="single-product.html" class="text-black fw-700 font-xsss lh-26">Butler Stool Ladder</a></h2>
-                                            <h6 class="font-xsss fw-600 text-grey-500 ls-2">$449</h6>
-                                        </div>                                
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card w-100 border-0 mt-4">
-                                        <div class="card-image w-100 p-0 text-center bg-greylight rounded-3 mb-2">
-                                            <a href="single-product.html"><img src="images/pp-9.png" alt="product-image" class="w-100 mt-0 mb-0 p-5"></a>
-                                        </div>
-                                        <div class="card-body w-100 p-0 text-center">
-                                            <div class="star w-100 d-block text-left mt-0 text-center">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star-disable.png" alt="star" class="w15 me-1 me-2">
-                                            </div>
-                                            <h2 class="mt-1 mb-1"><a href="single-product.html" class="text-black fw-700 font-xsss lh-26">Textured Sleeveless Camisole</a></h2>
-                                            <h6 class="font-xsss fw-600 text-grey-500 ls-2">$449</h6>
-                                        </div>                                
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card w-100 border-0 mt-4">
-                                        <div class="card-image w-100 p-0 text-center bg-greylight rounded-3 mb-2">
-                                            <a href="single-product.html"><img src="images/pp-10.png" alt="product-image" class="w-100 mt-0 mb-0 p-5"></a>
-                                        </div>
-                                        <div class="card-body w-100 p-0 text-center">
-                                            <div class="star w-100 d-block text-left mt-0 text-center">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star-disable.png" alt="star" class="w15 me-1 me-2">
-                                            </div>
-                                            <h2 class="mt-1 mb-1"><a href="single-product.html" class="text-black fw-700 font-xsss lh-26">Adjustable Shoulder Straps</a></h2>
-                                            <h6 class="font-xsss fw-600 text-grey-500 ls-2">$449</h6>
-                                        </div>                                
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card w-100 border-0 mt-4">
-                                        <div class="card-image w-100 p-0 text-center bg-greylight rounded-3 mb-2">
-                                            <a href="single-product.html"><img src="images/pp-11.png" alt="product-image" class="w-100 mt-0 mb-0 p-5"></a>
-                                        </div>
-                                        <div class="card-body w-100 p-0 text-center">
-                                            <div class="star w-100 d-block text-left mt-0 text-center">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star-disable.png" alt="star" class="w15 me-1 me-2">
-                                            </div>
-                                            <h2 class="mt-1 mb-1"><a href="single-product.html" class="text-black fw-700 font-xsss lh-26">Neck Strappy Camisole</a></h2>
-                                            <h6 class="font-xsss fw-600 text-grey-500 ls-2">$449</h6>
-                                        </div>                                
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-4 col-md-6">
-                                    <div class="card w-100 border-0 mt-4">
-                                        <div class="card-image w-100 p-0 text-center bg-greylight rounded-3 mb-2">
-                                            <a href="single-product.html"><img src="images/pp-4.png" alt="product-image" class="w-100 mt-0 mb-0 p-5 mt-4 mb-4"></a>
-                                        </div>
-                                        <div class="card-body w-100 p-0 text-center">
-                                            <div class="star w-100 d-block text-left mt-0 text-center">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star.png" alt="star" class="w15">
-                                                <img src="images/star-disable.png" alt="star" class="w15 me-1 me-2">
-                                            </div>
-                                            <h2 class="mt-1 mb-1"><a href="single-product.html" class="text-black fw-700 font-xsss lh-26">Scoop-Neck Strappy</a></h2>
-                                            <h6 class="font-xsss fw-600 text-grey-500 ls-2">$449</h6>
-                                        </div>                                
-                                    </div>
-                                </div>
-                                <div class="col-lg-12 mt-3 mb-5 text-center"><a href="#" class="fw-700 text-white font-xssss text-uppercase ls-3 lh-32 rounded-3 mt-3 text-center d-inline-block p-2 bg-current w150">Load More</a></div>
-                            </div>
-                        </div>     
+                            </div> <!-- .card -->
+                        </div> <!-- .col-xl-12 -->
                     </div>
                 </div>
-                 
-            </div>            
+            </div>
         </div>
         <!-- main content -->
+
+
+
+
+
+
 
         <!-- right chat -->
         <div class="right-chat nav-wrap mt-2 right-scroll-bar">
@@ -742,8 +556,14 @@
     </div>
 
 
-    <script src="js/plugin.js"></script>
-    <script src="js/scripts.js"></script>
+
+
+
+
+
+
+    <script th:src="@{/js/plugin.js}"></script>
+    <script th:src="@{/js/scripts.js}"></script>
     
 </body>
 
