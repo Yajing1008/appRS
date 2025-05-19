@@ -40,9 +40,6 @@ public class AmiController {
 		return "ami";
 	}
 	
-	
-	
-	
 	@GetMapping("/searchAmis")
 	public String searchAmis(@RequestParam String search, HttpSession session, Model model) {
 		Etudiant etudiantConnecte = (Etudiant) session.getAttribute("etudiantConnecte");
@@ -71,7 +68,6 @@ public class AmiController {
 		return "redirect:/ami";
 	}
 	
-	// 接受好友请求
 	@GetMapping("/accepterDemande")
 	public String accepterDemande(@RequestParam Long idDemande, HttpSession session) {
 		DemandeAmi demande = demandeAmiRepository.findById(idDemande).orElse(null);
@@ -87,19 +83,30 @@ public class AmiController {
 			
 			etudiantRepository.save(e1);
 			etudiantRepository.save(e2);
+			demandeAmiRepository.save(demande);
 		}
-		return "redirect:/demandes";
+		Etudiant utilisateurConnecte = (Etudiant) session.getAttribute("etudiantConnecte");
+		List<DemandeAmi> nouvellesDemandes = demandeAmiRepository.findByReceveurAndStatut(utilisateurConnecte, "EN_ATTENTE");
+		session.setAttribute("demandesRecues", nouvellesDemandes);
+		
+		return "redirect:/ami";
 	}
-	
-	// 拒绝好友请求
 	@GetMapping("/refuserDemande")
-	public String refuserDemande(@RequestParam Long idDemande) {
+	public String refuserDemande(@RequestParam Long idDemande, HttpSession session) {
 		DemandeAmi demande = demandeAmiRepository.findById(idDemande).orElse(null);
+		
 		if (demande != null && "EN_ATTENTE".equals(demande.getStatut())) {
 			demande.setStatut("REFUSEE");
+			demandeAmiRepository.save(demande);
 		}
-		return "redirect:/demandes";
+		
+		Etudiant utilisateurConnecte = (Etudiant) session.getAttribute("etudiantConnecte");
+		List<DemandeAmi> nouvellesDemandes = demandeAmiRepository.findByReceveurAndStatut(utilisateurConnecte, "EN_ATTENTE");
+		session.setAttribute("demandesRecues", nouvellesDemandes);
+		
+		return "redirect:/ami";
 	}
+	
 }
 
 
