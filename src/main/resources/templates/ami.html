@@ -66,9 +66,13 @@
             </div>
 
             <div th:each="demande : ${session.demandesRecues}" class="card bg-transparent-card w-100 border-0 ps-5 mb-3">
-                <img th:src="@{/images/user-7.png}" alt="user" class="w40 position-absolute left-0">
+                <!-- ✅ Avatar dynamique -->
+                <img th:src="${demande.demandeur.photoEtudiant != '' ? demande.demandeur.photoEtudiant : '/images/default.png'}"
+                     alt="user" class="w40 position-absolute left-0 rounded-circle">
+
                 <h5 class="font-xsss text-grey-900 mb-1 mt-0 fw-700 d-block"
-                    th:text="${demande.demandeur.prenomEtudiant + ' ' + demande.demandeur.nomEtudiant}">Nom Demandeur
+                    th:text="${demande.demandeur.prenomEtudiant + ' ' + demande.demandeur.nomEtudiant}">
+                    Nom Demandeur
                     <span class="text-grey-400 font-xsssss fw-600 float-right mt-1">Just now</span>
                 </h5>
                 <h6 class="text-grey-500 fw-500 font-xssss lh-4">
@@ -82,6 +86,7 @@
                 </div>
             </div>
         </div>
+
 
         <a href="#" class="p-2 text-center ms-3 menu-icon chat-active-btn"><i
                 class="feather-message-square font-xl text-current"></i></a>
