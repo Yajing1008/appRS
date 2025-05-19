@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Controller
 public class AmiController {
@@ -32,10 +34,22 @@ public class AmiController {
 		List<Etudiant> allEtudiants = etudiantRepository.findAllExceptSelf(utilisateurConnecte.getIdEtudiant());
 		List<Etudiant> amis = etudiantRepository.findFriends(utilisateurConnecte.getIdEtudiant());
 		List<DemandeAmi> demandesRecues = demandeAmiRepository.findByReceveurAndStatut(utilisateurConnecte, "EN_ATTENTE");
+		List<DemandeAmi> demandesEnvoyees = demandeAmiRepository.findByDemandeurAndStatut(utilisateurConnecte, "EN_ATTENTE");
+		
+		Set<Long> idsReceveursEnAttente = demandesEnvoyees.stream()
+				.map(d -> d.getReceveur().getIdEtudiant())
+				.collect(Collectors.toSet());
+		
+		Set<Long> idsDemandeursEnAttente = demandesRecues.stream()
+				.map(d -> d.getDemandeur().getIdEtudiant())
+				.collect(Collectors.toSet());
 		
 		session.setAttribute("allEtudiants", allEtudiants);
 		session.setAttribute("amis", amis);
-		session.setAttribute("demandesRecues", demandesRecues); // ⬅️ 关键
+		session.setAttribute("demandesRecues", demandesRecues);
+		session.setAttribute("demandesEnvoyees", demandesEnvoyees);
+		session.setAttribute("idsReceveursEnAttente", idsReceveursEnAttente);
+		session.setAttribute("idsDemandeursEnAttente", idsDemandeursEnAttente);
 		
 		return "ami";
 	}
