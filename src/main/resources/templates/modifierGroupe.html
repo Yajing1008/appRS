@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifier le groupe</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body class="color-theme-blue mont-font">
+
+<div class="main-content right-chat-active" style="margin-top: 50px;">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-700 text-grey-900">Modifier le groupe</h2>
+            <a th:href="@{/groupe/groupes}" class="btn btn-outline-secondary font-xssss fw-600">← Retour aux groupes</a>
+        </div>
+
+        <div class="card border-0 shadow-xss rounded-3 p-4 bg-white mb-4">
+            <form th:action="@{'/groupe/' + ${groupe.idGroupe} + '/modifier'}"
+                  method="post"
+                  enctype="multipart/form-data"
+                  th:object="${groupe}">
+
+                <div class="mb-3">
+                    <label class="form-label fw-600">Nom du groupe :</label>
+                    <input type="text" th:field="*{nomGroupe}" class="form-control" placeholder="Nom du groupe" required/>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-600">Description :</label>
+                    <textarea th:field="*{descriptionGroupe}" class="form-control" placeholder="Description" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-600">Visibilité :</label>
+                    <select th:field="*{estPublicGroupe}" class="form-select">
+                        <option value="true">Public</option>
+                        <option value="false">Privé</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-600">Photo du groupe :</label>
+                    <input type="file" name="photo" accept="image/*" class="form-control"/>
+                </div>
+
+                <button type="submit" class="btn btn-primary font-xssss fw-600">Mettre à jour</button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
