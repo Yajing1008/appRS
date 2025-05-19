@@ -27,13 +27,13 @@ class EvenementTest {
 
         Evenement evenement = new Evenement();
         evenement.setIdEvenement(1L);
-        evenement.setDateHeureEvenement(date);
+        evenement.setDateHeureDebutEvenement(date);
         evenement.setNomEvenement("Réunion projet");
         evenement.setCreateur(createur);
         evenement.setMembreGroupe(membres);
 
         assertEquals(1L, evenement.getIdEvenement());
-        assertEquals(date, evenement.getDateHeureEvenement());
+        assertEquals(date, evenement.getDateHeureDebutEvenement());
         assertEquals("Réunion projet", evenement.getNomEvenement());
         assertSame(createur, evenement.getCreateur());
         assertEquals(1, evenement.getMembreGroupe().size());
@@ -48,16 +48,27 @@ class EvenementTest {
         List<Etudiant> membres = new ArrayList<>();
         membres.add(new Etudiant());
 
-        LocalDateTime date = LocalDateTime.of(2025, 12, 1, 10, 0);
+        LocalDateTime debut = LocalDateTime.of(2025, 12, 1, 10, 0);
+        LocalDateTime fin = LocalDateTime.of(2025, 12, 1, 12, 0);
+        String nom = "Conférence";
+        String imageUrl = "image.jpg";
+        String lieu = "Salle 101";
+        String description = "Une conférence importante.";
 
-        Evenement evenement = new Evenement(2L, date, "Conférence", createur, membres);
+        Evenement evenement = new Evenement(2L, debut, fin, nom, imageUrl, lieu, description, createur, membres);
 
         assertEquals(2L, evenement.getIdEvenement());
-        assertEquals(date, evenement.getDateHeureEvenement());
-        assertEquals("Conférence", evenement.getNomEvenement());
+        assertEquals(debut, evenement.getDateHeureDebutEvenement());
+        assertEquals(fin, evenement.getDateHeureFinEvenement());
+        assertEquals(nom, evenement.getNomEvenement());
+        assertEquals(imageUrl, evenement.getImageUrlEvenement());
+        assertEquals(lieu, evenement.getLieuEvenement());
+        assertEquals(description, evenement.getDescriptionEvenement());
         assertSame(createur, evenement.getCreateur());
         assertSame(membres, evenement.getMembreGroupe());
     }
+
+
 
     /**
      * Vérifie les valeurs par défaut d'une instance de {@link Evenement}.
@@ -67,7 +78,7 @@ class EvenementTest {
         Evenement evenement = new Evenement();
 
         assertNull(evenement.getIdEvenement());
-        assertNull(evenement.getDateHeureEvenement());
+        assertNull(evenement.getDateHeureDebutEvenement());
         assertNull(evenement.getNomEvenement());
         assertNotNull(evenement.getMembreGroupe());
         assertTrue(evenement.getMembreGroupe().isEmpty());
@@ -84,14 +95,14 @@ class EvenementTest {
 
         Evenement e1 = new Evenement();
         e1.setIdEvenement(1L);
-        e1.setDateHeureEvenement(date);
+        e1.setDateHeureDebutEvenement(date);
         e1.setNomEvenement("Nom");
         e1.setCreateur(createur);
         e1.setMembreGroupe(membres);
 
         Evenement e2 = new Evenement();
         e2.setIdEvenement(1L);
-        e2.setDateHeureEvenement(date);
+        e2.setDateHeureDebutEvenement(date);
         e2.setNomEvenement("Nom");
         e2.setCreateur(createur);
         e2.setMembreGroupe(membres);
