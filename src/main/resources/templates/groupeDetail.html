@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Détails du groupe</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body class="color-theme-blue mont-font">
+
+<div class="main-content right-chat-active" style="margin-top: 50px;">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h2 class="fw-700 text-grey-900" th:text="${groupe.nomGroupe}">Nom du groupe</h2>
+      <a th:href="@{/groupe/groupes}" class="btn btn-outline-secondary font-xssss fw-600">← Retour aux groupes</a>
+    </div>
+
+    <div th:if="${groupe.photoGroupe != ''}">
+      <img th:src="'data:image/png;base64,' + ${groupe.photoGroupe}" alt="Image du groupe" class="img-fluid rounded mb-3"/>
+    </div>
+
+
+    <div class="card border-0 shadow-xss rounded-3 p-4 bg-white mb-4">
+      <p class="font-xsss text-grey-500 mb-3"><strong>Description :</strong></p>
+      <p class="font-xssss text-grey-700" th:text="${groupe.descriptionGroupe}">Lorem ipsum...</p>
+
+      <p class="font-xsss text-grey-500 mt-4"><strong>Visibilité :</strong>
+        <span th:text="${groupe.estPublicGroupe} ? 'Public' : 'Privé'">Public</span>
+      </p>
+
+      <p class="font-xsss text-grey-500"><strong>Date de création :</strong>
+        <span th:text="${groupe.dateCreerGroupe}">2025-05-17</span>
+      </p>
+    </div>
+
+    <div th:if="${estMembre}">
+      <form th:action="@{'/groupe/' + ${groupe.idGroupe} + '/quitter'}" method="post">
+        <button type="submit" class="btn btn-danger font-xssss fw-600 mt-3">Quitter le groupe</button>
+      </form>
+    </div>
+
+    <!-- Membres -->
+    <div class="card border-0 shadow-xss rounded-3 p-4 bg-white">
+      <h4 class="fw-600 text-grey-800 mb-3">Membres du groupe</h4>
+      <ul class="list-unstyled">
+        <li th:each="participation : ${groupe.membres}" class="mb-2">
+                    <span class="font-xssss text-grey-700"
+                          th:text="${participation.etudiant.prenomEtudiant + ' ' + participation.etudiant.nomEtudiant}">
+                        Nom de l'étudiant
+                    </span>
+        </li>
+      </ul>
+      <div th:if="${groupe.membres.isEmpty()}" class="text-grey-500 font-xssss">
+        Aucun membre pour le moment.
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

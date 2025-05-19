@@ -1,28 +1,43 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
+    <meta charset="UTF-8">
     <title>Créer un groupe</title>
     <link rel="stylesheet" th:href="@{/css/style.css}" />
 </head>
-<body>
-    <div class="container mt-5">
-        <h2>Créer un nouveau groupe</h2>
-        <form th:action="@{/groupe/nouveau}" th:object="${groupe}" method="post">
-            <div class="form-group">
-                <label>Nom du groupe</label>
-                <input type="text" th:field="*{nomGroupe}" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label>Description</label>
-                <textarea th:field="*{descriptionGroupe}" class="form-control" rows="3"></textarea>
-            </div>
-            <div class="form-group">
-                <label>Visibilité</label><br/>
-                <input type="radio" th:field="*{estPublicGroupe}" value="true"> Public<br/>
-                <input type="radio" th:field="*{estPublicGroupe}" value="false"> Privé
-            </div>
-            <button type="submit" class="btn btn-success mt-3">Créer</button>
-        </form>
+<body class="color-theme-blue mont-font">
+
+<div class="main-content right-chat-active" style="margin-top: 50px;">
+    <div class="container">
+        <div class="card border-0 shadow-xss rounded-3 p-4 bg-white">
+            <h2 class="fw-700 text-grey-900 mb-4">Créer un nouveau groupe</h2>
+
+            <form th:action="@{/groupe/nouveau}" method="post" enctype="multipart/form-data" th:object="${groupe}">
+                <div class="mb-3">
+                    <input type="text" th:field="*{nomGroupe}" class="form-control bg-grey border-0 lh-32 font-xssss" placeholder="Nom du groupe" required />
+                </div>
+
+                <div class="mb-3">
+                    <textarea th:field="*{descriptionGroupe}" class="form-control bg-grey border-0 lh-32 font-xssss" placeholder="Description" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <select th:field="*{estPublicGroupe}" class="form-select bg-grey border-0 lh-32 font-xssss">
+                        <option value="true">Public</option>
+                        <option value="false">Privé</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="font-xssss text-grey-600 mb-1">Photo du groupe :</label>
+                    <input type="file" name="photo" accept="image/*" class="form-control bg-grey border-0 lh-32 font-xssss" />
+                </div>
+
+                <button type="submit" class="btn btn-success font-xssss fw-600 text-white px-4 py-2 rounded-3">Créer</button>
+            </form>
+        </div>
     </div>
+</div>
+
 </body>
 </html>

@@ -1,10 +1,10 @@
 package com.ut1.miage.appRS.model;
 
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.*;
 
 /**
  * Représente un groupe dans le réseau social.
@@ -31,6 +31,17 @@ public class Groupe {
 
     /** Indique si le groupe est public ou privé. */
     private Boolean estPublicGroupe;
+
+    public String getPhotoGroupe() {
+        return photoGroupe;
+    }
+
+    public void setPhotoGroupe(String photoGroupe) {
+        this.photoGroupe = photoGroupe;
+    }
+
+    @Lob
+    private String photoGroupe = "";
 
     /** Conversation associée au groupe. */
     @ManyToOne
