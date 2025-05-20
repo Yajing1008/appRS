@@ -54,8 +54,9 @@ public class Etudiant {
     /**
      * Liste des posts que l'étudiant a republiés.
      */
-    @ManyToMany(mappedBy = "republications")
-    private List<Post> postsRepublies = new ArrayList<>();
+    @OneToMany(mappedBy = "etudiant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Republier> postsRepublies = new ArrayList<>();
+
 
     /**
      * Groupes créés par l'étudiant.
@@ -200,11 +201,11 @@ public class Etudiant {
         this.postsPublies = postsPublies;
     }
 
-    public List<Post> getPostsRepublies() {
+    public List<Republier> getPostsRepublies() {
         return postsRepublies;
     }
 
-    public void setPostsRepublies(List<Post> postsRepublies) {
+    public void setPostsRepublies(List<Republier> postsRepublies) {
         this.postsRepublies = postsRepublies;
     }
 

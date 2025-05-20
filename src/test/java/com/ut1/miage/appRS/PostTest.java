@@ -1,10 +1,7 @@
 package com.ut1.miage.appRS;
 
+import com.ut1.miage.appRS.model.*;
 import org.junit.jupiter.api.Test;
-import com.ut1.miage.appRS.model.Commenter;
-import com.ut1.miage.appRS.model.Etudiant;
-import com.ut1.miage.appRS.model.Post;
-import com.ut1.miage.appRS.model.Reagir;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +28,29 @@ class PostTest {
         Etudiant etudiant = new Etudiant();
         post.setEtudiant(etudiant);
 
-        List<Etudiant> republications = new ArrayList<>();
-        republications.add(new Etudiant());
+        List<Republier> republications = new ArrayList<>();
+        Republier republier = new Republier();
+        republier.setPost(post);
+        republier.setEtudiant(new Etudiant());
+        republications.add(republier);
         post.setRepublications(republications);
 
+
         List<Commenter> commentaires = new ArrayList<>();
-        commentaires.add(new Commenter());
+        Commenter commenter = new Commenter();
+        commenter.setPost(post);
+        commenter.setEtudiant(new Etudiant());
+        commentaires.add(commenter);
         post.setCommentaires(commentaires);
 
+
         List<Reagir> reactions = new ArrayList<>();
-        reactions.add(new Reagir());
+        Reagir reaction = new Reagir();
+        reaction.setPost(post);
+        reaction.setEtudiant(new Etudiant());
+        reactions.add(reaction);
         post.setReactions(reactions);
+
 
         assertEquals(1L, post.getIdPost());
         assertEquals("Contenu de test", post.getContenuPost());
@@ -51,6 +60,7 @@ class PostTest {
         assertEquals(1, post.getCommentaires().size());
         assertEquals(1, post.getReactions().size());
     }
+
 
     /**
      * Vérifie les valeurs par défaut après la création d'une instance {@link Post}

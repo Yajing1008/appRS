@@ -1,9 +1,10 @@
 package com.ut1.miage.appRS.model;
 
+import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import jakarta.persistence.*;
 
 /**
  * Représente une publication (post) faite par un étudiant sur le réseau social.
@@ -23,19 +24,25 @@ public class Post {
     /** Indique si le post est public ou non. */
     private boolean estPublicPost;
 
+    /** Date de publication du post. */
+    @Column(nullable = false)
+    private LocalDateTime datePublicationPost = LocalDateTime.now();
+
+    /** Liste des URLs des photos du post. */
+    @ElementCollection
+    @CollectionTable(name = "post_photos", joinColumns = @JoinColumn(name = "id_post"))
+    @Column(name = "url_photo_post")
+    private List<String> urlsPhotosPost = new ArrayList<>();
+
     /** L'étudiant ayant publié ce post. */
     @ManyToOne
     @JoinColumn(name = "id_etudiant_publier", nullable = false)
     private Etudiant etudiant;
 
     /** Liste des étudiants ayant republié ce post. */
-    @ManyToMany
-    @JoinTable(
-        name = "republier",
-        joinColumns = @JoinColumn(name = "id_post"),
-        inverseJoinColumns = @JoinColumn(name = "id_etudiant")
-    )
-    private List<Etudiant> republications = new ArrayList<>();
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Republier> republications = new ArrayList<>();
+
 
     /** Liste des commentaires associés à ce post. */
     @OneToMany(mappedBy = "post")
@@ -93,15 +100,14 @@ public class Post {
     /**
      * @return la liste des étudiants ayant republié ce post
      */
-    public List<Etudiant> getRepublications() {
-        return republications;
+
+    public List<Republier> getRepublications() {
+        return republications.stream()
+                .sorted((r1, r2) -> r2.getDateRepublication().compareTo(r1.getDateRepublication()))
+                .toList();
     }
 
-    /**
-     * Définit la liste des étudiants ayant republié ce post.
-     * @param republications la liste des étudiants
-     */
-    public void setRepublications(List<Etudiant> republications) {
+    public void setRepublications(List<Republier> republications) {
         this.republications = republications;
     }
 
@@ -148,5 +154,66 @@ public class Post {
      */
     public void setContenuPost(String contenuPost) {
         this.contenuPost = contenuPost;
+    }
+
+    /**
+     * @return la date de publication du post
+     */
+    public LocalDateTime getDatePublicationPost() {
+        return datePublicationPost;
+    }
+
+    /**
+     * Définit la date de publication du post.
+     * @param datePublicationPost la date de publication
+     */
+
+    public void setDatePublicationPost(LocalDateTime datePublicationPost) {
+        this.datePublicationPost = datePublicationPost;
+    }
+
+    /**
+     * @return la liste des URLs des photos du post
+     */
+    public List<String> getUrlsPhotosPost() {
+        return urlsPhotosPost;
+    }
+
+    /**
+     * Définit la liste des URLs des photos du post.
+     * @param urlsPhotosPost la liste des URLs à associer au post
+     */
+    public void setUrlsPhotosPost(List<String> urlsPhotosPost) {
+        this.urlsPhotosPost = urlsPhotosPost;
+    }
+
+
+    public List<Reagir> getFavoris() {
+        List<Reagir> favoris = new ArrayList<>();
+        for (Reagir r : reactions) {
+            if ("Favori".equalsIgnoreCase(r.getStatut())) {
+                favoris.add(r);
+            }
+        }
+        return favoris;
+    }
+
+    public List<Reagir> getLikes() {
+        List<Reagir> likes = new ArrayList<>();
+        for (Reagir r : reactions) {
+            if ("Like".equalsIgnoreCase(r.getStatut())) {
+                likes.add(r);
+            }
+        }
+        return likes;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "idPost=" + idPost +
+                ", contenuPost='" + contenuPost + '\'' +
+                ", estPublicPost=" + estPublicPost +
+                '}';
     }
 }
