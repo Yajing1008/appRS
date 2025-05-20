@@ -50,12 +50,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 //            @Param("etudiant") Etudiant etudiant,
 //            @Param("amis") List<Etudiant> amis
 //    );
-
+    
     @Query("""
-            SELECT p 
-            FROM Post p 
-            WHERE p.estPublicPost = true OR (p.estPublicPost = false AND p.etudiant IN :amis)           
-            """)
+       SELECT p
+       FROM Post p
+       WHERE p.estPublicPost = true OR (p.estPublicPost = false AND p.etudiant IN :amis)
+       ORDER BY p.datePublicationPost DESC
+       """)
     List<Post> findRelativePosts(List<Etudiant> amis);
 
 

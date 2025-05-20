@@ -503,7 +503,9 @@
                                         <h4 class="fw-700 text-grey-900 font-xssss mt-1">
                                             <span th:text="${post.etudiant.prenomEtudiant} + ' ' + ${post.etudiant.nomEtudiant}">Nom Prénom</span>
                                             <span class="d-block font-xssss fw-500 mt-1 lh-3 text-grey-500"
-                                                  th:text="${post.datePublicationPost}">3 hour ago</span>
+                                                  th:text="${postDates[post.idPost]}">
+                                            20 mai 2025 à 14:35
+                                        </span>
                                         </h4>
                                         <!-- 删除按钮 -->
                                         <div class="ms-auto">
