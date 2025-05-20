@@ -41,6 +41,6 @@ class EtuMessConversationTest {
     @Test
     void testEmbeddedIdInitialization() {
         EtuMessConversation emc = new EtuMessConversation();
-        assertNotNull(emc.getId());
+        assertNotNull(emc.getIdEtuMessConversation());
     }
 }

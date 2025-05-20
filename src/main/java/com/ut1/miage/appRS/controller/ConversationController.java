@@ -6,18 +6,18 @@ import com.ut1.miage.appRS.model.Etudiant;
 import com.ut1.miage.appRS.repository.ConversationRepository;
 import com.ut1.miage.appRS.repository.EtuMessConversationRepository;
 import com.ut1.miage.appRS.repository.EtudiantRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
+@Controller
 public class ConversationController {
 	@Autowired
 	EtudiantRepository etudiantRepository;
@@ -25,31 +25,57 @@ public class ConversationController {
 	ConversationRepository conversationRepository;
 	@Autowired
 	EtuMessConversationRepository messageRepository;
-	
 	@GetMapping("/conversation/{id}")
-	public String openConversation(@PathVariable("id") Long idEtudiant, Model model, Principal principal) {
-		// 获取当前登录用户
-		Etudiant utilisateurConnecte = etudiantRepository.findByEmailEtudiant(principal.getName()).orElseThrow();
+	public String openConversation(@PathVariable("id") Long idEtudiant,
+	                               Model model,
+	                               HttpSession session) {
 		
-		// 查找两人之间是否已有对话
-		Optional<Conversation> conversationExistante = conversationRepository.findConversationBetween(utilisateurConnecte.getIdEtudiant(), idEtudiant);
+		Etudiant utilisateurConnecte = (Etudiant) session.getAttribute("etudiantConnecte");
+		if (utilisateurConnecte == null) {
+			return "redirect:/connexion";
+		}
 		
-		Conversation conversation;
-		if (conversationExistante.isPresent()) {
-			conversation = conversationExistante.get();
-		} else {
-			// 创建新的对话
+		// 尝试找两人共有的 conversation（必须在同一 conversation 下两人都发过消息）
+		List<Conversation> allConversations = conversationRepository.findAll();
+		Conversation conversation = null;
+		
+		for (Conversation c : allConversations) {
+			List<EtuMessConversation> messages = messageRepository.findByConversation(c);
+			boolean contientUtilisateur = messages.stream()
+					.anyMatch(m -> m.getEtudiant().getIdEtudiant().equals(utilisateurConnecte.getIdEtudiant()));
+			boolean contientAmi = messages.stream()
+					.anyMatch(m -> m.getEtudiant().getIdEtudiant().equals(idEtudiant));
+			if (contientUtilisateur && contientAmi) {
+				conversation = c;
+				break;
+			}
+		}
+		
+		if (conversation == null) {
+			// 创建新会话
 			conversation = new Conversation();
 			conversation.setDateCommenceConversation(LocalDateTime.now());
 			conversationRepository.save(conversation);
 			
-			// 插入一条空消息作为初始化（可选）
+			// 创建 "开始聊天！" 消息
+			EtuMessConversation msg1 = new EtuMessConversation();
+			msg1.setEtudiant(utilisateurConnecte);
+			msg1.setConversation(conversation);
+			msg1.setMessage("Start to chat!");
+			msg1.setDateHeureMessage(LocalDateTime.now());
+			messageRepository.save(msg1);
+			
+			Etudiant amiInit = etudiantRepository.findById(idEtudiant).orElseThrow();
+			
+			EtuMessConversation msg2 = new EtuMessConversation();
+			msg2.setEtudiant(amiInit);
+			msg2.setConversation(conversation);
+			msg2.setMessage("Start to chat!");
+			msg2.setDateHeureMessage(LocalDateTime.now());
+			messageRepository.save(msg2);
 		}
 		
-		// 获取目标聊天好友
 		Etudiant ami = etudiantRepository.findById(idEtudiant).orElseThrow();
-		
-		// 查询消息记录
 		List<EtuMessConversation> messages = messageRepository.findByConversation(conversation);
 		
 		model.addAttribute("ami", ami);
@@ -59,5 +85,39 @@ public class ConversationController {
 		
 		return "conversation";
 	}
+	@PostMapping("/send")
+	public String sendMessage(@RequestParam("idConversation") Long idConversation,
+	                          @RequestParam("idEtudiant") Long idEtudiant,
+	                          @RequestParam("message") String message,
+	                          HttpSession session) {
+		
+		Etudiant sender = (Etudiant) session.getAttribute("etudiantConnecte");
+		
+		if (sender == null || !sender.getIdEtudiant().equals(idEtudiant)) {
+			return "redirect:/connexion";
+		}
+		
+		Conversation conversation = conversationRepository.findById(idConversation).orElseThrow();
+		
+		EtuMessConversation msg = new EtuMessConversation();
+		msg.setEtudiant(sender);
+		msg.setConversation(conversation);
+		msg.setMessage(message);
+		msg.setDateHeureMessage(LocalDateTime.now());
+		
+		messageRepository.save(msg);
+		
+		return "redirect:/conversation/" + getOtherParticipantId(conversation, idEtudiant);
+	}
 	
+	// 获取聊天对方 ID 的辅助方法
+	private Long getOtherParticipantId(Conversation conv, Long myId) {
+		List<EtuMessConversation> messages = messageRepository.findByConversation(conv);
+		return messages.stream()
+				.map(m -> m.getEtudiant().getIdEtudiant())
+				.filter(id -> !id.equals(myId))
+				.findFirst()
+				.orElse(myId);
+	}
+
 }
