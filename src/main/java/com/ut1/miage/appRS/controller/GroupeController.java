@@ -184,6 +184,7 @@ public class GroupeController {
             estMembre = groupe.getMembres().stream()
                     .anyMatch(p -> p.getEtudiant() != null &&
                             etudiant.getIdEtudiant().equals(p.getEtudiant().getIdEtudiant()));
+            model.addAttribute("etudiantConnecte", etudiant);
         }
 
         model.addAttribute("estMembre", estMembre);
@@ -294,6 +295,23 @@ public class GroupeController {
         demandeRejoindreGroupeRepository.delete(demande);
 
         return "redirect:/groupe/mes-demandes";
+    }
+
+    @PostMapping("/groupe/{id}/retirer-membre/{idEtudiant}")
+    @Transactional
+    public String retirerMembre(@PathVariable Long id, @PathVariable Long idEtudiant, HttpSession session) {
+        Etudiant createur = (Etudiant) session.getAttribute("etudiantConnecte");
+        if (createur == null) return "redirect:/connexion";
+
+        Groupe groupe = groupeRepository.findById(id).orElse(null);
+        if (groupe == null || !groupe.getCreateur().getIdEtudiant().equals(createur.getIdEtudiant())) {
+            return "redirect:/groupe/groupes";
+        }
+
+        ParticiperId participerId = new ParticiperId(idEtudiant, id);
+        participerRepository.deleteById(participerId);
+
+        return "redirect:/groupe/" + id + "/details";
     }
 
 
