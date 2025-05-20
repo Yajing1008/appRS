@@ -45,6 +45,8 @@ public class IndexController {
         if (etudiantConnecte != null) {
             // ✅ 重新从数据库加载 Etudiant 实体，确保 Hibernate session 活跃
             etudiantConnecte = etudiantRepository.findById(etudiantConnecte.getIdEtudiant()).orElse(null);
+            List<Etudiant> amis = etudiantRepository.findFriends(etudiantConnecte.getIdEtudiant());
+            session.setAttribute("amis", amis);
         }
 
         List<Post> posts;
@@ -52,6 +54,7 @@ public class IndexController {
         if (etudiantConnecte == null) {
             // ✅ 未登录用户：只看公开帖子或公开转发原帖
             posts = postRepository.findAllPublicPostsWithPublicReposts();
+            session.setAttribute("amis", null);
         } else {
             // ✅ 获取朋友列表 + 自己
             List<Etudiant> amis = new ArrayList<>(etudiantConnecte.getAmis());

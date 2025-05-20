@@ -10,9 +10,8 @@ import java.util.Optional;
 public interface DemandeAmiRepository extends JpaRepository<DemandeAmi, Long> {
 	
 	List<DemandeAmi> findByReceveurAndStatut(Etudiant receveur, String statut);
-	
+	List<DemandeAmi> findByDemandeurAndStatut(Etudiant demandeur, String statut);
 	boolean existsByDemandeurAndReceveurAndStatut(Etudiant demandeur, Etudiant receveur, String statut);
-	
 	Optional<DemandeAmi> findById(Long idDemande);
 }
 
