@@ -1,10 +1,12 @@
 package com.ut1.miage.appRS.repository;
 
+import com.ut1.miage.appRS.model.Post;
+import com.ut1.miage.appRS.model.Reagir;
+import com.ut1.miage.appRS.model.ReagirId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ut1.miage.appRS.model.Reagir;
-
 @Repository
-public interface ReagirRepository extends JpaRepository<Reagir, Long> {
+public interface ReagirRepository extends JpaRepository<Reagir, ReagirId>{
+    void deleteAllByPost(Post post);
 }
