@@ -16,9 +16,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Controller
 public class IndexController {
@@ -41,46 +40,52 @@ public class IndexController {
     @GetMapping("/")
     public String index(Model model, HttpSession session) {
         Etudiant etudiantConnecte = (Etudiant) session.getAttribute("etudiantConnecte");
-
+        
+        
         if (etudiantConnecte != null) {
-            // ✅ 重新从数据库加载 Etudiant 实体，确保 Hibernate session 活跃
             etudiantConnecte = etudiantRepository.findById(etudiantConnecte.getIdEtudiant()).orElse(null);
-            List<Etudiant> amis = etudiantRepository.findFriends(etudiantConnecte.getIdEtudiant());
+            List<Etudiant> amis = new ArrayList<>(etudiantConnecte.getAmis());
             session.setAttribute("amis", amis);
-        }
-
-        List<Post> posts;
-
-        if (etudiantConnecte == null) {
-            // ✅ 未登录用户：只看公开帖子或公开转发原帖
-            posts = postRepository.findAllPublicPostsWithPublicReposts();
+        }else {
             session.setAttribute("amis", null);
+        }
+        
+        
+        List<Post> posts;
+        if (etudiantConnecte == null) {
+            posts = postRepository.findAllPublicPostsWithPublicReposts();
         } else {
-            // ✅ 获取朋友列表 + 自己
             List<Etudiant> amis = new ArrayList<>(etudiantConnecte.getAmis());
             amis.add(etudiantConnecte);
-
-            // ✅ 已登录用户：所有公开帖 + 我的私人帖 + 我的朋友的私人帖 + 朋友转发的公开帖或朋友的私密帖
             posts = postRepository.findRelativePosts(amis);
-
-
         }
-
-        // ✅ 防止懒加载失败：初始化转发列表为空列表（防止null）
+        
+        
         for (Post post : posts) {
             if (post.getRepublications() == null) {
                 post.setRepublications(new ArrayList<>());
             }
         }
-
-        // ✅ 可选：添加调试日志
-        System.out.println("Nombre de posts récupérés : " + posts.size());
-
+        
+        
+        // ✅ 格式化时间（法语格式）
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH:mm", Locale.FRENCH);
+        Map<Long, String> postDates = new HashMap<>();
+        
+        
+        for (Post post : posts) {
+            if (post.getDatePublicationPost() != null) {
+                String formatted = post.getDatePublicationPost().format(formatter);
+                postDates.put(post.getIdPost(), formatted);
+            }
+        }
+        
+        
         model.addAttribute("posts", posts);
+        model.addAttribute("postDates", postDates); // 👈 加入到 model
         model.addAttribute("etudiantConnecte", etudiantConnecte);
         return "index";
     }
-
 
 
 

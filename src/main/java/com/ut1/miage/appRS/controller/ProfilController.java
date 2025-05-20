@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Controller
@@ -36,42 +37,54 @@ public class ProfilController {
 
     @Autowired
     private CommenterRepository commenterRepository;
-
-
-
-
-
+    
+    
     @GetMapping("/profil")
     public String afficherProfil(Model model, HttpSession session) {
         Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
-
-        // 将 etudiant 传入页面，不论是否为空，用于左侧用户信息
+        
+        
         model.addAttribute("etudiant", etudiant);
-
-        // 如果未登录，传提示信息到页面，由 Thymeleaf 负责显示
+        
+        
         if (etudiant == null) {
             model.addAttribute("messageConnexion", "Veuillez vous connecter pour voir vos publications.");
-            return "profil"; // 不跳转，而是展示提示
+            return "profil";
         }
-
-        // ✅ 获取我发布的帖子
+        
+        
         List<Post> postsPublies = postRepository.findByEtudiantOrderByDatePublicationPostDesc(etudiant);
-        // ✅ 获取我转发的帖子
         List<Republier> republications = republierRepository.findByEtudiantOrderByDateRepublicationDesc(etudiant);
         List<Post> postsRepartages = republications.stream()
                 .map(Republier::getPost)
                 .toList();
-
-        // ✅ 合并并去重（按时间顺序，你也可以改成只按时间排序）
+        
+        
         Set<Post> posts = new LinkedHashSet<>();
-        posts.addAll(postsRepartages); // 转发放前面
+        posts.addAll(postsRepartages);
         posts.addAll(postsPublies);
-
+        
+        
+        // ✅ 时间格式器（法语）
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH:mm", Locale.FRENCH);
+        Map<Long, String> postDates = new HashMap<>();
+        
+        
+        for (Post post : posts) {
+            if (post.getDatePublicationPost() != null) {
+                String formatted = post.getDatePublicationPost().format(formatter);
+                postDates.put(post.getIdPost(), formatted);
+            }
+        }
+        
+        
         model.addAttribute("posts", posts);
+        model.addAttribute("postDates", postDates); // 👈 添加格式化时间Map
         return "profil";
     }
-
-
+    
+    
+    
     /**
      * Affiche le formulaire de modification du profil.
      *
@@ -79,38 +92,52 @@ public class ProfilController {
      * @param session Session HTTP permettant de récupérer l'étudiant connecté.
      * @return Le nom de la vue du formulaire d’édition, ici "profil_modifier".
      */
-
+    
     @GetMapping("/profil/modifier")
     public String showEditForm(Model model, HttpSession session) {
         Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
-
+        
+        
         model.addAttribute("etudiant", etudiant);
-
-        // 若用户未登录，只渲染空数据（可选）
+        
+        
         if (etudiant == null) {
             model.addAttribute("posts", Collections.emptyList());
+            model.addAttribute("postDates", Collections.emptyMap()); // 空时间map也一并传
             return "profil_modifier";
         }
-
-        // 获取我发布的帖子
+        
+        
         List<Post> postsPublies = postRepository.findByEtudiantOrderByDatePublicationPostDesc(etudiant);
-
-        // 获取我转发的帖子
         List<Republier> republications = republierRepository.findByEtudiantOrderByDateRepublicationDesc(etudiant);
         List<Post> postsRepartages = republications.stream()
                 .map(Republier::getPost)
                 .toList();
-
-        // 合并并去重（保留顺序）
+        
+        
         Set<Post> posts = new LinkedHashSet<>();
         posts.addAll(postsRepartages);
         posts.addAll(postsPublies);
-
+        
+        
+        // ✅ 格式化时间（法语）
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH:mm", Locale.FRENCH);
+        Map<Long, String> postDates = new HashMap<>();
+        
+        
+        for (Post post : posts) {
+            if (post.getDatePublicationPost() != null) {
+                postDates.put(post.getIdPost(), post.getDatePublicationPost().format(formatter));
+            }
+        }
+        
+        
         model.addAttribute("posts", posts);
+        model.addAttribute("postDates", postDates); // 👈 添加格式化后的时间
         return "profil_modifier";
     }
-
-
+    
+    
     /**
      * Enregistre les modifications du profil étudiant.
      *
