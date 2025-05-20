@@ -32,14 +32,6 @@ public class Groupe {
     /** Indique si le groupe est public ou privé. */
     private Boolean estPublicGroupe;
 
-    public String getPhotoGroupe() {
-        return photoGroupe;
-    }
-
-    public void setPhotoGroupe(String photoGroupe) {
-        this.photoGroupe = photoGroupe;
-    }
-
     @Lob
     private String photoGroupe = "";
 
@@ -56,6 +48,9 @@ public class Groupe {
     /** Liste des participations au groupe (étudiants membres). */
     @OneToMany(mappedBy = "groupe")
     private List<Participer> membres = new ArrayList<>();
+
+    @OneToMany(mappedBy = "groupe", cascade = CascadeType.ALL)
+    private List<DemandeRejoindreGroupe> demandes = new ArrayList<>();
 
     /** @return l'identifiant du groupe */
     public Long getIdGroupe() {
@@ -159,5 +154,21 @@ public class Groupe {
      */
     public void setMembres(List<Participer> membres) {
         this.membres = membres;
+    }
+
+    public String getPhotoGroupe() {
+        return photoGroupe;
+    }
+
+    public void setPhotoGroupe(String photoGroupe) {
+        this.photoGroupe = photoGroupe;
+    }
+
+    public List<DemandeRejoindreGroupe> getDemandes() {
+        return demandes;
+    }
+
+    public void setDemandes(List<DemandeRejoindreGroupe> demandes) {
+        this.demandes = demandes;
     }
 }

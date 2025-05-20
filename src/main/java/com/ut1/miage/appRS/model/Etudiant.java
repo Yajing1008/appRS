@@ -87,6 +87,10 @@ public class Etudiant {
     @OneToMany(mappedBy = "etudiant")
     private List<Reagir> reactions = new ArrayList<>();
 
+
+    @OneToMany(mappedBy = "etudiant", cascade = CascadeType.ALL)
+    private List<DemandeRejoindreGroupe> demandesGroupes = new ArrayList<>();
+
     /**
      * Universités fréquentées par l'étudiant.
      */
@@ -295,6 +299,14 @@ public class Etudiant {
     
     public void setDemandesRecues(List<DemandeAmi> demandesRecues) {
         this.demandesRecues = demandesRecues;
+    }
+
+    public List<DemandeRejoindreGroupe> getDemandesGroupes() {
+        return demandesGroupes;
+    }
+
+    public void setDemandesGroupes(List<DemandeRejoindreGroupe> demandesGroupes) {
+        this.demandesGroupes = demandesGroupes;
     }
     
     @Override

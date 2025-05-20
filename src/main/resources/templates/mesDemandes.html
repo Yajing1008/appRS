@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mes demandes</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body class="color-theme-blue mont-font">
+
+<div class="main-content right-chat-active" style="margin-top: 50px;">
+    <div class="container">
+
+        <!-- Bouton retour -->
+        <div class="mb-4 d-flex justify-content-end">
+            <a th:href="@{/groupe/groupes}" class="btn btn-outline-secondary font-xssss fw-600">
+                ← Retour aux groupes
+            </a>
+        </div>
+
+        <h2 class="fw-700 text-grey-900 mb-4">Demandes pour rejoindre mes groupes</h2>
+
+        <div th:if="${demandes != null and !demandes.isEmpty()}" class="row">
+            <div class="col-md-6 mb-4" th:each="demande : ${demandes}">
+                <div class="card shadow-xss rounded-3 p-4 bg-white">
+                    <p class="font-xsss mb-3">
+                        <strong th:text="${demande.etudiant.prenomEtudiant + ' ' + demande.etudiant.nomEtudiant}">Étudiant</strong>
+                        souhaite rejoindre le groupe
+                        <strong th:text="${demande.groupe.nomGroupe}">Nom du groupe</strong>.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <form th:action="@{'/groupe/demande/' + ${demande.idDemande} + '/accepter'}" method="post">
+                            <button type="submit" class="btn btn-success btn-sm">Accepter</button>
+                        </form>
+
+                        <form th:action="@{'/groupe/demande/' + ${demande.idDemande} + '/refuser'}" method="post">
+                            <button type="submit" class="btn btn-danger btn-sm">Refuser</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${demandes == null or demandes.isEmpty()}" class="text-center mt-5">
+            <p class="text-grey-600 font-xsss">Aucune demande reçue pour l’instant.</p>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

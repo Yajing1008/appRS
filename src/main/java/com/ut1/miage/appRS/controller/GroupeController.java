@@ -1,9 +1,7 @@
 package com.ut1.miage.appRS.controller;
 
-import com.ut1.miage.appRS.model.Etudiant;
-import com.ut1.miage.appRS.model.Groupe;
-import com.ut1.miage.appRS.model.Participer;
-import com.ut1.miage.appRS.model.ParticiperId;
+import com.ut1.miage.appRS.model.*;
+import com.ut1.miage.appRS.repository.DemandeRejoindreGroupeRepository;
 import com.ut1.miage.appRS.repository.GroupeRepository;
 import com.ut1.miage.appRS.repository.ParticiperRepository;
 import jakarta.servlet.http.HttpSession;
@@ -17,14 +15,19 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class GroupeController {
 
     @Autowired
     private GroupeRepository groupeRepository;
+
     @Autowired
     private ParticiperRepository participerRepository;
+
+    @Autowired
+    private DemandeRejoindreGroupeRepository demandeRejoindreGroupeRepository;
 
     @GetMapping("/groupe/nouveau")
     public String afficherFormulaire(Model model, HttpSession session) {
@@ -103,6 +106,14 @@ public class GroupeController {
                 }
             }
         }
+
+        List<DemandeRejoindreGroupe> demandesExistantes = demandeRejoindreGroupeRepository.findByEtudiant(etudiant);
+        Set<Long> groupesDemandes = demandesExistantes.stream()
+                .filter(d -> !Boolean.TRUE.equals(d.getApprouvee())) // uniquement les demandes non approuvées
+                .map(d -> d.getGroupe().getIdGroupe())
+                .collect(Collectors.toSet());
+
+        model.addAttribute("groupesDemandes", groupesDemandes);
 
         model.addAttribute("groupesRejoints", groupesRejoints);
         model.addAttribute("groupesCrees", groupesCrees);
@@ -221,4 +232,69 @@ public class GroupeController {
         groupeRepository.save(groupe);
         return "redirect:/groupe/" + id + "/details";
     }
+
+    @PostMapping("/groupe/{id}/demande-rejoindre")
+    public String demanderARejoindre(@PathVariable Long id, HttpSession session) {
+        Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
+        if (etudiant == null) return "redirect:/connexion";
+
+        Groupe groupe = groupeRepository.findById(id).orElse(null);
+        if (groupe == null || groupe.getEstPublicGroupe()) return "redirect:/groupe/groupes";
+
+        DemandeRejoindreGroupe demande = new DemandeRejoindreGroupe();
+        demande.setEtudiant(etudiant);
+        demande.setGroupe(groupe);
+        demandeRejoindreGroupeRepository.save(demande);
+
+        return "redirect:/groupe/groupes";
+    }
+
+    @GetMapping("/groupe/mes-demandes")
+    public String afficherDemandes(Model model, HttpSession session) {
+        Etudiant createur = (Etudiant) session.getAttribute("etudiantConnecte");
+        if (createur == null) return "redirect:/connexion";
+
+        List<DemandeRejoindreGroupe> demandes = demandeRejoindreGroupeRepository.findByGroupeCreateurIdEtudiant(createur.getIdEtudiant());
+        model.addAttribute("demandes", demandes);
+        return "mesDemandes";
+    }
+
+
+    @PostMapping("/groupe/demande/{id}/accepter")
+    public String accepterDemande(@PathVariable Long id) {
+        DemandeRejoindreGroupe demande = demandeRejoindreGroupeRepository.findById(id).orElse(null);
+        if (demande != null) {
+            demande.setApprouvee(true);
+            demandeRejoindreGroupeRepository.save(demande);
+
+            // Ajouter le participant
+            Participer participer = new Participer();
+            participer.setEtudiant(demande.getEtudiant());
+            participer.setGroupe(demande.getGroupe());
+            participer.setRole("membre");
+            ParticiperId pid = new ParticiperId(demande.getEtudiant().getIdEtudiant(), demande.getGroupe().getIdGroupe());
+            participer.setId(pid);
+            participerRepository.save(participer);
+        }
+
+        // Supprimer la demande après acceptation
+        demandeRejoindreGroupeRepository.delete(demande);
+
+        return "redirect:/groupe/mes-demandes";
+    }
+
+    @PostMapping("/groupe/demande/{id}/refuser")
+    public String refuserDemande(@PathVariable Long id) {
+        DemandeRejoindreGroupe demande = demandeRejoindreGroupeRepository.findById(id).orElse(null);
+        if (demande != null) {
+            demande.setApprouvee(false);
+            demandeRejoindreGroupeRepository.save(demande);
+        }
+        // Supprimer la demande après acceptation
+        demandeRejoindreGroupeRepository.delete(demande);
+
+        return "redirect:/groupe/mes-demandes";
+    }
+
+
 }
