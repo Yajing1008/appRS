@@ -1,6 +1,7 @@
 package com.ut1.miage.appRS.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class Conversation {
     /**
      * Date de début de la conversation.
      */
-    private LocalDate dateCommenceConversation;
+    private LocalDateTime dateCommenceConversation;
 
     /**
      * Groupes associés à cette conversation.
@@ -63,7 +64,7 @@ public class Conversation {
      * Retourne la date de début de la conversation.
      * @return dateCommenceConversation
      */
-    public LocalDate getDateCommenceConversation() {
+    public LocalDateTime getDateCommenceConversation() {
         return dateCommenceConversation;
     }
 
@@ -71,7 +72,7 @@ public class Conversation {
      * Définit la date de début de la conversation.
      * @param dateCommenceConversation date à définir
      */
-    public void setDateCommenceConversation(LocalDate dateCommenceConversation) {
+    public void setDateCommenceConversation(LocalDateTime dateCommenceConversation) {
         this.dateCommenceConversation = dateCommenceConversation;
     }
 

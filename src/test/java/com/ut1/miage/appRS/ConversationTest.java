@@ -6,6 +6,7 @@ import com.ut1.miage.appRS.model.EtuMessConversation;
 import com.ut1.miage.appRS.model.Groupe;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ class ConversationTest {
         Conversation conversation = new Conversation();
 
         Long id = 1L;
-        LocalDate date = LocalDate.of(2024, 10, 1);
+        LocalDateTime date = LocalDateTime.of(2024, 10, 1,1,1,1);
 
         conversation.setIdConversation(id);
         conversation.setDateCommenceConversation(date);
