@@ -114,9 +114,17 @@ public class EtudiantTest {
     @Test
     void testSetPostsRepublies() {
         Etudiant etudiant = new Etudiant();
-        List<Post> republies = new ArrayList<>();
-        republies.add(new Post());
+
+        List<Republier> republies = new ArrayList<>();
+
+        Republier republier = new Republier();
+        republier.setEtudiant(etudiant);
+        republier.setPost(new Post());
+
+        republies.add(republier);
+
         etudiant.setPostsRepublies(republies);
+
         assertEquals(republies, etudiant.getPostsRepublies());
     }
 

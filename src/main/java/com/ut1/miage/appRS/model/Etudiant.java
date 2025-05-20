@@ -54,8 +54,9 @@ public class Etudiant {
     /**
      * Liste des posts que l'étudiant a republiés.
      */
-    @ManyToMany(mappedBy = "republications")
-    private List<Post> postsRepublies = new ArrayList<>();
+    @OneToMany(mappedBy = "etudiant", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Republier> postsRepublies = new ArrayList<>();
+
 
     /**
      * Groupes créés par l'étudiant.
@@ -86,6 +87,10 @@ public class Etudiant {
      */
     @OneToMany(mappedBy = "etudiant")
     private List<Reagir> reactions = new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "etudiant", cascade = CascadeType.ALL)
+    private List<DemandeRejoindreGroupe> demandesGroupes = new ArrayList<>();
 
     /**
      * Universités fréquentées par l'étudiant.
@@ -200,11 +205,11 @@ public class Etudiant {
         this.postsPublies = postsPublies;
     }
 
-    public List<Post> getPostsRepublies() {
+    public List<Republier> getPostsRepublies() {
         return postsRepublies;
     }
 
-    public void setPostsRepublies(List<Post> postsRepublies) {
+    public void setPostsRepublies(List<Republier> postsRepublies) {
         this.postsRepublies = postsRepublies;
     }
 
@@ -295,6 +300,14 @@ public class Etudiant {
     
     public void setDemandesRecues(List<DemandeAmi> demandesRecues) {
         this.demandesRecues = demandesRecues;
+    }
+
+    public List<DemandeRejoindreGroupe> getDemandesGroupes() {
+        return demandesGroupes;
+    }
+
+    public void setDemandesGroupes(List<DemandeRejoindreGroupe> demandesGroupes) {
+        this.demandesGroupes = demandesGroupes;
     }
     
     @Override
