@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional // Annule les changements à la fin de chaque test
 class ConnectionControllerTest {
-
+    
     @Autowired
     private MockMvc mockMvc;
 
@@ -47,14 +47,12 @@ class ConnectionControllerTest {
     @Test
     void testInscriptionReussie() throws Exception {
         mockMvc.perform(post("/inscription")
-                        .param("prenomEtudiant", "Jean")
-                        .param("nomEtudiant", "Dupont")
-                        .param("emailEtudiant", "jean@example.com")
-                        .param("motDePass", "motdepasse"))
+                        .param("emailEtudiant", "test@example.com")
+                        .param("motDePass", "secret123"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("confirmationInscription"));
     }
-
+    
     /**
      * [Test48.2]
      * Teste l'inscription avec une adresse email déjà utilisée.
