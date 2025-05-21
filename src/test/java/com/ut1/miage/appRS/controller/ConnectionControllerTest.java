@@ -1,4 +1,4 @@
-package com.ut1.miage.appRS;
+package com.ut1.miage.appRS.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ut1.miage.appRS.model.Etudiant;

@@ -1,6 +1,5 @@
-package com.ut1.miage.appRS;
+package com.ut1.miage.appRS.model;
 
-import com.ut1.miage.appRS.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

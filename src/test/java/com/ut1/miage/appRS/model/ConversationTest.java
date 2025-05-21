@@ -1,11 +1,7 @@
-package com.ut1.miage.appRS;
+package com.ut1.miage.appRS.model;
 
 import org.junit.jupiter.api.Test;
-import com.ut1.miage.appRS.model.Conversation;
-import com.ut1.miage.appRS.model.EtuMessConversation;
-import com.ut1.miage.appRS.model.Groupe;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
