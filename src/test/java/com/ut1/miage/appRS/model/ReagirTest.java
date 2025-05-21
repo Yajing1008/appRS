@@ -1,9 +1,7 @@
-package com.ut1.miage.appRS;
+package com.ut1.miage.appRS.model;
 
 import org.junit.jupiter.api.Test;
-import com.ut1.miage.appRS.model.Etudiant;
-import com.ut1.miage.appRS.model.Post;
-import com.ut1.miage.appRS.model.Reagir;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
