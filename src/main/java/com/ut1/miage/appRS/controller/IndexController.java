@@ -36,6 +36,9 @@ public class IndexController {
 
     @Autowired
     private CommenterRepository commenterRepository;
+    
+    @Autowired
+    private ParticiperRepository participerRepository;
 
     @GetMapping("/")
     public String index(Model model, HttpSession session) {
@@ -45,11 +48,18 @@ public class IndexController {
         if (etudiantConnecte != null) {
             etudiantConnecte = etudiantRepository.findById(etudiantConnecte.getIdEtudiant()).orElse(null);
             List<Etudiant> amis = new ArrayList<>(etudiantConnecte.getAmis());
+            List<Groupe> groupes = new ArrayList<>(etudiantConnecte.getGroupesCrees());
+            List<Participer> participations = new ArrayList<>(participerRepository.findByEtudiant_IdEtudiant(etudiantConnecte.getIdEtudiant()));
+            List<Groupe> groupesMembre = participations.stream()
+                    .map(Participer::getGroupe)
+                    .toList();
+            groupes.addAll(groupesMembre);
             session.setAttribute("amis", amis);
+            session.setAttribute("mesGroupes",groupes);
         }else {
             session.setAttribute("amis", null);
+            session.setAttribute("mesGroupes",null);
         }
-        
         
         List<Post> posts;
         if (etudiantConnecte == null) {

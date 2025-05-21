@@ -51,8 +51,11 @@ public class GroupeController {
         if (!photo.isEmpty()) {
             try {
                 byte[] bytes = photo.getBytes();
+                String contentType = photo.getContentType();
+                String prefix = "data:" + (contentType != null ? contentType : "application/octet-stream") + ";base64,";
                 String base64Image = Base64.getEncoder().encodeToString(bytes);
-                groupe.setPhotoGroupe(base64Image);
+                String base64Url = prefix + base64Image;
+                groupe.setPhotoGroupe(base64Url);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -226,8 +229,11 @@ public class GroupeController {
 
         if (!fichierPhoto.isEmpty()) {
             byte[] bytes = fichierPhoto.getBytes();
-            String base64 = Base64.getEncoder().encodeToString(bytes);
-            groupe.setPhotoGroupe(base64);
+            String contentType = fichierPhoto.getContentType();
+            String prefix = "data:" + (contentType != null ? contentType : "application/octet-stream") + ";base64,";
+            String base64Image = Base64.getEncoder().encodeToString(bytes);
+            String base64Url = prefix + base64Image;
+            groupe.setPhotoGroupe(base64Url);
         }
 
         groupeRepository.save(groupe);
