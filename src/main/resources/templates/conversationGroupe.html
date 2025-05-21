@@ -371,14 +371,12 @@
                         <div class="chat-wrapper">
                             <div class="chat-header"
                                  style="display: flex; align-items: center; padding: 10px 15px; background: #f0f2f5; border-bottom: 1px solid #ccc;">
-                                <img th:src="${ami.photoEtudiant != '' ? ami.photoEtudiant : '/images/user-1.png'}"
-                                     alt="Avatar"
+                                <img th:src="${groupe.photoGroupe != '' ? groupe.photoGroupe : '/images/group-default.png'}"
+                                     alt="Group Avatar"
                                      style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; margin-right: 15px;">
-                                <div style="display: flex; flex-direction: column;">
-                                    <h5 th:text="${ami.prenomEtudiant + ' ' + ami.nomEtudiant}"
-                                        style="margin: 0; font-size: 1.1rem; font-weight: 600;">Nom complet</h5>
-                                    <small th:text="${ami.emailEtudiant}"
-                                           style="color: grey; font-size: 0.85rem;">email@example.com</small>
+                                <div>
+                                    <h5 th:text="${groupe.nomGroupe}" style="margin: 0; font-size: 1.1rem; font-weight: 600;">Nom du groupe</h5>
+                                    <small th:text="'Créé le ' + ${groupe.dateCreerGroupe}"></small>
                                 </div>
                             </div>
                             <div class="chat-body">

@@ -3,6 +3,7 @@ package com.ut1.miage.appRS.controller;
 import com.ut1.miage.appRS.model.Conversation;
 import com.ut1.miage.appRS.model.EtuMessConversation;
 import com.ut1.miage.appRS.model.Etudiant;
+import com.ut1.miage.appRS.model.Groupe;
 import com.ut1.miage.appRS.repository.ConversationRepository;
 import com.ut1.miage.appRS.repository.EtuMessConversationRepository;
 import com.ut1.miage.appRS.repository.EtudiantRepository;
@@ -29,98 +30,63 @@ public class ConversationGroupeController {
 	@Autowired
 	EtudiantRepository etudiantRepository;
 	@GetMapping("/conversationGroupe/{id}")
-	public String openConversation(@PathVariable("id") Long idEtudiant,
-	                               Model model,
-	                               HttpSession session) {
+	public String afficherConversationGroupe(@PathVariable("id") Long idGroupe,
+	                                         Model model,
+	                                         HttpSession session) {
 		
 		Etudiant utilisateurConnecte = (Etudiant) session.getAttribute("etudiantConnecte");
 		if (utilisateurConnecte == null) {
 			return "redirect:/connexion";
 		}
 		
-		// 尝试找两人共有的 conversation（必须在同一 conversation 下两人都发过消息）
-		List<Conversation> allConversations = conversationRepository.findAll();
-		Conversation conversation = null;
-		
-		for (Conversation c : allConversations) {
-			List<EtuMessConversation> messages = messageRepository.findByConversation(c);
-			boolean contientUtilisateur = messages.stream()
-					.anyMatch(m -> m.getEtudiant().getIdEtudiant().equals(utilisateurConnecte.getIdEtudiant()));
-			boolean contientAmi = messages.stream()
-					.anyMatch(m -> m.getEtudiant().getIdEtudiant().equals(idEtudiant));
-			if (contientUtilisateur && contientAmi) {
-				conversation = c;
-				break;
-			}
+		Groupe groupe = groupeRepository.findById(idGroupe).orElse(null);
+		if (groupe == null || groupe.getConversation() == null) {
+			return "redirect:/groupe/groupes";
 		}
 		
-		if (conversation == null) {
-			// 创建新会话
-			conversation = new Conversation();
-			conversation.setDateCommenceConversation(LocalDateTime.now());
-			conversationRepository.save(conversation);
-			
-			// 创建 "开始聊天！" 消息
-			EtuMessConversation msg1 = new EtuMessConversation();
-			msg1.setEtudiant(utilisateurConnecte);
-			msg1.setConversation(conversation);
-			msg1.setMessage("Start to chat!");
-			msg1.setDateHeureMessage(LocalDateTime.now());
-			messageRepository.save(msg1);
-			
-			Etudiant amiInit = etudiantRepository.findById(idEtudiant).orElseThrow();
-			
-			EtuMessConversation msg2 = new EtuMessConversation();
-			msg2.setEtudiant(amiInit);
-			msg2.setConversation(conversation);
-			msg2.setMessage("Start to chat!");
-			msg2.setDateHeureMessage(LocalDateTime.now());
-			messageRepository.save(msg2);
-		}
-		
-		Etudiant ami = etudiantRepository.findById(idEtudiant).orElseThrow();
+		Conversation conversation = groupe.getConversation();
 		List<EtuMessConversation> messages = messageRepository.findByConversation(conversation);
 		
-		model.addAttribute("ami", ami);
+		model.addAttribute("groupe", groupe); // 用于显示群组名、头像
 		model.addAttribute("conversation", conversation);
 		model.addAttribute("messages", messages);
 		model.addAttribute("utilisateurConnecte", utilisateurConnecte);
 		
 		return "conversationGroupe";
 	}
+	
 	@PostMapping("/sendGroupe")
-	public String sendMessage(@RequestParam("idConversation") Long idConversation,
-	                          @RequestParam("idEtudiant") Long idEtudiant,
-	                          @RequestParam("message") String message,
-	                          HttpSession session) {
+	public String envoyerMessageGroupe(@RequestParam("idConversation") Long idConversation,
+	                                   @RequestParam("idEtudiant") Long idEtudiant,
+	                                   @RequestParam("message") String contenu,
+	                                   HttpSession session) {
 		
-		Etudiant sender = (Etudiant) session.getAttribute("etudiantConnecte");
-		
-		if (sender == null || !sender.getIdEtudiant().equals(idEtudiant)) {
+		Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
+		if (etudiant == null || !etudiant.getIdEtudiant().equals(idEtudiant)) {
 			return "redirect:/connexion";
 		}
 		
-		Conversation conversation = conversationRepository.findById(idConversation).orElseThrow();
+		Conversation conversation = conversationRepository.findById(idConversation).orElse(null);
+		if (conversation == null) {
+			return "redirect:/groupe/groupes";
+		}
 		
-		EtuMessConversation msg = new EtuMessConversation();
-		msg.setEtudiant(sender);
-		msg.setConversation(conversation);
-		msg.setMessage(message);
-		msg.setDateHeureMessage(LocalDateTime.now());
+		// 创建消息对象
+		EtuMessConversation message = new EtuMessConversation();
+		message.setConversation(conversation);
+		message.setEtudiant(etudiant);
+		message.setMessage(contenu);
+		message.setDateHeureMessage(LocalDateTime.now());
 		
-		messageRepository.save(msg);
+		messageRepository.save(message);
 		
-		return "redirect:/conversationGroupe/" + getOtherParticipantId(conversation, idEtudiant);
+		// 重定向回群组聊天页面
+		Groupe groupe = groupeRepository.findByConversation(conversation).orElse(null);
+		if (groupe != null) {
+			return "redirect:/conversationGroupe/" + groupe.getIdGroupe();
+		} else {
+			return "redirect:/groupe/groupes";
+		}
 	}
-	
-	private Long getOtherParticipantId(Conversation conv, Long myId) {
-		List<EtuMessConversation> messages = messageRepository.findByConversation(conv);
-		return messages.stream()
-				.map(m -> m.getEtudiant().getIdEtudiant())
-				.filter(id -> !id.equals(myId))
-				.findFirst()
-				.orElse(myId);
-	}
-	
 	
 }
