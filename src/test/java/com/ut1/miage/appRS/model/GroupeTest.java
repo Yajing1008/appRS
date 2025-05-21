@@ -83,4 +83,53 @@ class GroupeTest {
 
         assertEquals(2, groupe.getMembres().size());
     }
+
+    /**
+    * Vérifie le bon fonctionnement du champ photoGroupe.
+    */
+    @Test
+    void testPhotoGroupe() {
+        Groupe groupe = new Groupe();
+        String photo = "photo.png";
+        groupe.setPhotoGroupe(photo);
+        assertEquals(photo, groupe.getPhotoGroupe());
+    }
+
+    /**
+    * Vérifie l'ajout et la récupération des demandes de rejoindre un groupe.
+    */
+    @Test
+    void testDemandesGroupe() {
+        Groupe groupe = new Groupe();
+        DemandeRejoindreGroupe demande1 = new DemandeRejoindreGroupe();
+        DemandeRejoindreGroupe demande2 = new DemandeRejoindreGroupe();
+        List<DemandeRejoindreGroupe> demandes = new ArrayList<>();
+        demandes.add(demande1);
+        demandes.add(demande2);
+
+        groupe.setDemandes(demandes);
+
+        assertEquals(2, groupe.getDemandes().size());
+        assertSame(demande1, groupe.getDemandes().get(0));
+    }
+
+    /**
+    * Vérifie que les méthodes equals et hashCode fonctionnent correctement.
+    */
+    @Test
+    void testEqualsAndHashCode() {
+        Groupe g1 = new Groupe();
+        g1.setIdGroupe(1L);
+
+        Groupe g2 = new Groupe();
+        g2.setIdGroupe(1L);
+
+        Groupe g3 = new Groupe();
+        g3.setIdGroupe(2L);
+
+        assertEquals(g1, g2);
+        assertEquals(g1.hashCode(), g2.hashCode());
+        assertNotEquals(g1, g3);
+        assertNotEquals(g1.hashCode(), g3.hashCode());
+    }
 }

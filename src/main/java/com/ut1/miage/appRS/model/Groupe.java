@@ -5,11 +5,12 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
- * Représente un groupe dans le réseau social.
- * Un groupe peut avoir un créateur, des membres, une conversation associée,
- * et être public ou privé.
+ * Représente un groupe dans le réseau social étudiant.
+ * Un groupe peut être public ou privé, avoir un créateur, des membres, des demandes d’adhésion
+ * et une conversation de groupe.
  */
 @Entity
 @Table(name = "GROUPES")
@@ -29,28 +30,32 @@ public class Groupe {
     /** Description du groupe. */
     private String descriptionGroupe;
 
-    /** Indique si le groupe est public ou privé. */
+    /** Indique si le groupe est public (true) ou privé (false). */
     private Boolean estPublicGroupe;
 
+    /** Photo de couverture du groupe (base64 ou URL). */
     @Lob
     private String photoGroupe = "";
 
-    /** Conversation associée au groupe. */
+    /** Conversation liée à ce groupe (peut être null au début). */
     @ManyToOne
     @JoinColumn(name = "id_conversation")
     private Conversation conversation;
 
-    /** Étudiant créateur du groupe. */
+    /** Étudiant qui a créé le groupe. */
     @ManyToOne
     @JoinColumn(name = "id_etudiant")
     private Etudiant createur;
 
-    /** Liste des participations au groupe (étudiants membres). */
+    /** Liste des membres du groupe via la relation Participer. */
     @OneToMany(mappedBy = "groupe")
     private List<Participer> membres = new ArrayList<>();
 
+    /** Liste des demandes pour rejoindre le groupe. */
     @OneToMany(mappedBy = "groupe", cascade = CascadeType.ALL)
     private List<DemandeRejoindreGroupe> demandes = new ArrayList<>();
+
+    // ====== Getters ======
 
     /** @return l'identifiant du groupe */
     public Long getIdGroupe() {
@@ -72,20 +77,37 @@ public class Groupe {
         return descriptionGroupe;
     }
 
-    /** @return true si le groupe est public, sinon false */
+    /** @return true si le groupe est public, false s’il est privé */
     public Boolean getEstPublicGroupe() {
         return estPublicGroupe;
     }
 
-    /** @return la conversation liée au groupe */
+    /** @return la conversation associée au groupe */
     public Conversation getConversation() {
         return conversation;
     }
 
-    /** @return l'étudiant créateur du groupe */
+    /** @return l’étudiant créateur du groupe */
     public Etudiant getCreateur() {
         return createur;
     }
+
+    /** @return la liste des membres du groupe */
+    public List<Participer> getMembres() {
+        return membres;
+    }
+
+    /** @return la photo du groupe (URL ou base64) */
+    public String getPhotoGroupe() {
+        return photoGroupe;
+    }
+
+    /** @return les demandes d'adhésion au groupe */
+    public List<DemandeRejoindreGroupe> getDemandes() {
+        return demandes;
+    }
+
+    // ====== Setters ======
 
     /**
      * Définit l'identifiant du groupe.
@@ -121,54 +143,63 @@ public class Groupe {
 
     /**
      * Définit si le groupe est public.
-     * @param estPublicGroupe true si public, sinon false
+     * @param estPublicGroupe true si public, false sinon
      */
     public void setEstPublicGroupe(Boolean estPublicGroupe) {
         this.estPublicGroupe = estPublicGroupe;
     }
 
     /**
-     * Définit la conversation associée au groupe.
-     * @param conversation la conversation à associer
+     * Définit la conversation associée.
+     * @param conversation conversation à associer
      */
     public void setConversation(Conversation conversation) {
         this.conversation = conversation;
     }
 
     /**
-     * Définit l'étudiant créateur du groupe.
-     * @param createur l'étudiant créateur
+     * Définit le créateur du groupe.
+     * @param createur étudiant à définir comme créateur
      */
     public void setCreateur(Etudiant createur) {
         this.createur = createur;
     }
 
-    /** @return la liste des membres du groupe */
-    public List<Participer> getMembres() {
-        return membres;
-    }
-
     /**
-     * Définit la liste des membres du groupe.
-     * @param membres liste de participations à associer
+     * Définit la liste des membres.
+     * @param membres liste des participations
      */
     public void setMembres(List<Participer> membres) {
         this.membres = membres;
     }
 
-    public String getPhotoGroupe() {
-        return photoGroupe;
-    }
-
+    /**
+     * Définit la photo du groupe.
+     * @param photoGroupe photo à définir
+     */
     public void setPhotoGroupe(String photoGroupe) {
         this.photoGroupe = photoGroupe;
     }
 
-    public List<DemandeRejoindreGroupe> getDemandes() {
-        return demandes;
-    }
-
+    /**
+     * Définit la liste des demandes d’adhésion.
+     * @param demandes liste à définir
+     */
     public void setDemandes(List<DemandeRejoindreGroupe> demandes) {
         this.demandes = demandes;
+    }
+
+    // ====== equals & hashCode (basés sur l'id) ======
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Groupe groupe)) return false;
+        return Objects.equals(idGroupe, groupe.idGroupe);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idGroupe);
     }
 }
