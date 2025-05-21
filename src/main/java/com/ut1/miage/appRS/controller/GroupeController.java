@@ -314,5 +314,20 @@ public class GroupeController {
         return "redirect:/groupe/" + id + "/details";
     }
 
+    @PostMapping("/groupe/{id}/supprimer")
+    @Transactional
+    public String supprimerGroupe(@PathVariable Long id, HttpSession session) {
+        Etudiant createur = (Etudiant) session.getAttribute("etudiantConnecte");
+        if (createur == null) return "redirect:/connexion";
+
+        Groupe groupe = groupeRepository.findById(id).orElse(null);
+        if (groupe == null || !groupe.getCreateur().getIdEtudiant().equals(createur.getIdEtudiant())) {
+            return "redirect:/groupe/groupes";
+        }
+
+        groupeRepository.deleteById(id);
+        return "redirect:/groupe/groupes";
+    }
+
 
 }
