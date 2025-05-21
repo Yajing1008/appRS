@@ -1,9 +1,9 @@
 package com.ut1.miage.appRS.model;
 
+import jakarta.persistence.Embeddable;
+
 import java.io.Serializable;
 import java.util.Objects;
-
-import jakarta.persistence.Embeddable;
 
 /**
  * Classe représentant une clé composite pour l'entité {@link Participer},
@@ -81,7 +81,7 @@ public class ParticiperId implements Serializable {
                Objects.equals(idGroupe, that.idGroupe);
     }
 
-    /**
+    /**nb
      * Calcule le hash code de cette instance.
      *
      * @return le hash code calculé
