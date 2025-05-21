@@ -213,7 +213,7 @@
     </div>
 
     <div th:if="${groupe.photoGroupe != ''}">
-      <img th:src="'data:image/png;base64,' + ${groupe.photoGroupe}" alt="Image du groupe" class="img-fluid rounded mb-3"/>
+      <img th:src="${groupe.photoGroupe}" alt="Image du groupe" class="img-fluid rounded mb-3"/>
     </div>
 
 
@@ -236,7 +236,6 @@
       </form>
     </div>
 
-    <!-- Membres -->
     <!-- Membres -->
     <div class="card border-0 shadow-xss rounded-3 p-4 bg-white mt-4">
       <h4 class="fw-600 text-grey-800 mb-3">Membres du groupe</h4>
