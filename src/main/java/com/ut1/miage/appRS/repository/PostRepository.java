@@ -13,9 +13,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     // 所有公开帖子
     List<Post> findByEstPublicPostTrueOrderByDatePublicationPostDesc();
-    // 🔹 查找某位学生转发的所有帖子（按时间倒序）
+
     List<Post> findByEtudiantOrderByDatePublicationPostDesc(Etudiant etudiant);
 
+    List<Post> findByEtudiantAndEstPublicPostTrueOrderByDatePublicationPostDesc(Etudiant etudiant);
 
     // ✅ 未登录用户和已登录用户都需要：获取所有公开的帖子（包含公开转发）
     @Query("""

@@ -1,13 +1,12 @@
 package com.ut1.miage.appRS.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.ut1.miage.appRS.model.Etudiant;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-
 import java.util.Optional;
 
 public interface EtudiantRepository extends JpaRepository<Etudiant, Long> {
@@ -26,6 +25,10 @@ public interface EtudiantRepository extends JpaRepository<Etudiant, Long> {
     List<Etudiant> findFriends(@Param("idConnecte") Long idConnecte);
     
     Optional<Etudiant> findByEmailEtudiant(String emailEtudiant);
+
+    @EntityGraph(attributePaths = {"amis"})
+    @Query("SELECT e FROM Etudiant e WHERE e.idEtudiant = :id")
+    Optional<Etudiant> findEtudiantWithAmis(@Param("id") Long id);
 
 
 }
