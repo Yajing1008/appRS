@@ -31,24 +31,6 @@ class ConversationTest {
     }
 
     /**
-     * Vérifie l'association entre une conversation et ses groupes.
-     */
-    @Test
-    void testAssociationAvecGroupes() {
-        Groupe groupe1 = new Groupe();
-        Groupe groupe2 = new Groupe();
-
-        List<Groupe> groupes = new ArrayList<>();
-        groupes.add(groupe1);
-        groupes.add(groupe2);
-
-        Conversation conversation = new Conversation();
-        conversation.setGroupes(groupes);
-
-        assertEquals(2, conversation.getGroupes().size());
-    }
-
-    /**
      * Vérifie l'association entre une conversation et ses messages.
      */
     @Test
@@ -74,7 +56,6 @@ class ConversationTest {
         Conversation conversation = new Conversation();
 
         assertNull(conversation.getDateCommenceConversation());
-        assertNotNull(conversation.getGroupes());
         assertNotNull(conversation.getMessagesDansConversation());
     }
 }

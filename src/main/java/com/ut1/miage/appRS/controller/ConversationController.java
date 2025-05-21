@@ -110,7 +110,6 @@ public class ConversationController {
 		return "redirect:/conversation/" + getOtherParticipantId(conversation, idEtudiant);
 	}
 	
-	// 获取聊天对方 ID 的辅助方法
 	private Long getOtherParticipantId(Conversation conv, Long myId) {
 		List<EtuMessConversation> messages = messageRepository.findByConversation(conv);
 		return messages.stream()

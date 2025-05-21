@@ -33,12 +33,6 @@ public class Conversation {
     private LocalDateTime dateCommenceConversation;
 
     /**
-     * Groupes associés à cette conversation.
-     */
-    @OneToMany(mappedBy = "conversation")
-    private List<Groupe> groupes = new ArrayList<>();
-
-    /**
      * Messages envoyés dans cette conversation.
      */
     @OneToMany(mappedBy = "conversation")
@@ -75,23 +69,7 @@ public class Conversation {
     public void setDateCommenceConversation(LocalDateTime dateCommenceConversation) {
         this.dateCommenceConversation = dateCommenceConversation;
     }
-
-    /**
-     * Retourne la liste des groupes liés à cette conversation.
-     * @return liste de groupes
-     */
-    public List<Groupe> getGroupes() {
-        return groupes;
-    }
-
-    /**
-     * Définit les groupes liés à cette conversation.
-     * @param groupes liste de groupes
-     */
-    public void setGroupes(List<Groupe> groupes) {
-        this.groupes = groupes;
-    }
-
+    
     /**
      * Retourne les messages envoyés dans cette conversation.
      * @return liste de messages

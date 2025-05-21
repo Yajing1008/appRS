@@ -1,6 +1,7 @@
 package com.ut1.miage.appRS.controller;
 
 import com.ut1.miage.appRS.model.*;
+import com.ut1.miage.appRS.repository.ConversationRepository;
 import com.ut1.miage.appRS.repository.DemandeRejoindreGroupeRepository;
 import com.ut1.miage.appRS.repository.GroupeRepository;
 import com.ut1.miage.appRS.repository.ParticiperRepository;
@@ -28,7 +29,10 @@ public class GroupeController {
 
     @Autowired
     private DemandeRejoindreGroupeRepository demandeRejoindreGroupeRepository;
-
+    
+    @Autowired
+    private ConversationRepository conversationRepository;
+    
     @GetMapping("/groupe/nouveau")
     public String afficherFormulaire(Model model, HttpSession session) {
         Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
@@ -51,8 +55,11 @@ public class GroupeController {
         if (!photo.isEmpty()) {
             try {
                 byte[] bytes = photo.getBytes();
+                String contentType = photo.getContentType();
+                String prefix = "data:" + (contentType != null ? contentType : "application/octet-stream") + ";base64,";
                 String base64Image = Base64.getEncoder().encodeToString(bytes);
-                groupe.setPhotoGroupe(base64Image);
+                String base64Url = prefix + base64Image;
+                groupe.setPhotoGroupe(base64Url);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -60,6 +67,9 @@ public class GroupeController {
 
         groupe.setCreateur(createur);
         groupe.setDateCreerGroupe(LocalDate.now());
+        Conversation conversation = new Conversation();
+        conversation = conversationRepository.save(conversation);
+        groupe.setConversation(conversation);
         groupeRepository.save(groupe);
 
         return "redirect:/groupe/groupes";
@@ -226,8 +236,11 @@ public class GroupeController {
 
         if (!fichierPhoto.isEmpty()) {
             byte[] bytes = fichierPhoto.getBytes();
-            String base64 = Base64.getEncoder().encodeToString(bytes);
-            groupe.setPhotoGroupe(base64);
+            String contentType = fichierPhoto.getContentType();
+            String prefix = "data:" + (contentType != null ? contentType : "application/octet-stream") + ";base64,";
+            String base64Image = Base64.getEncoder().encodeToString(bytes);
+            String base64Url = prefix + base64Image;
+            groupe.setPhotoGroupe(base64Url);
         }
 
         groupeRepository.save(groupe);

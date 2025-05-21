@@ -6,7 +6,10 @@ import org.springframework.stereotype.Repository;
 
 import com.ut1.miage.appRS.model.Participer;
 
+import java.util.List;
+
 @Repository
 public interface ParticiperRepository extends JpaRepository<Participer, Long> {
     void deleteById(ParticiperId participerId);
+    List<Participer> findByEtudiant_IdEtudiant(Long idEtudiant);
 }
