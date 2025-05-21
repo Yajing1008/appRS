@@ -63,7 +63,7 @@
 
             <div th:each="demande : ${session.demandesRecues}" class="card bg-transparent-card w-100 border-0 ps-5 mb-3">
                 <!-- ✅ Avatar dynamique -->
-                <img th:src="${demande.demandeur.photoEtudiant != '' ? demande.demandeur.photoEtudiant : '/images/default.png'}"
+                <img th:src="${demande.demandeur.photoEtudiant != '' ? demande.demandeur.photoEtudiant : '/images/user-1.png'}"
                      alt="user" class="w40 position-absolute left-0 rounded-circle">
 
                 <h5 class="font-xsss text-grey-900 mb-1 mt-0 fw-700 d-block"
