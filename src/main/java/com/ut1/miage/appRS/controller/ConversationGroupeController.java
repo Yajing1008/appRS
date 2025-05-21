@@ -6,6 +6,7 @@ import com.ut1.miage.appRS.model.Etudiant;
 import com.ut1.miage.appRS.repository.ConversationRepository;
 import com.ut1.miage.appRS.repository.EtuMessConversationRepository;
 import com.ut1.miage.appRS.repository.EtudiantRepository;
+import com.ut1.miage.appRS.repository.GroupeRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,14 +19,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-public class ConversationController {
+public class ConversationGroupeController {
 	@Autowired
-	EtudiantRepository etudiantRepository;
+	GroupeRepository groupeRepository;
 	@Autowired
 	ConversationRepository conversationRepository;
 	@Autowired
 	EtuMessConversationRepository messageRepository;
-	@GetMapping("/conversation/{id}")
+	@Autowired
+	EtudiantRepository etudiantRepository;
+	@GetMapping("/conversationGroupe/{id}")
 	public String openConversation(@PathVariable("id") Long idEtudiant,
 	                               Model model,
 	                               HttpSession session) {
@@ -83,9 +86,9 @@ public class ConversationController {
 		model.addAttribute("messages", messages);
 		model.addAttribute("utilisateurConnecte", utilisateurConnecte);
 		
-		return "conversation";
+		return "conversationGroupe";
 	}
-	@PostMapping("/send")
+	@PostMapping("/sendGroupe")
 	public String sendMessage(@RequestParam("idConversation") Long idConversation,
 	                          @RequestParam("idEtudiant") Long idEtudiant,
 	                          @RequestParam("message") String message,
@@ -107,7 +110,7 @@ public class ConversationController {
 		
 		messageRepository.save(msg);
 		
-		return "redirect:/conversation/" + getOtherParticipantId(conversation, idEtudiant);
+		return "redirect:/conversationGroupe/" + getOtherParticipantId(conversation, idEtudiant);
 	}
 	
 	private Long getOtherParticipantId(Conversation conv, Long myId) {
@@ -118,5 +121,6 @@ public class ConversationController {
 				.findFirst()
 				.orElse(myId);
 	}
-
+	
+	
 }

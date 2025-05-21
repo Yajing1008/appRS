@@ -1,6 +1,7 @@
 package com.ut1.miage.appRS.controller;
 
 import com.ut1.miage.appRS.model.*;
+import com.ut1.miage.appRS.repository.ConversationRepository;
 import com.ut1.miage.appRS.repository.DemandeRejoindreGroupeRepository;
 import com.ut1.miage.appRS.repository.GroupeRepository;
 import com.ut1.miage.appRS.repository.ParticiperRepository;
@@ -28,7 +29,10 @@ public class GroupeController {
 
     @Autowired
     private DemandeRejoindreGroupeRepository demandeRejoindreGroupeRepository;
-
+    
+    @Autowired
+    private ConversationRepository conversationRepository;
+    
     @GetMapping("/groupe/nouveau")
     public String afficherFormulaire(Model model, HttpSession session) {
         Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
@@ -63,6 +67,9 @@ public class GroupeController {
 
         groupe.setCreateur(createur);
         groupe.setDateCreerGroupe(LocalDate.now());
+        Conversation conversation = new Conversation();
+        conversation = conversationRepository.save(conversation);
+        groupe.setConversation(conversation);
         groupeRepository.save(groupe);
 
         return "redirect:/groupe/groupes";
