@@ -10,6 +10,22 @@
     <link rel="stylesheet" th:href="@{/css/feather.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="icon" type="image/png" sizes="16x16" th:href="@{/images/favicon.png}">
+
+    <style>
+        .group-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .group-card-body {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 230px;
+        }
+    </style>
 </head>
 <body class="color-theme-blue mont-font">
     <div class="preloader"></div>
@@ -227,7 +243,7 @@
 
                 <div class="row" th:if="${groupes != null}">
                     <div class="col-md-6 col-lg-4 mb-4" th:each="groupe : ${groupes}">
-                        <div class="card border-0 shadow-xss rounded-3 overflow-hidden">
+                        <div class="card border-0 shadow-xss rounded-3 overflow-hidden group-card">
                             <img th:if="${groupe.photoGroupe != null and !#strings.isEmpty(groupe.photoGroupe)}"
                                  th:src="'data:image/jpeg;base64,' + ${groupe.photoGroupe}"
                                  alt="Image du groupe"
@@ -240,8 +256,8 @@
                                  style="width:100%; height:200px; object-fit:cover;"
                                  class="rounded-top"/>
 
-                            <div class="card-body text-left pt-0">
-                                <h4 th:text="${groupe.nomGroupe}" class="fw-700 font-xsss mt-2 mb-1">Nom du groupe</h4>
+                            <div class="card-body text-left pt-0 group-card-body">
+                            <h4 th:text="${groupe.nomGroupe}" class="fw-700 font-xsss mt-2 mb-1">Nom du groupe</h4>
                                 <p th:text="${groupe.descriptionGroupe}" class="text-grey-500 font-xssss">Description</p>
 
                                 <a th:href="@{'/groupe/' + ${groupe.idGroupe} + '/details'}" class="btn btn-outline-primary me-2">Voir le groupe</a>
@@ -257,12 +273,21 @@
                                 <span th:if="${groupesRejoints.contains(groupe.idGroupe)}"
                                       class="text-muted small ms-2">Déjà membre</span>
 
-                                <span th:if="${etudiantConnecte != null and groupe.createur.idEtudiant == etudiantConnecte.idEtudiant}"
-                                      class="text-muted small ms-2">
-                            Vous êtes le créateur
-                            <a th:href="@{'/groupe/' + ${groupe.idGroupe} + '/modifier'}"
-                               class="btn btn-warning font-xssss fw-600 mt-3">Modifier le groupe</a>
-                        </span>
+                                <div th:if="${etudiantConnecte != null and groupe.createur.idEtudiant == etudiantConnecte.idEtudiant}" class="text-muted small ms-2">
+                                    Vous êtes le créateur
+                                    <div class="mt-2">
+                                        <a th:href="@{'/groupe/' + ${groupe.idGroupe} + '/modifier'}"
+                                           class="btn btn-warning font-xssss fw-600 me-2">
+                                            Modifier le groupe
+                                        </a>
+                                        <form th:action="@{'/groupe/' + ${groupe.idGroupe} + '/supprimer'}"
+                                              method="post"
+                                              style="display: inline;"
+                                              onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce groupe ?');">
+                                            <button type="submit" class="btn btn-danger font-xssss fw-600">Supprimer le groupe</button>
+                                        </form>
+                                    </div>
+                                </div>
 
                                 <!-- Si le groupe est privé -->
                                 <div th:if="${!groupe.estPublicGroupe and groupe.createur.idEtudiant != etudiantConnecte?.idEtudiant}">
