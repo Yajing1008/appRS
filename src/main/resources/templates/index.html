@@ -686,11 +686,12 @@
 
                                 <div th:each="ami : ${session.amis}">
                                     <div class="card-body d-flex pt-0 ps-4 pe-4 pb-0 align-items-center">
+                                        <a th:href="@{/profil/{id}(id=${ami.idEtudiant})}" style="text-decoration: none;">
                                         <figure class="avatar me-3">
                                             <img th:src="${ami.photoEtudiant != '' ? ami.photoEtudiant : '/images/user-1.png'}"
                                                  alt="image" class="shadow-sm rounded-circle w45">
                                         </figure>
-
+                                        </a>
 
                                         <div>
                                             <h4 class="fw-700 text-grey-900 font-xssss mb-0" th:text="${ami.prenomEtudiant + ' ' + ami.nomEtudiant}">Nom Ami</h4>

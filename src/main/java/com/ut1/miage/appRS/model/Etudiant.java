@@ -95,15 +95,25 @@ public class Etudiant {
     /**
      * Universités fréquentées par l'étudiant.
      */
-    @ManyToMany(mappedBy = "etudiant")
+    @ManyToMany
+    @JoinTable(
+            name = "ETUDIER",
+            joinColumns = @JoinColumn(name = "id_etudiant"),
+            inverseJoinColumns = @JoinColumn(name = "id_univ")
+    )
     private List<Universite> universites = new ArrayList<>();
+
 
     /**
      * Centres d’intérêt de l’étudiant.
      */
-    @ManyToMany(mappedBy = "etudiant")
+    @ManyToMany
+    @JoinTable(
+            name = "AVOIR",
+            joinColumns = @JoinColumn(name = "id_etudiant"),
+            inverseJoinColumns = @JoinColumn(name = "id_centre_interet")
+    )
     private List<CentreInteret> centresInteret = new ArrayList<>();
-
     /**
      * Événements auxquels l’étudiant participe.
      */
