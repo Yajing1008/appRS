@@ -26,7 +26,7 @@ class UniversiteTest {
 
         assertEquals(1L, u.getIdUniv());
         assertEquals("Université de Toulouse", u.getNomUniv());
-        assertEquals(etudiants, u.getEtudiant());
+        assertEquals(etudiants, u.getEtudiants());
     }
 
     /**
@@ -38,8 +38,8 @@ class UniversiteTest {
         Universite u = new Universite();
         assertNull(u.getIdUniv());
         assertNull(u.getNomUniv());
-        assertNotNull(u.getEtudiant());
-        assertTrue(u.getEtudiant().isEmpty());
+        assertNotNull(u.getEtudiants());
+        assertTrue(u.getEtudiants().isEmpty());
     }
 
     /**
@@ -54,11 +54,11 @@ class UniversiteTest {
 
         u.setIdUniv(10L);
         u.setNomUniv("UT1");
-        u.setEtudiant(etudiants);
+        u.setEtudiants(etudiants);
 
         assertEquals(10L, u.getIdUniv());
         assertEquals("UT1", u.getNomUniv());
-        assertEquals(etudiants, u.getEtudiant());
+        assertEquals(etudiants, u.getEtudiants());
     }
 
     /**

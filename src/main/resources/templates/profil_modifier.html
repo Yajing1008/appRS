@@ -17,6 +17,10 @@
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/emoji.css}">
     <link rel="stylesheet" th:href="@{/css/lightbox.css}">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
 </head>
 
 <body class="color-theme-blue mont-font">
@@ -330,6 +334,16 @@
                                                 <label class="font-xssss fw-600 text-grey-700">Email</label>
                                                 <input type="email" th:field="${etudiant.emailEtudiant}" class="form-control font-xssss">
                                             </div>
+                                            <!-- Univ -->
+                                            <div class="mb-3">
+                                                <label class="font-xssss text-grey-700 fw-700">Universités</label>
+                                                <select id="universites" name="universites" multiple="multiple" class="form-control">
+                                                    <option th:each="univ : ${toutesUniversites}"
+                                                            th:value="${univ.nomUniv}"
+                                                            th:text="${univ.nomUniv}"></option>
+
+                                                </select>
+                                            </div>
 
                                             <!-- naissance + sexe -->
                                             <div class="row">
@@ -346,6 +360,18 @@
                                                     </select>
                                                 </div>
                                             </div>
+
+                                            <!-- Centres d’intérêt -->
+                                            <div class="mb-3">
+                                                <label class="font-xssss text-grey-700 fw-700">Centres d’intérêt</label>
+                                                <select id="centresInteret" name="centresInteret" multiple="multiple" class="form-control">
+                                                    <option th:each="interet : ${tousCentresInteret}"
+                                                            th:value="${interet.nomCentreInteret}"
+                                                            th:text="${interet.nomCentreInteret}"></option>
+                                                </select>
+                                            </div>
+
+
 
                                             <!-- description -->
                                             <div class="mb-3">
@@ -944,6 +970,10 @@
     <script th:src="@{/js/lightbox.js}"></script>
     <script th:src="@{/js/scripts.js}"></script>
     <script th:src="@{/js/jquery.easypiechart.min.js}"></script>
+    <!-- jQuery（必须先加载 jQuery）-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $('.chart').easyPieChart({
             easing: 'easeOutElastic',
@@ -959,8 +989,27 @@
                 this.el.children[0].innerHTML = Math.round(percent);
             }
         });
-    </script> 
-    
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            $('#universites').select2({
+                tags: true,
+                placeholder: "Sélectionnez ou ajoutez une université",
+                width: '100%'
+            });
+
+            $('#centresInteret').select2({
+                tags: true,
+                placeholder: "Sélectionnez ou ajoutez un centre d’intérêt",
+                width: '100%'
+            });
+        });
+    </script>
+
+
+
+
 </body>
 
 </html>

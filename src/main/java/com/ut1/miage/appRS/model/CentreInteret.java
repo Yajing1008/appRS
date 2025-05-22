@@ -1,7 +1,10 @@
 package com.ut1.miage.appRS.model;
 
-import java.util.*;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Représente un centre d'intérêt auquel un ou plusieurs étudiants peuvent être associés.
@@ -22,13 +25,8 @@ public class CentreInteret {
      * Liste des étudiants ayant ce centre d'intérêt.
      * Relation ManyToMany avec la table de jointure AVOIR.
      */
-    @ManyToMany
-    @JoinTable(
-        name = "AVOIR", 
-        joinColumns = @JoinColumn(name = "nom_centre_interet"),
-        inverseJoinColumns = @JoinColumn(name = "id_etudiant")
-    )
-    private List<Etudiant> etudiant = new ArrayList<>();
+    @ManyToMany(mappedBy = "centresInteret")
+    private List<Etudiant> etudiants = new ArrayList<>();
 
     /** Constructeur par défaut. */
     public CentreInteret() {}
@@ -38,14 +36,13 @@ public class CentreInteret {
      * 
      * @param idCentreInteret L'identifiant du centre d'intérêt.
      * @param nomCentreInteret Le nom du centre d'intérêt.
-     * @param etudiant La liste des étudiants associés à ce centre d'intérêt.
+     * @param etudiants La liste des étudiants associés à ce centre d'intérêt.
      */
-    public CentreInteret(Long idCentreInteret, String nomCentreInteret, List<Etudiant> etudiant) {
+    public CentreInteret(Long idCentreInteret, String nomCentreInteret, List<Etudiant> etudiants) {
         this.idCentreInteret = idCentreInteret;
         this.nomCentreInteret = nomCentreInteret;
-        this.etudiant = etudiant;
+        this.etudiants = etudiants;
     }
-
     /**
      * @return L'identifiant du centre d'intérêt.
      */
@@ -77,20 +74,20 @@ public class CentreInteret {
     /**
      * @return La liste des étudiants associés à ce centre d'intérêt.
      */
-    public List<Etudiant> getEtudiant() {
-        return etudiant;
+    public List<Etudiant> getEtudiants() {
+        return etudiants;
     }
 
     /**
-     * @param etudiant La liste des étudiants à associer.
+     * @param etudiants La liste des étudiants à associer.
      */
-    public void setEtudiant(List<Etudiant> etudiant) {
-        this.etudiant = etudiant;
+    public void setEtudiants(List<Etudiant> etudiants) {
+        this.etudiants = etudiants;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idCentreInteret, nomCentreInteret, etudiant);
+        return Objects.hash(idCentreInteret, nomCentreInteret, etudiants);
     }
 
     @Override
@@ -100,6 +97,6 @@ public class CentreInteret {
         CentreInteret other = (CentreInteret) obj;
         return Objects.equals(idCentreInteret, other.idCentreInteret) &&
                Objects.equals(nomCentreInteret, other.nomCentreInteret) &&
-               Objects.equals(etudiant, other.etudiant);
+               Objects.equals(etudiants, other.etudiants);
     }
 }
