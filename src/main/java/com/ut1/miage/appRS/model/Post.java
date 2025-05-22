@@ -191,7 +191,7 @@ public class Post {
     public List<Reagir> getFavoris() {
         List<Reagir> favoris = new ArrayList<>();
         for (Reagir r : reactions) {
-            if ("Favori".equalsIgnoreCase(r.getStatut())) {
+            if ("Favori".equalsIgnoreCase(r.getReagirId().getStatut())) {
                 favoris.add(r);
             }
         }
@@ -201,7 +201,7 @@ public class Post {
     public List<Reagir> getLikes() {
         List<Reagir> likes = new ArrayList<>();
         for (Reagir r : reactions) {
-            if ("Like".equalsIgnoreCase(r.getStatut())) {
+            if ("Like".equalsIgnoreCase(r.getReagirId().getStatut())) {
                 likes.add(r);
             }
         }

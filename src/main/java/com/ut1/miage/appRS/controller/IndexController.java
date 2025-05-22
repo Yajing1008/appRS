@@ -1,16 +1,8 @@
 package com.ut1.miage.appRS.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-
+import com.ut1.miage.appRS.model.*;
+import com.ut1.miage.appRS.repository.*;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,23 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.ut1.miage.appRS.model.Commenter;
-import com.ut1.miage.appRS.model.Etudiant;
-import com.ut1.miage.appRS.model.Groupe;
-import com.ut1.miage.appRS.model.Participer;
-import com.ut1.miage.appRS.model.Post;
-import com.ut1.miage.appRS.model.Reagir;
-import com.ut1.miage.appRS.model.ReagirId;
-import com.ut1.miage.appRS.model.Republier;
-import com.ut1.miage.appRS.model.RepublierId;
-import com.ut1.miage.appRS.repository.CommenterRepository;
-import com.ut1.miage.appRS.repository.EtudiantRepository;
-import com.ut1.miage.appRS.repository.ParticiperRepository;
-import com.ut1.miage.appRS.repository.PostRepository;
-import com.ut1.miage.appRS.repository.ReagirRepository;
-import com.ut1.miage.appRS.repository.RepublierRepository;
-
-import jakarta.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 /**
  * Contrôleur principal de l'application, gérant l'affichage du fil d'actualité,
@@ -253,16 +233,17 @@ public class IndexController {
         }
 
         Optional<Post> postOpt = postRepository.findById(postId);
+        System.out.println("postOpt = " + postOpt);
         if (postOpt.isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "Publication introuvable.");
             return "redirect:/#post-" + postId;
         }
 
         Post post = postOpt.get();
-        ReagirId id = new ReagirId(post.getIdPost(), etudiant.getIdEtudiant());
+        ReagirId id = new ReagirId(post.getIdPost(), etudiant.getIdEtudiant(), "Like");
         Optional<Reagir> existing = reagirRepository.findById(id);
 
-        if (existing.isPresent() && "Like".equals(existing.get().getStatut())) {
+        if (existing.isPresent() && "Like".equals(existing.get().getReagirId().getStatut())) {
             reagirRepository.delete(existing.get());
             redirectAttributes.addFlashAttribute("success", "Like retiré.");
         } else {
@@ -271,7 +252,7 @@ public class IndexController {
             Reagir r = new Reagir();
             r.setPost(post);
             r.setEtudiant(etudiant);
-            r.setStatut("Like");
+            r.getReagirId().setStatut("Like");
             reagirRepository.save(r);
             redirectAttributes.addFlashAttribute("success", "Publication aimée !");
         }
@@ -298,10 +279,10 @@ public class IndexController {
         }
 
         Post post = postOpt.get();
-        ReagirId id = new ReagirId(post.getIdPost(), etudiant.getIdEtudiant());
+        ReagirId id = new ReagirId(post.getIdPost(), etudiant.getIdEtudiant(), "Favori");
         Optional<Reagir> existingReaction = reagirRepository.findById(id);
 
-        if (existingReaction.isPresent() && "Favori".equals(existingReaction.get().getStatut())) {
+        if (existingReaction.isPresent() && "Favori".equals(existingReaction.get().getReagirId().getStatut())) {
             reagirRepository.delete(existingReaction.get());
             redirectAttributes.addFlashAttribute("success", "Favori supprimé.");
         } else {
@@ -310,7 +291,7 @@ public class IndexController {
             Reagir reaction = new Reagir();
             reaction.setPost(post);
             reaction.setEtudiant(etudiant);
-            reaction.setStatut("Favori");
+            reaction.getReagirId().setStatut("Favori");
             reagirRepository.save(reaction);
             redirectAttributes.addFlashAttribute("success", "Ajouté aux favoris !");
         }
