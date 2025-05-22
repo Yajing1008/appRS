@@ -37,5 +37,26 @@ public interface ReagirRepository extends JpaRepository<Reagir, ReagirId>{
             @Param("etudiantId") Long etudiantId,
             @Param("statut") String statut);
 
+    /**
+     * Vérifie si l'étudiant connecté a aimé (réagi avec "Like") une publication donnée.
+     *
+     * @param postId l'identifiant de la publication concernée
+     * @param etudiantId l'identifiant de l'étudiant connecté
+     * @return true si l'étudiant a déjà liké cette publication, sinon false
+     */
+    @Query("SELECT COUNT(r) > 0 FROM Reagir r " +
+            "WHERE r.reagirId.idPost = :postId AND r.reagirId.idEtudiant = :etudiantId AND r.reagirId.statut = 'Like'")
+    boolean hasLiked(@Param("postId") Long postId, @Param("etudiantId") Long etudiantId);
+
+    /**
+     * Vérifie si l'étudiant connecté a ajouté une publication donnée à ses favoris (réaction "Favori").
+     *
+     * @param postId l'identifiant de la publication concernée
+     * @param etudiantId l'identifiant de l'étudiant connecté
+     * @return true si l'étudiant a déjà ajouté cette publication aux favoris, sinon false
+     */
+    @Query("SELECT COUNT(r) > 0 FROM Reagir r " +
+            "WHERE r.reagirId.idPost = :postId AND r.reagirId.idEtudiant = :etudiantId AND r.reagirId.statut = 'Favori'")
+    boolean hasFavori(@Param("postId") Long postId, @Param("etudiantId") Long etudiantId);
 
 }
