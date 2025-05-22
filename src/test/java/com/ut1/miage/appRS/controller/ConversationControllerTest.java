@@ -1,8 +1,11 @@
 package com.ut1.miage.appRS.controller;
 
-import java.time.LocalDate;
-import java.util.List;
-
+import com.ut1.miage.appRS.model.Conversation;
+import com.ut1.miage.appRS.model.EtuMessConversation;
+import com.ut1.miage.appRS.model.Etudiant;
+import com.ut1.miage.appRS.repository.ConversationRepository;
+import com.ut1.miage.appRS.repository.EtuMessConversationRepository;
+import com.ut1.miage.appRS.repository.EtudiantRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,21 +13,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrlPattern;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ut1.miage.appRS.model.Conversation;
-import com.ut1.miage.appRS.model.EtuMessConversation;
-import com.ut1.miage.appRS.model.Etudiant;
-import com.ut1.miage.appRS.repository.ConversationRepository;
-import com.ut1.miage.appRS.repository.EtuMessConversationRepository;
-import com.ut1.miage.appRS.repository.EtudiantRepository;
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Tests d'intégration pour le contrôleur {@link ConversationController}.
@@ -35,21 +31,29 @@ import com.ut1.miage.appRS.repository.EtudiantRepository;
 @AutoConfigureMockMvc
 @Transactional
 public class ConversationControllerTest {
-
+    /** Objet permettant de simuler des requêtes HTTP dans les tests. */
     @Autowired
     private MockMvc mockMvc;
 
+    /** Référentiel permettant l'accès aux données des étudiants pour les tests. */
     @Autowired
     private EtudiantRepository etudiantRepository;
 
+    /** Référentiel pour accéder aux conversations de groupe ou privées dans les tests. */
     @Autowired
     private ConversationRepository conversationRepository;
 
+    /** Référentiel pour accéder aux messages envoyés par les étudiants dans les tests. */
     @Autowired
     private EtuMessConversationRepository messageRepository;
 
+    /** Premier étudiant utilisé dans les scénarios de test. */
     private Etudiant e1;
+
+    /** Deuxième étudiant utilisé dans les scénarios de test. */
     private Etudiant e2;
+
+    /** Session simulée représentant un étudiant connecté. */
     private MockHttpSession session;
 
     /**

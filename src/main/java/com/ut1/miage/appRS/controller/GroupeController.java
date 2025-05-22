@@ -17,7 +17,12 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
-
+/**
+ * Contrôleur chargé de la gestion des groupes d'étudiants.
+ *
+ * Gère les opérations liées aux groupes, telles que la création, l'affichage,
+ * la participation, les demandes d'adhésion et les conversations de groupe.
+ */
 @Controller
 public class GroupeController {
 

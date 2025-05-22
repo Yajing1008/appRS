@@ -17,7 +17,13 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-
+/**
+ * Contrôleur chargé de la gestion du profil étudiant.
+ *
+ * Fournit les fonctionnalités liées à l'affichage et à la modification du profil,
+ * ainsi qu'à la gestion des publications, commentaires, réactions, centres d'intérêt
+ * et universités associées à un étudiant.
+ */
 @Controller
 public class ProfilController {
 

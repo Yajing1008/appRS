@@ -33,45 +33,94 @@ public class Commenter {
     @Column(name = "dateheure_commentaire", nullable = false)
     private LocalDateTime dateHeureCommentaire;
 
-    // Getters et setters
-
+    /**
+     * Retourne l'identifiant unique du commentaire.
+     *
+     * @return l'identifiant du commentaire
+     */
     public Long getIdCommentaire() {
         return idCommentaire;
     }
 
+    /**
+     * Définit l'identifiant unique du commentaire.
+     *
+     * @param idCommentaire l'identifiant à attribuer
+     */
     public void setIdCommentaire(Long idCommentaire) {
         this.idCommentaire = idCommentaire;
     }
 
+    /**
+     * Retourne la publication associée à ce commentaire.
+     *
+     * @return l'objet Post associé
+     */
     public Post getPost() {
         return post;
     }
 
+    /**
+     * Définit la publication associée à ce commentaire.
+     *
+     * @param post l'objet Post à associer
+     */
     public void setPost(Post post) {
         this.post = post;
     }
 
+    /**
+     * Retourne l'étudiant ayant rédigé ce commentaire.
+     *
+     * @return l'objet Etudiant auteur du commentaire
+     */
     public Etudiant getEtudiant() {
         return etudiant;
     }
 
+    /**
+     * Définit l'étudiant ayant rédigé ce commentaire.
+     *
+     * @param etudiant l'objet Etudiant à associer
+     */
     public void setEtudiant(Etudiant etudiant) {
         this.etudiant = etudiant;
     }
 
+    /**
+     * Retourne le contenu textuel du commentaire.
+     *
+     * @return le texte du commentaire
+     */
     public String getCommentaire() {
         return commentaire;
     }
 
+    /**
+     * Définit le contenu textuel du commentaire.
+     *
+     * @param commentaire le texte à enregistrer
+     */
     public void setCommentaire(String commentaire) {
         this.commentaire = commentaire;
     }
 
+    /**
+     * Retourne la date et l'heure de publication du commentaire.
+     *
+     * @return la date et l'heure du commentaire
+     */
     public LocalDateTime getDateHeureCommentaire() {
         return dateHeureCommentaire;
     }
 
+    /**
+     * Définit la date et l'heure de publication du commentaire.
+     *
+     * @param dateHeureCommentaire la date et l'heure à enregistrer
+     */
     public void setDateHeureCommentaire(LocalDateTime dateHeureCommentaire) {
         this.dateHeureCommentaire = dateHeureCommentaire;
     }
+
 }

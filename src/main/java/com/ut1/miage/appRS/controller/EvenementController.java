@@ -17,7 +17,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
-
+/**
+ * Contrôleur chargé de la gestion des événements.
+ *
+ * Permet la création, la consultation, la modification et la suppression
+ * d'événements organisés par ou pour les étudiants.
+ */
 @Controller
 public class EvenementController {
 
@@ -30,13 +35,12 @@ public class EvenementController {
     /**
      * Affiche la page des événements de l'étudiant connecté.
      *
-     * <p>Cette méthode permet :
-     * <ul>
-     *   <li>d'afficher les événements créés par l'étudiant,</li>
-     *   <li>d'afficher les événements auxquels il participe,</li>
-     *   <li>de générer un JSON compatible avec FullCalendar,</li>
-     *   <li>et de transmettre toutes les données nécessaires à la vue "event".</li>
-     * </ul>
+     * Cette méthode permet
+     * d'afficher les événements créés par l'étudiant,</li>
+     * d'afficher les événements auxquels il participe,</li>
+     * de générer un JSON compatible avec FullCalendar,</li>
+     * et de transmettre toutes les données nécessaires à la vue "event".</li>
+     *
      *
      * @param model   le modèle pour passer les attributs à la vue
      * @param session la session HTTP contenant l'étudiant connecté
