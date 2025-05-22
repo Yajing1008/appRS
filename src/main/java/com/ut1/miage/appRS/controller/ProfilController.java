@@ -559,7 +559,7 @@ public class ProfilController {
             Reagir r = new Reagir();
             r.setPost(post);
             r.setEtudiant(etudiant);
-            r.setStatut("Like");
+            r.getReagirId().setStatut("Like");
             reagirRepository.save(r);
             redirectAttributes.addFlashAttribute("success", "Publication aimée !");
         }
@@ -602,6 +602,7 @@ public class ProfilController {
         Optional<Reagir> existingFavori = reagirRepository.findByPostIdAndEtudiantIdAndStatut(
                 post.getIdPost(), etudiant.getIdEtudiant(), "Favori");
 
+        System.out.println("existingFavori = " + existingFavori);
         if (existingFavori.isPresent()) {
             reagirRepository.delete(existingFavori.get());
             redirectAttributes.addFlashAttribute("success", "Favori supprimé.");
@@ -609,7 +610,7 @@ public class ProfilController {
             Reagir reaction = new Reagir();
             reaction.setPost(post);
             reaction.setEtudiant(etudiant);
-            reaction.setStatut("Favori");
+            reaction.getReagirId().setStatut("Favori");
             reagirRepository.save(reaction);
             redirectAttributes.addFlashAttribute("success", "Ajouté aux favoris !");
         }

@@ -8,24 +8,26 @@ import jakarta.persistence.*;
  */
 @Entity
 @Table(name = "REAGIR")
-@IdClass(ReagirId.class)
 public class Reagir {
 
+    @EmbeddedId
+    private ReagirId reagirId = new ReagirId();
+
     /** Le post concerné par la réaction. */
-    @Id
+
     @ManyToOne
+    @MapsId("idPost")
     @JoinColumn(name = "id_post")
     private Post post;
 
     /** L'étudiant ayant réagi au post. */
-    @Id
+
     @ManyToOne
+    @MapsId("idEtudiant")
     @JoinColumn(name = "id_etudiant")
     private Etudiant etudiant;
 
-    /** Type de réaction (ex : "Like", "Dislike", "Love", etc.). */
-    @Column(nullable = false)
-    private String statut;
+
 
     /**
      * Récupère le post concerné par la réaction.
@@ -59,19 +61,12 @@ public class Reagir {
         this.etudiant = etudiant;
     }
 
-    /**
-     * Récupère le statut de la réaction (like, love, etc.).
-     * @return le type de réaction
-     */
-    public String getStatut() {
-        return statut;
+
+    public ReagirId getReagirId() {
+        return reagirId;
     }
 
-    /**
-     * Définit le type de réaction.
-     * @param statut le statut (type) de la réaction
-     */
-    public void setStatut(String statut) {
-        this.statut = statut;
+    public void setReagirId(ReagirId reagirId) {
+        this.reagirId = reagirId;
     }
 }

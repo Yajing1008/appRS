@@ -28,9 +28,19 @@ public class EvenementController {
     private EtudiantRepository etudiantRepository;
 
     /**
-     * Page principale des événements :
-     * - calendrier FullCalendar (événements de l'utilisateur connecté)
-     * - liste des cartes d'événements pour tout le monde
+     * Affiche la page des événements de l'étudiant connecté.
+     *
+     * <p>Cette méthode permet :
+     * <ul>
+     *   <li>d'afficher les événements créés par l'étudiant,</li>
+     *   <li>d'afficher les événements auxquels il participe,</li>
+     *   <li>de générer un JSON compatible avec FullCalendar,</li>
+     *   <li>et de transmettre toutes les données nécessaires à la vue "event".</li>
+     * </ul>
+     *
+     * @param model   le modèle pour passer les attributs à la vue
+     * @param session la session HTTP contenant l'étudiant connecté
+     * @return la vue "event" avec les données d'événements
      */
     @GetMapping("/evenement")
     public String afficherEvenementsEtCalendrier(Model model, HttpSession session) {
@@ -41,23 +51,23 @@ public class EvenementController {
         List<Evenement> mesParticipations = new ArrayList<>();
 
         if (etudiant != null) {
-            // ✅ 获取当前用户创建的活动并按开始时间倒序排列
+
             mesCreations = evenementRepository.findByCreateur(etudiant)
                     .stream()
                     .sorted(Comparator.comparing(Evenement::getDateHeureDebutEvenement).reversed())
                     .toList();
 
-            // ✅ 获取当前用户参加的活动（包括自己创建的）
+
             List<Evenement> participationsBrutes = evenementRepository.findByMembreGroupeContains(etudiant);
 
-            // ✅ 过滤掉自己创建的，只保留“我参加的”，并按开始时间倒序排列
+
             final List<Evenement> finalMesCreations = mesCreations;
             mesParticipations = participationsBrutes.stream()
                     .filter(e -> !finalMesCreations.contains(e))
                     .sorted(Comparator.comparing(Evenement::getDateHeureDebutEvenement).reversed())
                     .toList();
 
-            // ✅ 构建 FullCalendar JSON
+
             for (Evenement e : mesCreations) {
                 Map<String, Object> eventMap = new HashMap<>();
                 eventMap.put("title", e.getNomEvenement() + " (Créé)");
@@ -79,7 +89,7 @@ public class EvenementController {
             model.addAttribute("utilisateurConnecte", etudiant);
         }
 
-        // ✅ 转换成 JSON 字符串传给 FullCalendar
+
         try {
             ObjectMapper mapper = new ObjectMapper();
             String eventJson = mapper.writeValueAsString(allEvents);
@@ -89,7 +99,7 @@ public class EvenementController {
             model.addAttribute("eventJson", "[]");
         }
 
-        // ✅ 添加排序后的活动列表到 model
+
         model.addAttribute("mesCreations", mesCreations);
         model.addAttribute("mesParticipations", mesParticipations);
 
@@ -100,7 +110,14 @@ public class EvenementController {
 
 
     /**
-     * Formulaire de création d’un événement
+     * Affiche le formulaire de création d’un nouvel événement.
+     *
+     * <p>Cette méthode initialise un objet {@link Evenement} vide
+     * et l'ajoute au modèle afin que le formulaire puisse être rempli.
+     * Elle renvoie la vue "event_creer".
+     *
+     * @param model le modèle utilisé pour passer les données à la vue
+     * @return la vue "event_creer" contenant le formulaire
      */
     @GetMapping("/evenement/creer")
     public String afficherFormulaireCreation(Model model) {
@@ -110,7 +127,25 @@ public class EvenementController {
 
 
     /**
-     * Traitement du formulaire de création
+     * Traite la soumission du formulaire de création d’un événement.
+     *
+     * <p>Cette méthode :
+     * <ul>
+     *   <li>vérifie que l’utilisateur est connecté,</li>
+     *   <li>valide les dates de début et de fin,</li>
+     *   <li>enregistre éventuellement une image en base64,</li>
+     *   <li>associe l’événement à son créateur,</li>
+     *   <li>et enregistre l’événement dans la base de données.</li>
+     * </ul>
+     *
+     * <p>Elle redirige vers la page des événements avec un message de succès ou d’erreur.</p>
+     *
+     * @param evenement l’objet Evenement contenant les données du formulaire
+     * @param photoFile le fichier image (optionnel)
+     * @param session la session contenant l’utilisateur connecté
+     * @param redirectAttributes pour afficher les messages flash
+     * @return redirection vers "/evenement" ou "/connexion" si non connecté
+     * @throws IOException si une erreur survient lors de la lecture du fichier
      */
     @PostMapping("/evenement/save")
     public String sauvegarderEvenement(@ModelAttribute Evenement evenement,
@@ -127,26 +162,26 @@ public class EvenementController {
 
         LocalDateTime now = LocalDateTime.now();
 
-        // ✅ 检查开始时间是否在当前之后
+
         if (evenement.getDateHeureDebutEvenement() == null || evenement.getDateHeureDebutEvenement().isBefore(now)) {
             redirectAttributes.addFlashAttribute("error", "La date de début doit être postérieure à la date actuelle.");
-            return "redirect:/evenement"; // 🔁 返回活动总览页
+            return "redirect:/evenement";
         }
 
-        // ✅ 检查结束时间是否在开始时间之后
+
         if (evenement.getDateHeureFinEvenement() == null || evenement.getDateHeureFinEvenement().isBefore(evenement.getDateHeureDebutEvenement())) {
             redirectAttributes.addFlashAttribute("error", "La date de fin doit être postérieure à la date de début.");
-            return "redirect:/evenement"; // 🔁 返回活动总览页
+            return "redirect:/evenement";
         }
 
-        // ✅ 如果上传了活动图片，则设置到活动
+
         if (photoFile != null && !photoFile.isEmpty()) {
             byte[] photoBytes = photoFile.getBytes();
             String base64 = Base64.getEncoder().encodeToString(photoBytes);
             evenement.setImageUrlEvenement("data:image/jpeg;base64," + base64);
         }
 
-        // ✅ 设置创建者并保存事件
+
         evenement.setCreateur(etudiant);
         evenementRepository.save(evenement);
 
@@ -157,12 +192,38 @@ public class EvenementController {
 
 
 
-
-    // 构造函数（可选）
+    /**
+     * Constructeur du contrôleur EvenementController.
+     *
+     * <p>Ce constructeur permet à Spring d’injecter automatiquement
+     * une instance de {@link EvenementRepository} pour gérer l’accès aux événements.
+     *
+     * @param evenementRepository le dépôt permettant l’accès aux événements en base
+     */
     public EvenementController(EvenementRepository evenementRepository) {
         this.evenementRepository = evenementRepository;
     }
 
+
+    /**
+     * Annule un événement si l'utilisateur connecté est son créateur
+     * et que l'événement n’a pas encore commencé.
+     *
+     * <p>Cette méthode vérifie :
+     * <ul>
+     *   <li>que l'utilisateur est connecté,</li>
+     *   <li>que l’événement existe,</li>
+     *   <li>que l'utilisateur en est le créateur,</li>
+     *   <li>et que l’événement n’a pas encore commencé.</li>
+     * </ul>
+     *
+     * <p>Si toutes les conditions sont réunies, l'événement est supprimé.</p>
+     *
+     * @param idEvenement l’identifiant de l’événement à annuler
+     * @param session la session contenant l’utilisateur connecté
+     * @param redirectAttributes pour transmettre les messages flash
+     * @return une redirection vers la page des événements
+     */
     @PostMapping("/evenement/annuler")
     public String annulerEvenement(@RequestParam Long idEvenement,
                                    HttpSession session,
@@ -183,13 +244,13 @@ public class EvenementController {
 
         Evenement evenement = optionalEvent.get();
 
-        // ✅ 验证是否是创建者
+
         if (!evenement.getCreateur().getIdEtudiant().equals(etudiant.getIdEtudiant())) {
             redirectAttributes.addFlashAttribute("error", "Vous n'êtes pas le créateur de cet événement.");
             return "redirect:/evenement";
         }
 
-        // ✅ 检查是否已开始（不能取消已开始或已结束的活动）
+
         if (evenement.getDateHeureDebutEvenement().isBefore(java.time.LocalDateTime.now())) {
             redirectAttributes.addFlashAttribute("error", "L'événement a déjà commencé, il ne peut plus être annulé.");
             return "redirect:/evenement";
@@ -202,12 +263,22 @@ public class EvenementController {
 
 
 
-
+    /**
+     * Affiche la liste de tous les événements à venir (non encore terminés).
+     *
+     * <p>Cette méthode récupère tous les événements dont la date de fin est
+     * postérieure à l’instant actuel, et les transmet à la vue "event_rejoindre"
+     * pour affichage. Si un utilisateur est connecté, il est également passé au modèle.
+     *
+     * @param model le modèle utilisé pour transmettre les données à la vue
+     * @param session la session contenant potentiellement l’utilisateur connecté
+     * @return la vue "event_rejoindre" affichant les événements futurs
+     */
     @GetMapping("/evenement/liste")
     public String listerTousLesEvenements(Model model, HttpSession session) {
         Etudiant utilisateurConnecte = (Etudiant) session.getAttribute("etudiantConnecte");
 
-        // 获取当前时间之后的所有活动并按开始时间升序排序
+
         List<Evenement> evenementsFuturs = evenementRepository
                 .findByDateHeureFinEvenementAfterOrderByDateHeureDebutEvenementAsc(java.time.LocalDateTime.now());
 
@@ -217,6 +288,23 @@ public class EvenementController {
         return "event_rejoindre";
     }
 
+
+    /**
+     * Recherche des événements à venir à partir d’un mot-clé optionnel.
+     *
+     * <p>Si le mot-clé est renseigné, cette méthode retourne tous les événements
+     * dont le nom contient ce mot-clé (sans tenir compte de la casse),
+     * et dont la date de fin est postérieure à maintenant.
+     * Sinon, elle retourne tous les événements futurs.
+     *
+     * <p>Le résultat est affiché dans la vue {@code event_rejoindre}.
+     * L’utilisateur connecté est également transmis au modèle s’il est présent.
+     *
+     * @param motCle le mot-clé saisi par l’utilisateur (optionnel)
+     * @param model le modèle contenant les résultats
+     * @param session la session HTTP contenant éventuellement l’utilisateur connecté
+     * @return la vue {@code event_rejoindre} avec la liste filtrée des événements
+     */
     @GetMapping("/evenement/recherche")
     public String rechercherEvenements(@RequestParam(name = "motCle", required = false) String motCle,
                                        Model model,
@@ -240,6 +328,26 @@ public class EvenementController {
         return "event_rejoindre";
     }
 
+    /**
+     * Permet à un utilisateur connecté de rejoindre un événement existant.
+     *
+     * <p>Cette méthode :
+     * <ul>
+     *   <li>vérifie que l’utilisateur est connecté ;</li>
+     *   <li>vérifie que l’événement existe ;</li>
+     *   <li>s’assure que l’événement n’est pas terminé ;</li>
+     *   <li>s’assure que l’utilisateur n’en est pas le créateur ;</li>
+     *   <li>et qu’il n’y participe pas déjà.</li>
+     * </ul>
+     *
+     * <p>Si toutes les conditions sont réunies, l’utilisateur est ajouté
+     * aux participants de l’événement.</p>
+     *
+     * @param idEvenement l’identifiant de l’événement à rejoindre
+     * @param session la session contenant l’utilisateur connecté
+     * @param redirectAttributes pour afficher les messages de succès ou d’erreur
+     * @return une redirection vers la page des événements
+     */
     @GetMapping("/evenement/rejoindre/{idEvenement}")
     public String rejoindreEvenement(@PathVariable Long idEvenement,
                                      HttpSession session,
@@ -269,7 +377,7 @@ public class EvenementController {
             return "redirect:/evenement";
         }
 
-        // ✅ 更稳健的重复加入检查
+
         boolean dejaParticipant = evenement.getMembreGroupe().stream()
                 .anyMatch(e -> e.getIdEtudiant().equals(utilisateur.getIdEtudiant()));
 
@@ -284,7 +392,25 @@ public class EvenementController {
         redirectAttributes.addFlashAttribute("success", "Vous avez rejoint l'événement avec succès !");
         return "redirect:/evenement";
     }
-
+    /**
+     * Permet à un utilisateur connecté de quitter un événement auquel il participe.
+     *
+     * <p>Cette méthode effectue plusieurs vérifications :
+     * <ul>
+     *   <li>l’utilisateur est connecté ;</li>
+     *   <li>l’événement existe ;</li>
+     *   <li>l’événement n’est pas encore terminé ;</li>
+     *   <li>l’utilisateur est bien un participant de cet événement.</li>
+     * </ul>
+     *
+     * <p>Si toutes les conditions sont remplies, l’utilisateur est retiré de la liste
+     * des participants, et l’événement est mis à jour.</p>
+     *
+     * @param idEvenement identifiant de l’événement à quitter
+     * @param session la session HTTP contenant l’utilisateur connecté
+     * @param redirectAttributes messages flash pour le retour utilisateur
+     * @return redirection vers la page des événements
+     */
     @GetMapping("/evenement/quitter/{idEvenement}")
     public String quitterEvenement(@PathVariable Long idEvenement,
                                    HttpSession session,
@@ -304,13 +430,13 @@ public class EvenementController {
 
         Evenement evenement = optionalEvent.get();
 
-        // 检查是否已结束
+
         if (evenement.getDateHeureFinEvenement().isBefore(java.time.LocalDateTime.now())) {
             redirectAttributes.addFlashAttribute("error", "L'événement est déjà terminé, vous ne pouvez plus le quitter.");
             return "redirect:/evenement";
         }
 
-        // 检查是否是参与者
+
         boolean estParticipant = evenement.getMembreGroupe().stream()
                 .anyMatch(e -> e.getIdEtudiant().equals(utilisateur.getIdEtudiant()));
 
@@ -319,7 +445,7 @@ public class EvenementController {
             return "redirect:/evenement";
         }
 
-        // 从成员列表中移除用户
+
         evenement.getMembreGroupe().removeIf(e -> e.getIdEtudiant().equals(utilisateur.getIdEtudiant()));
         evenementRepository.save(evenement);
 
@@ -327,6 +453,26 @@ public class EvenementController {
         return "redirect:/evenement";
     }
 
+    /**
+     * Affiche le formulaire de modification d’un événement existant,
+     * uniquement si l’utilisateur est connecté et est le créateur de l’événement.
+     *
+     * <p>Conditions vérifiées :
+     * <ul>
+     *   <li>L’utilisateur est connecté ;</li>
+     *   <li>L’événement existe ;</li>
+     *   <li>L’utilisateur est le créateur de l’événement.</li>
+     * </ul>
+     *
+     * <p>Si toutes les conditions sont remplies, l’événement est injecté dans le modèle
+     * pour affichage dans le formulaire {@code event_modifier.html}.</p>
+     *
+     * @param id identifiant de l’événement à modifier
+     * @param model le modèle à transmettre à la vue
+     * @param session session HTTP contenant potentiellement l’utilisateur connecté
+     * @param redirectAttributes attributs flash pour transmettre les erreurs
+     * @return la vue {@code event_modifier} ou une redirection en cas d’erreur
+     */
     @GetMapping("/evenement/modifier/{id}")
     public String afficherFormulaireModification(@PathVariable Long id,
                                                  Model model,
@@ -358,7 +504,25 @@ public class EvenementController {
     }
 
 
-
+    /**
+     * Met à jour les informations d’un événement existant.
+     *
+     * <p>Cette méthode :
+     * <ul>
+     *   <li>vérifie que l’utilisateur est connecté ;</li>
+     *   <li>vérifie que l’événement existe et que l’utilisateur en est le créateur ;</li>
+     *   <li>valide les dates de début et de fin ;</li>
+     *   <li>met à jour le nom, la description, le lieu, les dates, et éventuellement l’image ;</li>
+     *   <li>enregistre les modifications en base et redirige vers la liste des événements.</li>
+     * </ul>
+     *
+     * @param evenement l’événement modifié à sauvegarder
+     * @param photoFile un fichier image optionnel (peut être vide)
+     * @param session la session contenant l’utilisateur connecté
+     * @param redirectAttributes messages flash pour les retours utilisateur
+     * @return une redirection vers "/evenement"
+     * @throws IOException en cas d’erreur de traitement du fichier image
+     */
     @PostMapping("/evenement/update")
     public String modifierEvenement(@ModelAttribute Evenement evenement,
                                     @RequestParam(value = "photo", required = false) MultipartFile photoFile,
@@ -380,13 +544,13 @@ public class EvenementController {
 
         Evenement original = optionalEvenement.get();
 
-        // ✅ 验证是否是创建者
+
         if (!original.getCreateur().getIdEtudiant().equals(etudiant.getIdEtudiant())) {
             redirectAttributes.addFlashAttribute("erreur", "Vous n'êtes pas le créateur de cet événement.");
             return "redirect:/evenement";
         }
 
-        // ✅ 验证时间合法性
+
         LocalDateTime now = LocalDateTime.now();
         if (evenement.getDateHeureDebutEvenement() == null || evenement.getDateHeureDebutEvenement().isBefore(now)) {
             redirectAttributes.addFlashAttribute("error", "La date de début doit être postérieure à la date actuelle.");
@@ -398,7 +562,7 @@ public class EvenementController {
             return "redirect:/evenement";
         }
 
-        // ✅ 更新字段
+
         original.setNomEvenement(evenement.getNomEvenement());
         original.setLieuEvenement(evenement.getLieuEvenement());
         original.setDateHeureDebutEvenement(evenement.getDateHeureDebutEvenement());

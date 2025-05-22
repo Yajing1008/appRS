@@ -24,11 +24,11 @@ class ReagirTest {
 
         reagir.setEtudiant(etudiant);
         reagir.setPost(post);
-        reagir.setStatut(statut);
+        reagir.getReagirId().setStatut(statut);
 
         assertSame(etudiant, reagir.getEtudiant());
         assertSame(post, reagir.getPost());
-        assertEquals("like", reagir.getStatut());
+        assertEquals("like", reagir.getReagirId().getStatut());
     }
 
     /**
@@ -41,6 +41,6 @@ class ReagirTest {
 
         assertNull(reagir.getEtudiant());
         assertNull(reagir.getPost());
-        assertNull(reagir.getStatut());
+        assertNull(reagir.getReagirId().getStatut());
     }
 }

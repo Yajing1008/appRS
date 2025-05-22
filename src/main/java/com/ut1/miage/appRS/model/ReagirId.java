@@ -1,31 +1,43 @@
 package com.ut1.miage.appRS.model;
 
+import jakarta.persistence.Embeddable;
+
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Classe représentant la clé composite pour l'entité {@link Reagir}.
  * Composée des identifiants d'un étudiant et d'un post.
  */
+@Embeddable
 public class ReagirId implements Serializable {
 
     /** Identifiant de l'étudiant ayant réagi. */
-    private Long etudiant;
+    private Long idEtudiant;
 
     /** Identifiant du post concerné. */
-    private Long post;
+    private Long idPost;
+
+    private String statut;
 
     /** Constructeur par défaut requis pour JPA. */
     public ReagirId() {}
 
+
+    public ReagirId(Long etudiant, Long post) {
+        this.idEtudiant = etudiant;
+        this.idPost = post;
+    }
     /**
      * Constructeur avec tous les champs.
      * 
      * @param etudiant identifiant de l'étudiant
      * @param post identifiant du post
      */
-    public ReagirId(Long etudiant, Long post) {
-        this.etudiant = etudiant;
-        this.post = post;
+    public ReagirId(Long etudiant, Long post, String statut) {
+        this.idEtudiant = etudiant;
+        this.idPost = post;
+        this.statut = statut;
     }
 
     /**
@@ -34,7 +46,7 @@ public class ReagirId implements Serializable {
      * @return identifiant de l'étudiant
      */
     public Long getEtudiant() {
-        return etudiant;
+        return idEtudiant;
     }
 
     /**
@@ -43,7 +55,7 @@ public class ReagirId implements Serializable {
      * @param etudiant identifiant de l'étudiant
      */
     public void setEtudiant(Long etudiant) {
-        this.etudiant = etudiant;
+        this.idEtudiant = etudiant;
     }
 
     /**
@@ -52,7 +64,7 @@ public class ReagirId implements Serializable {
      * @return identifiant du post
      */
     public Long getPost() {
-        return post;
+        return idPost;
     }
 
     /**
@@ -61,37 +73,29 @@ public class ReagirId implements Serializable {
      * @param post identifiant du post
      */
     public void setPost(Long post) {
-        this.post = post;
+        this.idPost = post;
     }
 
-    /**
-     * Compare deux objets ReagirId pour vérifier s'ils sont égaux.
-     * 
-     * @param obj l'objet à comparer
-     * @return true si les deux objets sont égaux, sinon false
-     */
+    public String getStatut() {
+        return statut;
+    }
+
+    public void setStatut(String statut) {
+        this.statut = statut;
+    }
+
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null || getClass() != obj.getClass())
-            return false;
-        ReagirId other = (ReagirId) obj;
-        return (etudiant != null && etudiant.equals(other.etudiant)) &&
-               (post != null && post.equals(other.post));
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ReagirId)) return false;
+        ReagirId that = (ReagirId) o;
+        return Objects.equals(idEtudiant, that.idEtudiant) &&
+                Objects.equals(idPost, that.idPost) &&
+                Objects.equals(statut, that.statut);
     }
 
-    /**
-     * Calcule le hash code de la clé composite.
-     * 
-     * @return le hash code
-     */
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((etudiant == null) ? 0 : etudiant.hashCode());
-        result = prime * result + ((post == null) ? 0 : post.hashCode());
-        return result;
+        return Objects.hash(idEtudiant, idPost, statut);
     }
 }

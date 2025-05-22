@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface ReagirRepository extends JpaRepository<Reagir, ReagirId>{
     void deleteAllByPost(Post post);
-    @Query("SELECT r FROM Reagir r WHERE r.post.idPost = :postId AND r.etudiant.idEtudiant = :etudiantId AND r.statut = :statut")
+    @Query("SELECT r FROM Reagir r WHERE r.post.idPost = :postId AND r.etudiant.idEtudiant = :etudiantId AND r.reagirId.statut = :statut")
     Optional<Reagir> findByPostIdAndEtudiantIdAndStatut(
             @Param("postId") Long postId,
             @Param("etudiantId") Long etudiantId,
