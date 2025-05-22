@@ -1,27 +1,33 @@
 package com.ut1.miage.appRS.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ut1.miage.appRS.model.Etudiant;
-import com.ut1.miage.appRS.repository.EtudiantRepository;
+import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.ut1.miage.appRS.model.Etudiant;
+import com.ut1.miage.appRS.repository.EtudiantRepository;
 
 /**
- * Tests d'intégration pour le contrôleur de connexion et d'inscription.
+ * Tests d’intégration pour le contrôleur {@link ConnectionController}.
+ * Couvre l’inscription, la connexion et la déconnexion des étudiants.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional // Annule les changements à la fin de chaque test
-class ConnectionControllerTest {
+@Transactional
+public class ConnectionControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -29,62 +35,24 @@ class ConnectionControllerTest {
     @Autowired
     private EtudiantRepository etudiantRepository;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private Etudiant etudiant;
 
-    /**
-     * Nettoie la base de données avant chaque test.
-     */
     @BeforeEach
-    void cleanDB() {
-        etudiantRepository.deleteAll();
+    public void setUp() {
+        etudiant = new Etudiant();
+        etudiant.setNomEtudiant("Test");
+        etudiant.setPrenomEtudiant("Utilisateur");
+        etudiant.setEmailEtudiant("test@example.com");
+        etudiant.setMotDePass("123456");
+        etudiant.setDateNaissanceEtudiant(LocalDate.of(2000, 1, 1));
+        etudiantRepository.save(etudiant);
     }
 
     /**
-     * [Test48.1]
-     * Teste l'inscription d'un nouvel étudiant avec des informations valides.
-     * Vérifie que la vue de confirmation est retournée.
+     * Vérifie que le formulaire d'inscription s'affiche correctement.
      */
     @Test
-    void testInscriptionReussie() throws Exception {
-        mockMvc.perform(post("/inscription")
-                        .param("prenomEtudiant", "Jean")
-                        .param("nomEtudiant", "Dupont")
-                        .param("emailEtudiant", "jean@example.com")
-                        .param("motDePass", "motdepasse"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("confirmationInscription"));
-    }
-
-    /**
-     * [Test48.2]
-     * Teste l'inscription avec une adresse email déjà utilisée.
-     * Vérifie que le formulaire est réaffiché avec un message d'erreur.
-     */
-    @Test
-    void testEmailDejaUtilise() throws Exception {
-        // Insère un étudiant existant
-        Etudiant e = new Etudiant();
-        e.setPrenomEtudiant("Marie");
-        e.setNomEtudiant("Curie");
-        e.setEmailEtudiant("marie@example.com");
-        e.setMotDePass("securite");
-        etudiantRepository.save(e);
-
-        mockMvc.perform(post("/inscription")
-                        .param("prenomEtudiant", "Marie")
-                        .param("nomEtudiant", "Curie")
-                        .param("emailEtudiant", "marie@example.com")
-                        .param("motDePass", "autrepass"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("inscription"))
-                .andExpect(model().attributeExists("erreur"));
-    }
-
-    /**
-     * Vérifie que l'affichage du formulaire d'inscription fonctionne correctement.
-     */
-    @Test
-    void testAfficherFormulaireInscription() throws Exception {
+    public void testAfficherFormulaireInscription() throws Exception {
         mockMvc.perform(get("/inscription"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("inscription"))
@@ -92,79 +60,92 @@ class ConnectionControllerTest {
     }
 
     /**
-     * [Test49.1]
-     * Teste la connexion réussie avec email et mot de passe valides.
-     * Vérifie la redirection vers la page d’accueil.
+     * Vérifie l'inscription d'un nouvel utilisateur.
      */
-   @Test
-   void testConnexionReussie() throws Exception {
-       Etudiant etudiant = new Etudiant();
-       etudiant.setPrenomEtudiant("Pierre");
-       etudiant.setNomEtudiant("Martin");
-       etudiant.setEmailEtudiant("pierre@example.com");
-       etudiant.setMotDePass("secret123");
-       etudiantRepository.save(etudiant);
+    @Test
+    public void testInscriptionEtudiant() throws Exception {
+        mockMvc.perform(post("/inscription")
+                        .param("emailEtudiant", "nouveau@example.com")
+                        .param("motDePass", "abcdef")
+                        .param("nomEtudiant", "Nouveau")
+                        .param("prenomEtudiant", "Étudiant"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("confirmationInscription"));
+    }
 
-       mockMvc.perform(post("/connexion")
-                       .param("email", "pierre@example.com")
-                       .param("motDePasse", "secret123"))
-               .andExpect(status().is3xxRedirection())
-               .andExpect(redirectedUrl("/"));
-   }
+    /**
+     * Vérifie qu'on ne peut pas s'inscrire avec un email déjà utilisé.
+     */
+    @Test
+    public void testInscriptionEmailExistant() throws Exception {
+        mockMvc.perform(post("/inscription")
+                        .param("emailEtudiant", "test@example.com")  // déjà utilisé
+                        .param("motDePass", "abcdef")
+                        .param("nomEtudiant", "Dupont")
+                        .param("prenomEtudiant", "Jean"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("inscription"))
+                .andExpect(model().attributeExists("erreur"));
+    }
 
-   /**
-    * [Test49.2]
-    * Teste la connexion échouée avec un mauvais mot de passe.
-    * Vérifie que le formulaire est réaffiché avec une erreur.
-    */
-   @Test
-   void testConnexionMotDePasseInvalide() throws Exception {
-       Etudiant etudiant = new Etudiant();
-       etudiant.setPrenomEtudiant("Alice");
-       etudiant.setNomEtudiant("Durand");
-       etudiant.setEmailEtudiant("alice@example.com");
-       etudiant.setMotDePass("motcorrect");
-       etudiantRepository.save(etudiant);
+    /**
+     * Vérifie que le formulaire de connexion est accessible.
+     */
+    @Test
+    public void testAfficherFormulaireConnexion() throws Exception {
+        mockMvc.perform(get("/connexion"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("connexion"));
+    }
 
-       mockMvc.perform(post("/connexion")
-                       .param("email", "alice@example.com")
-                       .param("motDePasse", "mauvais"))
-               .andExpect(status().isOk())
-               .andExpect(view().name("connexion"))
-               .andExpect(model().attributeExists("erreur"));
-   }
+    /**
+     * Vérifie qu’un utilisateur peut se connecter avec des identifiants valides.
+     */
+    @Test
+    public void testConnexionValide() throws Exception {
+        mockMvc.perform(post("/connexion")
+                        .param("email", "test@example.com")
+                        .param("motDePasse", "123456"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
+    }
 
-   /**
-    * [Test49.3]
-    * Teste la connexion avec une adresse e-mail inexistante.
-    */
-   @Test
-   void testConnexionEmailInexistant() throws Exception {
-       mockMvc.perform(post("/connexion")
-                       .param("email", "inexistant@example.com")
-                       .param("motDePasse", "peuimporte"))
-               .andExpect(status().isOk())
-               .andExpect(view().name("connexion"))
-               .andExpect(model().attributeExists("erreur"));
-   }
+    /**
+     * Vérifie que la connexion échoue avec un mauvais mot de passe.
+     */
+    @Test
+    public void testConnexionMotDePasseInvalide() throws Exception {
+        mockMvc.perform(post("/connexion")
+                        .param("email", "test@example.com")
+                        .param("motDePasse", "mauvais"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("connexion"))
+                .andExpect(model().attributeExists("erreur"));
+    }
 
-   /**
-    * [Test50.1]
-    * Teste la déconnexion d’un étudiant connecté.
-    * Vérifie que la session est invalidée et qu’on est redirigé.
-    */
-   @Test
-   void testDeconnexion() throws Exception {
-       // Simuler une session active avec un étudiant
-       Etudiant etudiant = new Etudiant();
-       etudiant.setPrenomEtudiant("Luc");
-       etudiant.setNomEtudiant("Petit");
-       etudiant.setEmailEtudiant("luc@example.com");
-       etudiant.setMotDePass("motluc");
-       etudiantRepository.save(etudiant);
+    /**
+     * Vérifie que la connexion échoue si l'email n'existe pas.
+     */
+    @Test
+    public void testConnexionEmailInexistant() throws Exception {
+        mockMvc.perform(post("/connexion")
+                        .param("email", "inexistant@example.com")
+                        .param("motDePasse", "abc"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("connexion"))
+                .andExpect(model().attributeExists("erreur"));
+    }
 
-       mockMvc.perform(get("/deconnexion"))
-               .andExpect(status().is3xxRedirection())
-               .andExpect(redirectedUrl("/"));
-   }
+    /**
+     * Vérifie que la déconnexion supprime la session et redirige vers l’accueil.
+     */
+    @Test
+    public void testDeconnexion() throws Exception {
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("etudiantConnecte", etudiant);
+
+        mockMvc.perform(get("/deconnexion").session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"));
+    }
 }
