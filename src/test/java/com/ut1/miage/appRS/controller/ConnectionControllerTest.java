@@ -1,7 +1,7 @@
 package com.ut1.miage.appRS.controller;
 
-import java.time.LocalDate;
-
+import com.ut1.miage.appRS.model.Etudiant;
+import com.ut1.miage.appRS.repository.EtudiantRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,16 +9,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ut1.miage.appRS.model.Etudiant;
-import com.ut1.miage.appRS.repository.EtudiantRepository;
+import java.time.LocalDate;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Tests d’intégration pour le contrôleur {@link ConnectionController}.
@@ -29,14 +26,22 @@ import com.ut1.miage.appRS.repository.EtudiantRepository;
 @Transactional
 public class ConnectionControllerTest {
 
+    /** Objet permettant de simuler des requêtes HTTP dans les tests. */
     @Autowired
     private MockMvc mockMvc;
 
+    /** Référentiel pour accéder aux données des étudiants pendant les tests. */
     @Autowired
     private EtudiantRepository etudiantRepository;
 
+    /** Étudiant utilisé comme jeu de données pour les tests. */
     private Etudiant etudiant;
 
+    /**
+     * Initialise un étudiant de test avant chaque méthode de test.
+     *
+     * L’étudiant est enregistré dans la base de données en mémoire avec des informations fictives.
+     */
     @BeforeEach
     public void setUp() {
         etudiant = new Etudiant();

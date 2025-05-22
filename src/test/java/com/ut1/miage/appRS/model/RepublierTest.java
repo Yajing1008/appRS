@@ -7,15 +7,35 @@ import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Classe de test unitaire pour l'entité {@link Republier}.
+ *
+ * Vérifie la construction, les accesseurs, les mutateurs
+ * et le bon enregistrement des données liées à la republication.
+ */
 class RepublierTest {
 
+    /** Identifiant composite de republication. */
     private RepublierId republierId;
+
+    /** Publication d’origine liée à la republication. */
     private Post post;
+
+    /** Étudiant ayant republicé la publication. */
     private Etudiant etudiant;
+
+    /** Date et heure de la republication. */
     private LocalDateTime date;
+
+    /** Commentaire ajouté lors de la republication. */
     private String commentaire;
+
+    /** Statut de visibilité de la republication. */
     private boolean estPublic;
 
+    /**
+     * Initialise les objets de test communs avant chaque test.
+     */
     @BeforeEach
     void setUp() {
         republierId = new RepublierId(1L, 2L);
@@ -26,6 +46,9 @@ class RepublierTest {
         estPublic = true;
     }
 
+    /**
+     * Vérifie que le constructeur par défaut initialise les champs correctement.
+     */
     @Test
     void testDefaultConstructor() {
         Republier republier = new Republier();
@@ -33,6 +56,9 @@ class RepublierTest {
         assertThat(republier.getDateRepublication()).isNotNull();
     }
 
+    /**
+     * Vérifie le constructeur complet et les getters associés.
+     */
     @Test
     void testAllArgsConstructorAndGetters() {
         Republier republier = new Republier(republierId, post, etudiant, date, estPublic, commentaire);
@@ -45,6 +71,9 @@ class RepublierTest {
         assertThat(republier.isEstPublic()).isEqualTo(estPublic);
     }
 
+    /**
+     * Vérifie les accesseurs et mutateurs (getters et setters).
+     */
     @Test
     void testSettersAndGetters() {
         Republier republier = new Republier();

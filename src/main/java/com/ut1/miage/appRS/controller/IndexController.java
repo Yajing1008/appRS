@@ -221,7 +221,16 @@ public class IndexController {
     }
 
     /**
-     * Active ou désactive un like sur un post.
+     * Active ou désactive un "Like" sur une publication pour l'étudiant connecté.
+     *
+     * Si l'étudiant n'est pas connecté, il est redirigé avec un message d'erreur.
+     * Si la publication est introuvable, un message d'erreur est également affiché.
+     * Si un "Like" existe déjà, il est supprimé. Sinon, un nouveau "Like" est ajouté.
+     *
+     * @param postId l'identifiant de la publication ciblée
+     * @param session la session HTTP contenant l'étudiant connecté
+     * @param redirectAttributes les attributs utilisés pour afficher des messages après redirection
+     * @return une redirection vers la page d'accueil, ancrée sur la publication concernée
      */
     @GetMapping("/reaction/like")
     public String toggleLike(@RequestParam Long postId, HttpSession session, RedirectAttributes redirectAttributes) {
@@ -261,7 +270,16 @@ public class IndexController {
     }
 
     /**
-     * Active ou désactive un favori sur un post.
+     * Active ou désactive une réaction "Favori" sur une publication pour l'étudiant connecté.
+     *
+     * Si l'étudiant n'est pas connecté, il est redirigé avec un message d'erreur.
+     * Si la publication est introuvable, un message d'erreur est également affiché.
+     * Si un "Favori" existe déjà, il est supprimé. Sinon, une nouvelle réaction "Favori" est enregistrée.
+     *
+     * @param postId l'identifiant de la publication ciblée
+     * @param session la session HTTP contenant l'étudiant connecté
+     * @param redirectAttributes les attributs utilisés pour afficher des messages après redirection
+     * @return une redirection vers la page d'accueil, ancrée sur la publication concernée
      */
     @GetMapping("/reaction/favori")
     public String toggleFavori(@RequestParam Long postId, HttpSession session, RedirectAttributes redirectAttributes) {
@@ -300,7 +318,17 @@ public class IndexController {
     }
 
     /**
-     * Permet à l'utilisateur de commenter un post.
+     * Publie un commentaire sur une publication pour l'étudiant connecté.
+     *
+     * Si l'étudiant n'est pas connecté, il est redirigé avec un message d'erreur.
+     * Si la publication est introuvable, un message d'erreur est affiché.
+     * Sinon, le commentaire est enregistré avec la date et l'heure actuelles.
+     *
+     * @param postId l'identifiant de la publication commentée
+     * @param commentaire le contenu du commentaire saisi par l'utilisateur
+     * @param session la session HTTP contenant l'étudiant connecté
+     * @param redirectAttributes les attributs utilisés pour afficher des messages après redirection
+     * @return une redirection vers la page d'accueil, ancrée sur la publication concernée
      */
     @PostMapping("/commenter")
     public String commenter(@RequestParam Long postId,
@@ -335,8 +363,20 @@ public class IndexController {
     }
 
     /**
-     * Supprime un commentaire si l'utilisateur en est l'auteur.
+     * Supprime un commentaire d'une publication s'il appartient à l'étudiant connecté.
+     *
+     * Si l'étudiant n'est pas connecté, il est redirigé avec un message d'erreur.
+     * Si le commentaire est introuvable, un message d'erreur est affiché.
+     * Si le commentaire ne correspond pas à l'étudiant connecté, la suppression est refusée.
+     * Sinon, le commentaire est supprimé de la base de données.
+     *
+     * @param postId l'identifiant de la publication associée au commentaire
+     * @param idCommentaire l'identifiant du commentaire à supprimer
+     * @param session la session HTTP contenant l'étudiant connecté
+     * @param redirectAttributes les attributs utilisés pour afficher des messages après redirection
+     * @return une redirection vers la page d'accueil, ancrée sur la publication concernée
      */
+
     @Transactional
     @PostMapping("/commenter/supprimer")
     public String supprimerCommentaire(@RequestParam Long postId,

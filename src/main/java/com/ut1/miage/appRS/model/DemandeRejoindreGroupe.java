@@ -153,7 +153,7 @@ public class DemandeRejoindreGroupe {
         this.refusee = refusee;
     }
 
-    // --- equals & hashCode (basés sur idDemande) ---
+
 
     @Override
     public boolean equals(Object o) {

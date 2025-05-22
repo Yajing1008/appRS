@@ -100,74 +100,164 @@ public class Evenement {
 
 
 
+    /**
+     * Retourne l'identifiant de l'événement.
+     *
+     * @return l'identifiant de l'événement
+     */
     public Long getIdEvenement() {
         return idEvenement;
     }
 
+    /**
+     * Définit l'identifiant de l'événement.
+     *
+     * @param idEvenement l'identifiant de l'événement
+     */
     public void setIdEvenement(Long idEvenement) {
         this.idEvenement = idEvenement;
     }
 
+    /**
+     * Retourne la date et l'heure de début de l'événement.
+     *
+     * @return la date et l'heure de début de l'événement
+     */
     public LocalDateTime getDateHeureDebutEvenement() {
         return dateHeureDebutEvenement;
     }
 
+    /**
+     * Définit la date et l'heure de début de l'événement.
+     *
+     * @param dateHeureDebutEvenement la date et l'heure de début de l'événement
+     */
     public void setDateHeureDebutEvenement(LocalDateTime dateHeureDebutEvenement) {
         this.dateHeureDebutEvenement = dateHeureDebutEvenement;
     }
 
+    /**
+     * Retourne la date et l'heure de fin de l'événement.
+     *
+     * @return la date et l'heure de fin de l'événement
+     */
     public LocalDateTime getDateHeureFinEvenement() {
         return dateHeureFinEvenement;
     }
 
+    /**
+     * Définit la date et l'heure de fin de l'événement.
+     *
+     * @param dateHeureFinEvenement la date et l'heure de fin de l'événement
+     */
     public void setDateHeureFinEvenement(LocalDateTime dateHeureFinEvenement) {
         this.dateHeureFinEvenement = dateHeureFinEvenement;
     }
 
+    /**
+     * Retourne le nom de l'événement.
+     *
+     * @return le nom de l'événement
+     */
     public String getNomEvenement() {
         return nomEvenement;
     }
 
+    /**
+     * Définit le nom de l'événement.
+     *
+     * @param nomEvenement le nom de l'événement
+     */
     public void setNomEvenement(String nomEvenement) {
         this.nomEvenement = nomEvenement;
     }
 
+    /**
+     * Retourne l'étudiant créateur de l'événement.
+     *
+     * @return l'étudiant créateur
+     */
     public Etudiant getCreateur() {
         return createur;
     }
 
+    /**
+     * Définit l'étudiant créateur de l'événement.
+     *
+     * @param createur l'étudiant créateur
+     */
     public void setCreateur(Etudiant createur) {
         this.createur = createur;
     }
 
+    /**
+     * Retourne la liste des membres du groupe participant à l'événement.
+     *
+     * @return la liste des membres du groupe
+     */
     public List<Etudiant> getMembreGroupe() {
         return membreGroupe;
     }
 
+    /**
+     * Définit la liste des membres du groupe participant à l'événement.
+     *
+     * @param membreGroupe la liste des membres du groupe
+     */
     public void setMembreGroupe(List<Etudiant> membreGroupe) {
         this.membreGroupe = membreGroupe;
     }
 
+    /**
+     * Retourne l'URL de l'image associée à l'événement.
+     *
+     * @return l'URL de l'image de l'événement
+     */
     public String getImageUrlEvenement() {
         return imageUrlEvenement;
     }
 
+    /**
+     * Définit l'URL de l'image associée à l'événement.
+     *
+     * @param imageUrlEvenement l'URL de l'image de l'événement
+     */
     public void setImageUrlEvenement(String imageUrlEvenement) {
         this.imageUrlEvenement = imageUrlEvenement;
     }
 
+    /**
+     * Retourne le lieu de l'événement.
+     *
+     * @return le lieu de l'événement
+     */
     public String getLieuEvenement() {
         return lieuEvenement;
     }
 
+    /**
+     * Définit le lieu de l'événement.
+     *
+     * @param lieuEvenement le lieu de l'événement
+     */
     public void setLieuEvenement(String lieuEvenement) {
         this.lieuEvenement = lieuEvenement;
     }
 
+    /**
+     * Retourne la description de l'événement.
+     *
+     * @return la description de l'événement
+     */
     public String getDescriptionEvenement() {
         return descriptionEvenement;
     }
 
+    /**
+     * Définit la description de l'événement.
+     *
+     * @param descriptionEvenement la description de l'événement
+     */
     public void setDescriptionEvenement(String descriptionEvenement) {
         this.descriptionEvenement = descriptionEvenement;
     }

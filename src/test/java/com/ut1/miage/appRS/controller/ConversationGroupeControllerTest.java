@@ -1,24 +1,5 @@
 package com.ut1.miage.appRS.controller;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.ut1.miage.appRS.model.Conversation;
 import com.ut1.miage.appRS.model.EtuMessConversation;
 import com.ut1.miage.appRS.model.Etudiant;
@@ -27,6 +8,22 @@ import com.ut1.miage.appRS.repository.ConversationRepository;
 import com.ut1.miage.appRS.repository.EtuMessConversationRepository;
 import com.ut1.miage.appRS.repository.EtudiantRepository;
 import com.ut1.miage.appRS.repository.GroupeRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Tests d'intégration du contrôleur {@link ConversationGroupeController}.
@@ -36,26 +33,38 @@ import com.ut1.miage.appRS.repository.GroupeRepository;
 @AutoConfigureMockMvc
 @Transactional
 public class ConversationGroupeControllerTest {
-
+    /** Objet permettant de simuler des requêtes HTTP dans les tests. */
     @Autowired
     private MockMvc mockMvc;
 
+    /** Référentiel d'accès aux données des étudiants utilisé dans les tests. */
     @Autowired
     private EtudiantRepository etudiantRepository;
 
+    /** Référentiel de gestion des groupes utilisé dans les scénarios de test. */
     @Autowired
     private GroupeRepository groupeRepository;
 
+    /** Référentiel permettant d'accéder aux conversations liées aux groupes ou étudiants. */
     @Autowired
     private ConversationRepository conversationRepository;
 
+    /** Référentiel pour manipuler les messages envoyés dans les conversations. */
     @Autowired
     private EtuMessConversationRepository messageRepository;
 
+    /** Étudiant utilisé dans le contexte de test. */
     private Etudiant etudiant;
+
+    /** Groupe utilisé dans les scénarios de test. */
     private Groupe groupe;
+
+    /** Conversation utilisée dans le cadre des tests de messagerie. */
     private Conversation conversation;
+
+    /** Session simulée représentant un étudiant connecté. */
     private MockHttpSession session;
+
 
     /**
      * Prépare les données de base : étudiant, groupe, conversation et session simulée.

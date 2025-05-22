@@ -1,7 +1,9 @@
 package com.ut1.miage.appRS.controller;
 
-import java.time.LocalDate;
-
+import com.ut1.miage.appRS.model.DemandeAmi;
+import com.ut1.miage.appRS.model.Etudiant;
+import com.ut1.miage.appRS.repository.DemandeAmiRepository;
+import com.ut1.miage.appRS.repository.EtudiantRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,16 +11,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ut1.miage.appRS.model.DemandeAmi;
-import com.ut1.miage.appRS.model.Etudiant;
-import com.ut1.miage.appRS.repository.DemandeAmiRepository;
-import com.ut1.miage.appRS.repository.EtudiantRepository;
+import java.time.LocalDate;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Tests d'intégration pour le contrôleur {@link AmiController}.
@@ -29,18 +27,27 @@ import com.ut1.miage.appRS.repository.EtudiantRepository;
 @Transactional
 public class AmiControllerTest {
 
+    /** Objet MockMvc utilisé pour simuler des requêtes HTTP dans les tests. */
     @Autowired
     private MockMvc mockMvc;
 
+    /** Référentiel d'accès aux données des étudiants pour les tests. */
     @Autowired
     private EtudiantRepository etudiantRepository;
 
+    /** Référentiel d'accès aux demandes d'ami pour les tests. */
     @Autowired
     private DemandeAmiRepository demandeAmiRepository;
 
+    /** Étudiant jouant le rôle de demandeur dans les tests. */
     private Etudiant demandeur;
+
+    /** Étudiant jouant le rôle de receveur dans les tests. */
     private Etudiant receveur;
+
+    /** Session simulée pour représenter un étudiant connecté. */
     private MockHttpSession session;
+
 
     /**
      * Initialise les étudiants et la session pour les tests.

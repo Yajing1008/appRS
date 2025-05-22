@@ -4,8 +4,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Classe de test unitaire pour la classe {@link RepublierId}.
+ *
+ * Vérifie le bon fonctionnement du constructeur, des accesseurs,
+ * de la méthode equals et de la méthode hashCode.
+ */
 class RepublierIdTest {
 
+    /**
+     * Vérifie que le constructeur par défaut initialise les champs à null.
+     */
     @Test
     void testDefaultConstructor() {
         RepublierId id = new RepublierId();
@@ -14,6 +23,9 @@ class RepublierIdTest {
         assertThat(id.getEtudiantId()).isNull();
     }
 
+    /**
+     * Vérifie que le constructeur avec arguments initialise correctement les champs.
+     */
     @Test
     void testAllArgsConstructor() {
         RepublierId id = new RepublierId(1L, 2L);
@@ -21,6 +33,9 @@ class RepublierIdTest {
         assertThat(id.getEtudiantId()).isEqualTo(2L);
     }
 
+    /**
+     * Vérifie le bon fonctionnement des setters.
+     */
     @Test
     void testSetters() {
         RepublierId id = new RepublierId();
@@ -31,6 +46,9 @@ class RepublierIdTest {
         assertThat(id.getEtudiantId()).isEqualTo(4L);
     }
 
+    /**
+     * Vérifie que equals et hashCode fonctionnent pour des objets égaux ou différents.
+     */
     @Test
     void testEqualsAndHashCode() {
         RepublierId id1 = new RepublierId(1L, 2L);
@@ -44,6 +62,9 @@ class RepublierIdTest {
         assertThat(id1.hashCode()).isNotEqualTo(id3.hashCode());
     }
 
+    /**
+     * Vérifie que equals retourne false avec null ou un objet d’une autre classe.
+     */
     @Test
     void testEqualsWithNullAndDifferentClass() {
         RepublierId id = new RepublierId(1L, 2L);
@@ -52,6 +73,9 @@ class RepublierIdTest {
         assertThat(id.equals("not an id")).isFalse();
     }
 
+    /**
+     * Vérifie que equals retourne true quand l’objet est comparé à lui-même.
+     */
     @Test
     void testEqualsWithSameInstance() {
         RepublierId id = new RepublierId(1L, 2L);
