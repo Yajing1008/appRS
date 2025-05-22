@@ -29,6 +29,8 @@ public class Reagir {
 
 
 
+
+
     /**
      * Récupère le post concerné par la réaction.
      * @return le post réagi
@@ -69,4 +71,6 @@ public class Reagir {
     public void setReagirId(ReagirId reagirId) {
         this.reagirId = reagirId;
     }
+
+
 }
