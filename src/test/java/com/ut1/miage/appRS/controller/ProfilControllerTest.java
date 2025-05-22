@@ -55,10 +55,13 @@ class ProfilControllerTest {
     @Autowired
     private CentreInteretRepository centreInteretRepository;
 
+    @Autowired
+    private CommenterRepository commenterRepository;
+
     private Etudiant etudiant;
     private Etudiant cible;
     private Post post;
-
+    private Commenter commentaire;
     @BeforeEach
     void setUp() {
 
@@ -82,6 +85,14 @@ class ProfilControllerTest {
         post.setEtudiant(etudiant);
         post.setDatePublicationPost(LocalDateTime.now());
         post = postRepository.save(post);
+
+
+        commentaire = new Commenter();
+        commentaire.setEtudiant(etudiant);
+        commentaire.setPost(post);
+        commentaire.setCommentaire("Un commentaire.");
+        commentaire.setDateHeureCommentaire(LocalDateTime.now());
+        commentaire = commenterRepository.save(commentaire);
 
     }
 
@@ -460,6 +471,99 @@ class ProfilControllerTest {
         assertTrue(opt.isPresent(), "La républication doit être présente en base.");
         assertEquals("Je republie ce super post !", opt.get().getCommentaireRepublication());
     }
+
+    @Test
+    void testCommenter_NonConnecte() throws Exception {
+        mockMvc.perform(post("/profil/commenter")
+                        .param("postId", post.getIdPost().toString())
+                        .param("commentaire", "Super !"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
+                .andExpect(flash().attribute("error", "Veuillez vous connecter pour commenter."));
+    }
+
+    @Test
+    void testCommenter_PostInexistant() throws Exception {
+        mockMvc.perform(post("/profil/commenter")
+                        .sessionAttr("etudiantConnecte", etudiant)
+                        .param("postId", "999999")
+                        .param("commentaire", "Trop bien !"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil"))
+                .andExpect(flash().attribute("error", "Publication introuvable."));
+    }
+
+    @Test
+    void testCommenter_Succes() throws Exception {
+        mockMvc.perform(post("/profil/commenter")
+                        .sessionAttr("etudiantConnecte", etudiant)
+                        .param("postId", post.getIdPost().toString())
+                        .param("commentaire", "Très bon post !"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
+                .andExpect(flash().attribute("success", "Commentaire publié !"));
+
+
+        List<Commenter> commentaires = commenterRepository.findByPostOrderByDateHeureCommentaireDesc(post);
+
+        boolean trouve = commentaires.stream().anyMatch(c ->
+                c.getCommentaire().equals("Très bon post !") &&
+                        c.getEtudiant().getIdEtudiant().equals(etudiant.getIdEtudiant())
+        );
+
+        assertTrue(trouve, "Le commentaire 'Très bon post !' devrait être enregistré.");
+    }
+
+
+    @Test
+    void testSupprimerCommentaire_NonConnecte() throws Exception {
+        mockMvc.perform(post("/profil/commenter/supprimer")
+                        .param("postId", post.getIdPost().toString())
+                        .param("idCommentaire", commentaire.getIdCommentaire().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
+                .andExpect(flash().attribute("error", "Veuillez vous connecter pour supprimer un commentaire."));
+    }
+
+
+    @Test
+    void testSupprimerCommentaire_CommentaireInexistant() throws Exception {
+        mockMvc.perform(post("/profil/commenter/supprimer")
+                        .sessionAttr("etudiantConnecte", etudiant)
+                        .param("postId", post.getIdPost().toString())
+                        .param("idCommentaire", "999999")) // 不存在的评论ID
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
+                .andExpect(flash().attribute("error", "Commentaire introuvable."));
+    }
+
+    @Test
+    void testSupprimerCommentaire_PasProprietaire() throws Exception {
+        mockMvc.perform(post("/profil/commenter/supprimer")
+                        .sessionAttr("etudiantConnecte", cible) // cible ≠ commentaire 作者
+                        .param("postId", post.getIdPost().toString())
+                        .param("idCommentaire", commentaire.getIdCommentaire().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
+                .andExpect(flash().attribute("error", "Vous ne pouvez supprimer que vos propres commentaires."));
+    }
+
+    @Test
+    void testSupprimerCommentaire_Succes() throws Exception {
+        mockMvc.perform(post("/profil/commenter/supprimer")
+                        .sessionAttr("etudiantConnecte", etudiant) // etudiant 是评论作者
+                        .param("postId", post.getIdPost().toString())
+                        .param("idCommentaire", commentaire.getIdCommentaire().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
+                .andExpect(flash().attribute("success", "Commentaire supprimé !"));
+
+        assertFalse(commenterRepository.findById(commentaire.getIdCommentaire()).isPresent(),
+                "Le commentaire devrait être supprimé.");
+    }
+
+
+
 
 
 
