@@ -77,7 +77,9 @@ public class ProfilController {
             model.addAttribute("etudiant", null);
             model.addAttribute("posts", Collections.emptyList());
             model.addAttribute("postDates", Collections.emptyMap());
-            model.addAttribute("isOwner", false); //  安全：未登录当然不是本人
+            model.addAttribute("likedPostMap", Collections.emptyMap());
+            model.addAttribute("favoriPostMap", Collections.emptyMap());
+            model.addAttribute("isOwner", false);
             return "profil";
         }
 
@@ -86,6 +88,8 @@ public class ProfilController {
         if (optionalEtudiant.isEmpty()) {
             model.addAttribute("messageConnexion", "Profil introuvable.");
             model.addAttribute("isOwner", false);
+            model.addAttribute("likedPostMap", Collections.emptyMap());
+            model.addAttribute("favoriPostMap", Collections.emptyMap());
             return "profil";
         }
 
@@ -95,10 +99,8 @@ public class ProfilController {
 
         model.addAttribute("etudiant", etudiant);
 
-
         boolean isOwner = etudiantSession.getIdEtudiant().equals(etudiant.getIdEtudiant());
         model.addAttribute("isOwner", isOwner);
-
 
         List<Post> postsPublies = postRepository.findByEtudiantOrderByDatePublicationPostDesc(etudiant);
         List<Republier> republications = republierRepository.findByEtudiantOrderByDateRepublicationDesc(etudiant);
@@ -116,11 +118,25 @@ public class ProfilController {
             }
         }
 
+
+        Map<Long, Boolean> likedPostMap = new HashMap<>();
+        Map<Long, Boolean> favoriPostMap = new HashMap<>();
+
+        for (Post post : posts) {
+            boolean liked = reagirRepository.hasLiked(post.getIdPost(), etudiantSession.getIdEtudiant());
+            boolean favori = reagirRepository.hasFavori(post.getIdPost(), etudiantSession.getIdEtudiant());
+            likedPostMap.put(post.getIdPost(), liked);
+            favoriPostMap.put(post.getIdPost(), favori);
+        }
+
         model.addAttribute("posts", posts);
         model.addAttribute("postDates", postDates);
+        model.addAttribute("likedPostMap", likedPostMap);
+        model.addAttribute("favoriPostMap", favoriPostMap);
 
         return "profil";
     }
+
 
     /**
      * Affiche le profil d'un étudiant spécifique identifié par son ID.
@@ -149,28 +165,25 @@ public class ProfilController {
             model.addAttribute("etudiant", null);
             model.addAttribute("posts", Collections.emptyList());
             model.addAttribute("postDates", Collections.emptyMap());
+            model.addAttribute("likedPostMap", Collections.emptyMap());
+            model.addAttribute("favoriPostMap", Collections.emptyMap());
             model.addAttribute("isOwner", false);
             model.addAttribute("isFriend", false);
             return "profil";
         }
 
         Etudiant etudiant = optionalEtudiant.get();
-
-
         etudiant.getUniversites().size();
         etudiant.getCentresInteret().size();
         etudiant.getAmis().size();
 
         model.addAttribute("etudiant", etudiant);
 
-
         boolean isOwner = etudiantSession != null && etudiantSession.getIdEtudiant().equals(id);
         model.addAttribute("isOwner", isOwner);
 
-
         boolean isFriend = false;
         if (etudiantSession != null) {
-            // Recharger etudiantSession depuis la base de données pour initialiser la liste des amis
             Optional<Etudiant> optSession = etudiantRepository.findById(etudiantSession.getIdEtudiant());
             if (optSession.isPresent()) {
                 Etudiant sessionLoaded = optSession.get();
@@ -180,7 +193,7 @@ public class ProfilController {
         }
         model.addAttribute("isFriend", isFriend);
 
-        // 获取帖文列表
+
         List<Post> postsPublies;
         List<Republier> republications;
         List<Post> postsRepartages;
@@ -199,7 +212,7 @@ public class ProfilController {
         posts.addAll(postsRepartages);
         posts.addAll(postsPublies);
 
-        // 格式化日期
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH:mm", Locale.FRENCH);
         Map<Long, String> postDates = new HashMap<>();
         for (Post post : posts) {
@@ -208,11 +221,27 @@ public class ProfilController {
             }
         }
 
+
+        Map<Long, Boolean> likedPostMap = new HashMap<>();
+        Map<Long, Boolean> favoriPostMap = new HashMap<>();
+
+        if (etudiantSession != null) {
+            for (Post post : posts) {
+                boolean liked = reagirRepository.hasLiked(post.getIdPost(), etudiantSession.getIdEtudiant());
+                boolean favori = reagirRepository.hasFavori(post.getIdPost(), etudiantSession.getIdEtudiant());
+                likedPostMap.put(post.getIdPost(), liked);
+                favoriPostMap.put(post.getIdPost(), favori);
+            }
+        }
+
         model.addAttribute("posts", posts);
         model.addAttribute("postDates", postDates);
+        model.addAttribute("likedPostMap", likedPostMap);
+        model.addAttribute("favoriPostMap", favoriPostMap);
 
         return "profil";
     }
+
 
 
 
@@ -246,9 +275,12 @@ public class ProfilController {
             model.addAttribute("posts", Collections.emptyList());
             model.addAttribute("postDates", Collections.emptyMap());
             model.addAttribute("toutesUniversites", Collections.emptyList());
-            model.addAttribute("tousCentresInteret", Collections.emptyList()); // ✅ 加这一行
+            model.addAttribute("tousCentresInteret", Collections.emptyList());
+            model.addAttribute("likedPostMap", Collections.emptyMap());
+            model.addAttribute("favoriPostMap", Collections.emptyMap());
             return "profil_modifier";
         }
+
 
         List<Post> postsPublies = postRepository.findByEtudiantOrderByDatePublicationPostDesc(etudiant);
         List<Republier> republications = republierRepository.findByEtudiantOrderByDateRepublicationDesc(etudiant);
@@ -258,6 +290,7 @@ public class ProfilController {
         posts.addAll(postsRepartages);
         posts.addAll(postsPublies);
 
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH:mm", Locale.FRENCH);
         Map<Long, String> postDates = new HashMap<>();
         for (Post post : posts) {
@@ -266,16 +299,32 @@ public class ProfilController {
             }
         }
 
+
         List<Universite> toutesUniversites = universiteRepository.findAll();
         List<CentreInteret> tousCentresInteret = centreInteretRepository.findAll();
+
+
+        Map<Long, Boolean> likedPostMap = new HashMap<>();
+        Map<Long, Boolean> favoriPostMap = new HashMap<>();
+
+        for (Post post : posts) {
+            boolean liked = reagirRepository.hasLiked(post.getIdPost(), etudiant.getIdEtudiant());
+            boolean favori = reagirRepository.hasFavori(post.getIdPost(), etudiant.getIdEtudiant());
+            likedPostMap.put(post.getIdPost(), liked);
+            favoriPostMap.put(post.getIdPost(), favori);
+        }
+
 
         model.addAttribute("toutesUniversites", toutesUniversites);
         model.addAttribute("tousCentresInteret", tousCentresInteret);
         model.addAttribute("posts", posts);
         model.addAttribute("postDates", postDates);
+        model.addAttribute("likedPostMap", likedPostMap);
+        model.addAttribute("favoriPostMap", favoriPostMap);
 
         return "profil_modifier";
     }
+
 
 
 

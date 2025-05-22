@@ -505,23 +505,20 @@
                                     <a th:href="@{/reaction/like(postId=${post.idPost})}"
                                        class="d-flex align-items-center fw-600 text-grey-900 text-dark lh-26 font-xssss me-2"
                                        style="cursor: pointer;">
-                                        <i class="feather-thumbs-up text-white bg-primary-gradiant me-1 btn-round-xs font-xss"
-                                        ></i>
-
-
+                                        <i class="feather-thumbs-up me-1 btn-round-xs font-xss"
+                                           th:classappend="${likedPostMap[post.idPost]} ? 'text-white bg-primary-gradiant' : 'text-primary bg-light'"></i>
                                         <span th:text="${#lists.size(post.likes)} + ' Like'">0 Like</span>
                                     </a>
 
-
-                                    <!-- 收藏按钮（例如叫“favoris”） -->
+                                    <!-- 收藏按钮 -->
                                     <a th:href="@{/reaction/favori(postId=${post.idPost})}"
                                        class="d-flex align-items-center fw-600 text-grey-900 text-dark lh-26 font-xssss"
                                        style="cursor: pointer;">
-                                        <i class="feather-heart text-white bg-red-gradiant me-2 btn-round-xs font-xss"></i>
+                                        <i class="feather-heart me-2 btn-round-xs font-xss"
+                                           th:classappend="${favoriPostMap[post.idPost]} ? 'text-white bg-red-gradiant' : 'text-danger bg-light'"></i>
                                         <span th:text="${#lists.size(post.favoris)} + ' Favori'">0 Favori</span>
-
-
                                     </a>
+
                                     <!-- 评论按钮 -->
                                     <a href="#" id="dropdownMenuComment__${post.idPost}"
                                        data-bs-toggle="dropdown" aria-expanded="false"

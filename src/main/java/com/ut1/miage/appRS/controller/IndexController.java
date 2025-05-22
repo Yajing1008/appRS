@@ -94,11 +94,29 @@ public class IndexController {
             }
         }
 
+
+        Map<Long, Boolean> likedPostMap = new HashMap<>();
+        Map<Long, Boolean> favoriPostMap = new HashMap<>();
+        if (etudiantConnecte != null) {
+            for (Post post : posts) {
+                boolean liked = reagirRepository.hasLiked(post.getIdPost(), etudiantConnecte.getIdEtudiant());
+                boolean favori = reagirRepository.hasFavori(post.getIdPost(), etudiantConnecte.getIdEtudiant());
+
+
+                likedPostMap.put(post.getIdPost(), liked);
+                favoriPostMap.put(post.getIdPost(), favori);
+            }
+        }
+
         model.addAttribute("posts", posts);
         model.addAttribute("postDates", postDates);
         model.addAttribute("etudiantConnecte", etudiantConnecte);
+        model.addAttribute("likedPostMap", likedPostMap);
+        model.addAttribute("favoriPostMap", favoriPostMap);
+
         return "index";
     }
+
 
     /**
      * Gère la publication d’un nouveau post avec contenu et/ou images.
