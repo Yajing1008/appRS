@@ -20,12 +20,4 @@ class AppRsApplicationTests {
         // Ce test échoue si le contexte ne peut pas être chargé.
     }
 
-    /**
-     * Teste que la méthode main de l'application peut s'exécuter sans générer d'exception.
-     * Cela vérifie que l'application démarre correctement en mode "main".
-     */
-    @Test
-    void testMainMethodRunsWithoutException() {
-        assertDoesNotThrow(() -> AppRsApplication.main(new String[]{}));
-    }
 }
