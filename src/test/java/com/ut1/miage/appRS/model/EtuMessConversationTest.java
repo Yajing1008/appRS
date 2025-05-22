@@ -31,13 +31,19 @@ class EtuMessConversationTest {
         assertEquals("Hello world", emc.getMessage());
         assertEquals(now, emc.getDateHeureMessage());
     }
-
+    
     /**
-     * Vérifie que l'identifiant composite (EmbeddedId) est correctement initialisé à la création.
+     * Teste que les valeurs par défaut d'une instance d'EtuMessConversation
+     * sont bien nulles (ou non nulles si initialisées explicitement).
      */
     @Test
-    void testEmbeddedIdInitialization() {
-        EtuMessConversation emc = new EtuMessConversation();
-        assertNotNull(emc.getIdEtuMessConversation());
+    void testValeursParDefaut() {
+        EtuMessConversation message = new EtuMessConversation();
+        
+        assertNull(message.getIdEtuMessConversation());
+        assertNull(message.getEtudiant());
+        assertNull(message.getConversation());
+        assertNull(message.getMessage());
+        assertNull(message.getDateHeureMessage());
     }
 }

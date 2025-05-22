@@ -1,8 +1,16 @@
 package com.ut1.miage.appRS.controller;
 
-import com.ut1.miage.appRS.model.*;
-import com.ut1.miage.appRS.repository.*;
-import jakarta.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,12 +21,29 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import com.ut1.miage.appRS.model.Commenter;
+import com.ut1.miage.appRS.model.Etudiant;
+import com.ut1.miage.appRS.model.Groupe;
+import com.ut1.miage.appRS.model.Participer;
+import com.ut1.miage.appRS.model.Post;
+import com.ut1.miage.appRS.model.Reagir;
+import com.ut1.miage.appRS.model.ReagirId;
+import com.ut1.miage.appRS.model.Republier;
+import com.ut1.miage.appRS.model.RepublierId;
+import com.ut1.miage.appRS.repository.CommenterRepository;
+import com.ut1.miage.appRS.repository.EtudiantRepository;
+import com.ut1.miage.appRS.repository.ParticiperRepository;
+import com.ut1.miage.appRS.repository.PostRepository;
+import com.ut1.miage.appRS.repository.ReagirRepository;
+import com.ut1.miage.appRS.repository.RepublierRepository;
 
+import jakarta.servlet.http.HttpSession;
+
+/**
+ * Contrôleur principal de l'application, gérant l'affichage du fil d'actualité,
+ * la publication de posts, les réactions (like/favori), les commentaires
+ * ainsi que les republications.
+ */
 @Controller
 public class IndexController {
 
@@ -36,31 +61,35 @@ public class IndexController {
 
     @Autowired
     private CommenterRepository commenterRepository;
-    
+
     @Autowired
     private ParticiperRepository participerRepository;
 
+    /**
+     * Affiche la page d’accueil (fil d’actualité) avec les publications relatives à l’utilisateur connecté.
+     *
+     * @param model   modèle pour passer les données à la vue
+     * @param session session utilisateur
+     * @return nom de la vue "index"
+     */
     @GetMapping("/")
     public String index(Model model, HttpSession session) {
         Etudiant etudiantConnecte = (Etudiant) session.getAttribute("etudiantConnecte");
-        
-        
+
         if (etudiantConnecte != null) {
             etudiantConnecte = etudiantRepository.findById(etudiantConnecte.getIdEtudiant()).orElse(null);
             List<Etudiant> amis = new ArrayList<>(etudiantConnecte.getAmis());
             List<Groupe> groupes = new ArrayList<>(etudiantConnecte.getGroupesCrees());
-            List<Participer> participations = new ArrayList<>(participerRepository.findByEtudiant_IdEtudiant(etudiantConnecte.getIdEtudiant()));
-            List<Groupe> groupesMembre = participations.stream()
-                    .map(Participer::getGroupe)
-                    .toList();
+            List<Participer> participations = participerRepository.findByEtudiant_IdEtudiant(etudiantConnecte.getIdEtudiant());
+            List<Groupe> groupesMembre = participations.stream().map(Participer::getGroupe).toList();
             groupes.addAll(groupesMembre);
             session.setAttribute("amis", amis);
-            session.setAttribute("mesGroupes",groupes);
-        }else {
+            session.setAttribute("mesGroupes", groupes);
+        } else {
             session.setAttribute("amis", null);
-            session.setAttribute("mesGroupes",null);
+            session.setAttribute("mesGroupes", null);
         }
-        
+
         List<Post> posts;
         if (etudiantConnecte == null) {
             posts = postRepository.findAllPublicPostsWithPublicReposts();
@@ -69,37 +98,38 @@ public class IndexController {
             amis.add(etudiantConnecte);
             posts = postRepository.findRelativePosts(amis);
         }
-        
-        
+
         for (Post post : posts) {
             if (post.getRepublications() == null) {
                 post.setRepublications(new ArrayList<>());
             }
         }
-        
-        
-        // ✅ 格式化时间（法语格式）
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH:mm", Locale.FRENCH);
         Map<Long, String> postDates = new HashMap<>();
-        
-        
         for (Post post : posts) {
             if (post.getDatePublicationPost() != null) {
                 String formatted = post.getDatePublicationPost().format(formatter);
                 postDates.put(post.getIdPost(), formatted);
             }
         }
-        
-        
+
         model.addAttribute("posts", posts);
-        model.addAttribute("postDates", postDates); // 👈 加入到 model
+        model.addAttribute("postDates", postDates);
         model.addAttribute("etudiantConnecte", etudiantConnecte);
         return "index";
     }
 
-
-
-
+    /**
+     * Gère la publication d’un nouveau post avec contenu et/ou images.
+     *
+     * @param contenu            texte du post
+     * @param images             fichiers image uploadés
+     * @param estPublic          visibilité du post
+     * @param session            session utilisateur
+     * @param redirectAttributes pour afficher des messages flash
+     * @return redirection vers la page d'accueil
+     */
     @PostMapping("/publier")
     public String publierPost(
             @RequestParam(value = "contenu", required = false) String contenu,
@@ -107,8 +137,6 @@ public class IndexController {
             @RequestParam(value = "estPublic", required = false, defaultValue = "false") boolean estPublic,
             HttpSession session,
             RedirectAttributes redirectAttributes) {
-
-        System.out.println("estPublic = " + estPublic);
 
         Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
 
@@ -137,20 +165,17 @@ public class IndexController {
         post.setEtudiant(etudiant);
         List<String> urls = new ArrayList<>();
         String projectDir = System.getProperty("user.dir");
+
         try {
             if (images != null) {
-                // 创建目标目录（static/uploads）
                 File uploadDir = new File(projectDir + "/src/main/resources/static/uploads");
                 if (!uploadDir.exists()) uploadDir.mkdirs();
 
                 for (MultipartFile file : images) {
                     if (!file.isEmpty()) {
-                        // 使用时间戳防止重名
                         String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
                         File dest = new File(uploadDir, filename);
                         file.transferTo(dest);
-
-                        // 浏览器访问路径：/uploads/filename
                         urls.add("/uploads/" + filename);
                     }
                 }
@@ -168,8 +193,16 @@ public class IndexController {
         return "redirect:/";
     }
 
-
-
+    /**
+     * Permet de republier un post avec un commentaire et une visibilité.
+     *
+     * @param postId             identifiant du post original
+     * @param commentaire        commentaire de republication
+     * @param estPublic          visibilité de la republication
+     * @param session            session utilisateur
+     * @param redirectAttributes messages flash pour la vue
+     * @return redirection vers la page d'accueil
+     */
     @PostMapping("/republication")
     public String republier(
             @RequestParam("postId") Long postId,
@@ -191,10 +224,8 @@ public class IndexController {
             return "redirect:/";
         }
 
-        // 构造复合主键
         RepublierId id = new RepublierId(postId, etudiant.getIdEtudiant());
 
-        // 创建 republication 实体
         Republier republier = new Republier();
         republier.setId(id);
         republier.setPost(originalPost);
@@ -209,7 +240,9 @@ public class IndexController {
         return "redirect:/";
     }
 
-
+    /**
+     * Active ou désactive un like sur un post.
+     */
     @GetMapping("/reaction/like")
     public String toggleLike(@RequestParam Long postId, HttpSession session, RedirectAttributes redirectAttributes) {
         Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
@@ -233,7 +266,6 @@ public class IndexController {
             reagirRepository.delete(existing.get());
             redirectAttributes.addFlashAttribute("success", "Like retiré.");
         } else {
-            // 删除旧反应（如果是 Favori）
             existing.ifPresent(reagirRepository::delete);
 
             Reagir r = new Reagir();
@@ -247,8 +279,9 @@ public class IndexController {
         return "redirect:/#post-" + postId;
     }
 
-
-
+    /**
+     * Active ou désactive un favori sur un post.
+     */
     @GetMapping("/reaction/favori")
     public String toggleFavori(@RequestParam Long postId, HttpSession session, RedirectAttributes redirectAttributes) {
         Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
@@ -272,7 +305,6 @@ public class IndexController {
             reagirRepository.delete(existingReaction.get());
             redirectAttributes.addFlashAttribute("success", "Favori supprimé.");
         } else {
-            // 删除旧反应（如果是 Like）
             existingReaction.ifPresent(reagirRepository::delete);
 
             Reagir reaction = new Reagir();
@@ -286,6 +318,9 @@ public class IndexController {
         return "redirect:/#post-" + postId;
     }
 
+    /**
+     * Permet à l'utilisateur de commenter un post.
+     */
     @PostMapping("/commenter")
     public String commenter(@RequestParam Long postId,
                             @RequestParam String commentaire,
@@ -318,6 +353,9 @@ public class IndexController {
         return "redirect:/#post-" + postId;
     }
 
+    /**
+     * Supprime un commentaire si l'utilisateur en est l'auteur.
+     */
     @Transactional
     @PostMapping("/commenter/supprimer")
     public String supprimerCommentaire(@RequestParam Long postId,
@@ -350,10 +388,4 @@ public class IndexController {
         redirectAttributes.addFlashAttribute("success", "Commentaire supprimé !");
         return "redirect:/#post-" + postId;
     }
-
-
-
-
-
-
 }
