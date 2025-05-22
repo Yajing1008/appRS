@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
@@ -58,10 +59,14 @@ class ProfilControllerTest {
     @Autowired
     private CommenterRepository commenterRepository;
 
+    @Autowired
+    private ReagirRepository reagirRepository;
+
     private Etudiant etudiant;
     private Etudiant cible;
     private Post post;
     private Commenter commentaire;
+    private MockHttpSession session;
     @BeforeEach
     void setUp() {
 
@@ -93,6 +98,17 @@ class ProfilControllerTest {
         commentaire.setCommentaire("Un commentaire.");
         commentaire.setDateHeureCommentaire(LocalDateTime.now());
         commentaire = commenterRepository.save(commentaire);
+
+
+        session = new MockHttpSession();
+        session.setAttribute("etudiantConnecte", etudiant);
+
+
+        post = new Post();
+        post.setEtudiant(etudiant);
+        post.setContenuPost("Post de test");
+        post.setDatePublicationPost(LocalDateTime.now());
+        post = postRepository.save(post);
 
     }
 
@@ -232,19 +248,19 @@ class ProfilControllerTest {
 
     @Test
     void testShowEditForm_ConnecteAvecDonnees() throws Exception {
-        // 添加帖文
+
         Post post = new Post();
         post.setEtudiant(etudiant);
         post.setContenuPost("Bonjour !");
         post.setDatePublicationPost(LocalDateTime.of(2025, 5, 1, 10, 0));
         post = postRepository.save(post);
 
-        // 添加大学
+
         Universite universite = new Universite();
         universite.setNomUniv("Université de Test");
         universite = universiteRepository.save(universite);
 
-        // 添加兴趣
+
         CentreInteret interet = new CentreInteret();
         interet.setNomCentreInteret("Informatique");
         interet = centreInteretRepository.save(interet);
@@ -562,7 +578,158 @@ class ProfilControllerTest {
                 "Le commentaire devrait être supprimé.");
     }
 
+    @Test
+    void testToggleLike_NonConnecte() throws Exception {
+        mockMvc.perform(get("/profil/reaction/like")
+                        .param("postId", post.getIdPost().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
+                .andExpect(flash().attribute("error", "Veuillez vous connecter pour aimer une publication."));
+    }
 
+    @Test
+    void testToggleLike_PublicationIntrouvable() throws Exception {
+        mockMvc.perform(get("/profil/reaction/like")
+                        .param("postId", "9999")
+                        .sessionAttr("etudiantConnecte", etudiant))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-9999"))
+                .andExpect(flash().attribute("error", "Publication introuvable."));
+    }
+
+    @Test
+    void testToggleLike_AjoutLike() throws Exception {
+        mockMvc.perform(get("/profil/reaction/like")
+                        .param("postId", post.getIdPost().toString())
+                        .sessionAttr("etudiantConnecte", etudiant))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
+                .andExpect(flash().attribute("success", "Publication aimée !"));
+
+        Optional<Reagir> like = reagirRepository.findByPostIdAndEtudiantIdAndStatut(
+                post.getIdPost(), etudiant.getIdEtudiant(), "Like");
+        assertTrue(like.isPresent());
+    }
+
+    @Test
+    void testToggleLike_RetraitLike() throws Exception {
+
+        Reagir like = new Reagir();
+        like.setPost(post);
+        like.setEtudiant(etudiant);
+        like.getReagirId().setStatut("Like");
+        reagirRepository.save(like);
+
+        mockMvc.perform(get("/profil/reaction/like")
+                        .param("postId", post.getIdPost().toString())
+                        .sessionAttr("etudiantConnecte", etudiant))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
+                .andExpect(flash().attribute("success", "Like retiré."));
+
+        Optional<Reagir> deleted = reagirRepository.findByPostIdAndEtudiantIdAndStatut(
+                post.getIdPost(), etudiant.getIdEtudiant(), "Like");
+        assertTrue(deleted.isEmpty());
+    }
+
+    @Test
+    void testToggleFavori_AjouterEtSupprimer() throws Exception {
+
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("etudiantConnecte", etudiant);
+
+
+        Optional<Reagir> avant = reagirRepository.findByPostIdAndEtudiantIdAndStatut(post.getIdPost(), etudiant.getIdEtudiant(), "Favori");
+        assertTrue(avant.isEmpty());
+
+
+        mockMvc.perform(get("/profil/reaction/favori")
+                        .param("postId", post.getIdPost().toString())
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()));
+
+        Optional<Reagir> apresAjout = reagirRepository.findByPostIdAndEtudiantIdAndStatut(post.getIdPost(), etudiant.getIdEtudiant(), "Favori");
+        assertTrue(apresAjout.isPresent());
+
+
+        mockMvc.perform(get("/profil/reaction/favori")
+                        .param("postId", post.getIdPost().toString())
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()));
+
+        Optional<Reagir> apresSuppression = reagirRepository.findByPostIdAndEtudiantIdAndStatut(post.getIdPost(), etudiant.getIdEtudiant(), "Favori");
+        assertTrue(apresSuppression.isEmpty());
+    }
+
+    @Test
+    void testToggleFavori_EtudiantNonConnecte() throws Exception {
+        mockMvc.perform(get("/profil/reaction/favori")
+                        .param("postId", post.getIdPost().toString()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()));
+    }
+
+    @Test
+    void testToggleFavori_PostIntrouvable() throws Exception {
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute("etudiantConnecte", etudiant);
+
+        mockMvc.perform(get("/profil/reaction/favori")
+                        .param("postId", "999999") // 假设不存在的ID
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil#post-999999"));
+    }
+
+    @Test
+    public void testSupprimerPost_parAuteur() throws Exception {
+
+        Post post = new Post();
+        post.setEtudiant(etudiant);
+        post.setContenuPost("Post à supprimer");
+        post.setDatePublicationPost(LocalDateTime.now());
+        post = postRepository.save(post);
+
+
+        Commenter c = new Commenter();
+        c.setEtudiant(etudiant);
+        c.setPost(post);
+        c.setCommentaire("Commentaire test");
+        c.setDateHeureCommentaire(LocalDateTime.now());
+        commenterRepository.save(c);
+
+        Reagir r = new Reagir();
+        r.setPost(post);
+        r.setEtudiant(etudiant);
+        r.getReagirId().setStatut("Like");
+        reagirRepository.save(r);
+
+        Republier republier = new Republier();
+        republier.setEtudiant(etudiant);
+        republier.setPost(post);
+        republier.setDateRepublication(LocalDateTime.now());
+        republierRepository.save(republier);
+
+
+        mockMvc.perform(post("/profil/post/supprimer")
+                        .param("postId", post.getIdPost().toString())
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil"));
+
+
+        assertFalse(postRepository.findById(post.getIdPost()).isPresent());
+
+        assertTrue(commenterRepository.findByPostOrderByDateHeureCommentaireDesc(post).isEmpty());
+
+        assertTrue(reagirRepository.findByPostIdAndEtudiantIdAndStatut(
+                post.getIdPost(), etudiant.getIdEtudiant(), "Like"
+        ).isEmpty());
+
+        assertFalse(republierRepository.findByPostAndEtudiant(post, etudiant).isPresent());
+    }
 
 
 

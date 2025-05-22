@@ -1,10 +1,7 @@
 package com.ut1.miage.appRS.controller;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.ut1.miage.appRS.model.*;
+import com.ut1.miage.appRS.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,25 +9,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ut1.miage.appRS.model.Commenter;
-import com.ut1.miage.appRS.model.Etudiant;
-import com.ut1.miage.appRS.model.Post;
-import com.ut1.miage.appRS.model.Reagir;
-import com.ut1.miage.appRS.model.ReagirId;
-import com.ut1.miage.appRS.repository.CommenterRepository;
-import com.ut1.miage.appRS.repository.EtudiantRepository;
-import com.ut1.miage.appRS.repository.PostRepository;
-import com.ut1.miage.appRS.repository.ReagirRepository;
-import com.ut1.miage.appRS.repository.RepublierRepository;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Tests d’intégration du contrôleur {@link IndexController}.
@@ -113,41 +100,70 @@ public class IndexControllerTest {
      * Vérifie le comportement du bouton "like".
      */
     @Test
-    public void testToggleLike() throws Exception {
+    public void testToggleLike_shouldAddAndRemoveLike() throws Exception {
+
         Post post = new Post();
         post.setEtudiant(etudiant);
         post.setContenuPost("Post à liker");
         post.setDatePublicationPost(LocalDateTime.now());
         post = postRepository.save(post);
 
+        ReagirId likeId = new ReagirId(post.getIdPost(), etudiant.getIdEtudiant(), "Like");
+
+
         mockMvc.perform(get("/reaction/like")
                         .param("postId", post.getIdPost().toString())
                         .session(session))
                 .andExpect(status().is3xxRedirection());
 
-        Optional<Reagir> r = reagirRepository.findById(new ReagirId(post.getIdPost(), etudiant.getIdEtudiant()));
-        assertTrue(r.isPresent());
+        Optional<Reagir> ajout = reagirRepository.findById(likeId);
+        assertTrue(ajout.isPresent(), "Like 应该已添加");
+
+
+        mockMvc.perform(get("/reaction/like")
+                        .param("postId", post.getIdPost().toString())
+                        .session(session))
+                .andExpect(status().is3xxRedirection());
+
+        Optional<Reagir> suppression = reagirRepository.findById(likeId);
+        assertTrue(suppression.isEmpty(), "Like 应该已删除");
     }
+
 
     /**
      * Vérifie le comportement du bouton "favori".
      */
     @Test
-    public void testToggleFavori() throws Exception {
+    public void testToggleFavori_shouldAddAndRemoveFavori() throws Exception {
+
         Post post = new Post();
         post.setEtudiant(etudiant);
         post.setContenuPost("Post favori");
         post.setDatePublicationPost(LocalDateTime.now());
         post = postRepository.save(post);
 
+        ReagirId favoriId = new ReagirId(post.getIdPost(), etudiant.getIdEtudiant(), "Favori");
+
+
         mockMvc.perform(get("/reaction/favori")
                         .param("postId", post.getIdPost().toString())
                         .session(session))
                 .andExpect(status().is3xxRedirection());
 
-        Optional<Reagir> r = reagirRepository.findById(new ReagirId(post.getIdPost(), etudiant.getIdEtudiant()));
-        assertTrue(r.isPresent());
+        Optional<Reagir> ajout = reagirRepository.findById(favoriId);
+        assertTrue(ajout.isPresent(), "Favori 应该已添加");
+
+
+        mockMvc.perform(get("/reaction/favori")
+                        .param("postId", post.getIdPost().toString())
+                        .session(session))
+                .andExpect(status().is3xxRedirection());
+
+        Optional<Reagir> suppression = reagirRepository.findById(favoriId);
+        assertTrue(suppression.isEmpty(), "Favori 应该已删除");
     }
+
+
 
     /**
      * Vérifie qu’un commentaire est enregistré avec succès.

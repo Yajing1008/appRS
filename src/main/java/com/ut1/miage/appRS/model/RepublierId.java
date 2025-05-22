@@ -14,7 +14,7 @@ public class RepublierId implements Serializable {
     @Column(name = "id_etudiant")
     private Long etudiantId;
 
-    // equals() 和 hashCode() 是必须的
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

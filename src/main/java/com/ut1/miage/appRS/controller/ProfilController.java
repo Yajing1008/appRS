@@ -519,16 +519,15 @@ public class ProfilController {
 
 
     /**
-     * Active ou désactive un "Like" sur une publication pour l'étudiant connecté.
+     * Contrôleur pour gérer l'action de like/délike sur une publication.
      *
-     * Si l'étudiant a déjà liké la publication, le like est retiré.
-     * Sinon, un nouveau like est enregistré (en supprimant toute autre réaction existante comme "Favori").
-     * Redirige vers la publication concernée avec un message flash de succès ou d'erreur.
+     * Si l'utilisateur est connecté et a déjà liké le post, le like sera retiré.
+     * Sinon, un like sera ajouté.
      *
-     * @param postId             L'identifiant du post à aimer ou désaimer.
-     * @param session            La session contenant l'étudiant connecté.
-     * @param redirectAttributes Attributs pour transmettre un message flash.
-     * @return Redirection vers l'ancre du post sur la page de profil.
+     * @param postId identifiant du post à liker ou déliker
+     * @param session session HTTP pour identifier l'étudiant connecté
+     * @param redirectAttributes pour transmettre un message flash à la redirection
+     * @return redirection vers l'ancre du post sur la page profil
      */
     @GetMapping("/profil/reaction/like")
     public String toggleLike(@RequestParam Long postId, HttpSession session, RedirectAttributes redirectAttributes) {
@@ -570,16 +569,17 @@ public class ProfilController {
 
 
     /**
-     * Active ou désactive un "Favori" sur une publication pour l'étudiant connecté.
+     * Permet à un utilisateur connecté d'ajouter ou de retirer une publication de ses favoris.
      *
-     * Si l'étudiant a déjà mis la publication en favori, celle-ci est retirée des favoris.
-     * Sinon, elle est ajoutée comme favori (en supprimant toute autre réaction existante comme "Like").
-     * Redirige vers la publication concernée avec un message flash de succès ou d'erreur.
+     * - Si l'utilisateur n'est pas connecté, une redirection vers le profil est effectuée avec un message d'erreur.
+     * - Si la publication n'existe pas, un message d'erreur est affiché.
+     * - Si la réaction "Favori" existe déjà, elle est supprimée (fonction "toggle").
+     * - Sinon, une nouvelle réaction de type "Favori" est enregistrée.
      *
-     * @param postId             L'identifiant du post à ajouter ou retirer des favoris.
-     * @param session            La session contenant l'étudiant connecté.
-     * @param redirectAttributes Attributs pour transmettre un message flash.
-     * @return Redirection vers l'ancre du post sur la page de profil.
+     * @param postId identifiant du post à ajouter ou retirer des favoris
+     * @param session session HTTP contenant l'étudiant connecté
+     * @param redirectAttributes attributs de redirection pour les messages flash
+     * @return redirection vers l'ancre du post sur la page de profil
      */
     @GetMapping("/profil/reaction/favori")
     public String toggleFavori(@RequestParam Long postId, HttpSession session, RedirectAttributes redirectAttributes) {
