@@ -1,11 +1,22 @@
 package com.ut1.miage.appRS.model;
 
-import jakarta.persistence.*;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 /**
  * Représente un étudiant dans l'application de réseau social.
@@ -104,13 +115,23 @@ public class Etudiant {
     /**
      * Universités fréquentées par l'étudiant.
      */
-    @ManyToMany(mappedBy = "etudiant")
+    @ManyToMany
+    @JoinTable(
+            name = "ETUDIER",
+            joinColumns = @JoinColumn(name = "id_etudiant"),
+            inverseJoinColumns = @JoinColumn(name = "id_univ")
+    )
     private List<Universite> universites = new ArrayList<>();
     
     /**
      * Centres d’intérêt de l’étudiant.
      */
-    @ManyToMany(mappedBy = "etudiant")
+    @ManyToMany
+    @JoinTable(
+            name = "AVOIR",
+            joinColumns = @JoinColumn(name = "id_etudiant"),
+            inverseJoinColumns = @JoinColumn(name = "id_centre_interet")
+    )
     private List<CentreInteret> centresInteret = new ArrayList<>();
     
     /**

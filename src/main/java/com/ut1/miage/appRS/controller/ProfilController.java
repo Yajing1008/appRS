@@ -7,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -37,153 +35,366 @@ public class ProfilController {
 
     @Autowired
     private CommenterRepository commenterRepository;
-    
-    
+
+    @Autowired
+    private UniversiteRepository universiteRepository;
+
+    @Autowired
+    private CentreInteretRepository centreInteretRepository;
+
+    @InitBinder("etudiantForm")
+    public void initBinder(WebDataBinder binder) {
+        binder.setDisallowedFields("universites", "centresInteret");
+    }
+
+
+    /**
+     * Affiche le profil de l'étudiant actuellement connecté.
+     *
+     * Ce contrôleur récupère l'étudiant depuis la session et affiche son profil personnel,
+     * ses publications et ses republications. Il détermine également si l'utilisateur
+     * est bien le propriétaire du profil (isOwner).
+     *
+     * Si aucun étudiant n'est connecté, un message invitant à se connecter est affiché,
+     * et le modèle est rempli avec des valeurs vides pour éviter les erreurs d'affichage.
+     *
+     * @param model   Le modèle pour transmettre les données à la vue.
+     * @param session La session HTTP contenant l'étudiant connecté.
+     * @return La page de profil ("profil.html").
+     */
     @GetMapping("/profil")
     public String afficherProfil(Model model, HttpSession session) {
-        Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
-        
-        
-        model.addAttribute("etudiant", etudiant);
-        
-        
-        if (etudiant == null) {
+        Etudiant etudiantSession = (Etudiant) session.getAttribute("etudiantConnecte");
+
+        if (etudiantSession == null) {
             model.addAttribute("messageConnexion", "Veuillez vous connecter pour voir vos publications.");
+            model.addAttribute("etudiant", null);
+            model.addAttribute("posts", Collections.emptyList());
+            model.addAttribute("postDates", Collections.emptyMap());
+            model.addAttribute("isOwner", false); //  安全：未登录当然不是本人
             return "profil";
         }
-        
-        
-        List<Post> postsPublies = postRepository.findByEtudiantOrderByDatePublicationPostDesc(etudiant);
-        List<Republier> republications = republierRepository.findByEtudiantOrderByDateRepublicationDesc(etudiant);
-        List<Post> postsRepartages = republications.stream()
-                .map(Republier::getPost)
-                .toList();
-        
-        
-        Set<Post> posts = new LinkedHashSet<>();
-        posts.addAll(postsRepartages);
-        posts.addAll(postsPublies);
-        
-        
-        // ✅ 时间格式器（法语）
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH:mm", Locale.FRENCH);
-        Map<Long, String> postDates = new HashMap<>();
-        
-        
-        for (Post post : posts) {
-            if (post.getDatePublicationPost() != null) {
-                String formatted = post.getDatePublicationPost().format(formatter);
-                postDates.put(post.getIdPost(), formatted);
-            }
+
+        Optional<Etudiant> optionalEtudiant = etudiantRepository.findById(etudiantSession.getIdEtudiant());
+
+        if (optionalEtudiant.isEmpty()) {
+            model.addAttribute("messageConnexion", "Profil introuvable.");
+            model.addAttribute("isOwner", false);
+            return "profil";
         }
-        
-        
-        model.addAttribute("posts", posts);
-        model.addAttribute("postDates", postDates); // 👈 添加格式化时间Map
-        return "profil";
-    }
-    
-    
-    
-    /**
-     * Affiche le formulaire de modification du profil.
-     *
-     * @param model     Modèle utilisé pour transmettre les données à la vue.
-     * @param session Session HTTP permettant de récupérer l'étudiant connecté.
-     * @return Le nom de la vue du formulaire d’édition, ici "profil_modifier".
-     */
-    
-    @GetMapping("/profil/modifier")
-    public String showEditForm(Model model, HttpSession session) {
-        Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
-        
-        
+
+        Etudiant etudiant = optionalEtudiant.get();
+        etudiant.getUniversites().size();
+        etudiant.getCentresInteret().size();
+
         model.addAttribute("etudiant", etudiant);
-        
-        
-        if (etudiant == null) {
-            model.addAttribute("posts", Collections.emptyList());
-            model.addAttribute("postDates", Collections.emptyMap()); // 空时间map也一并传
-            return "profil_modifier";
-        }
-        
-        
+
+
+        boolean isOwner = etudiantSession.getIdEtudiant().equals(etudiant.getIdEtudiant());
+        model.addAttribute("isOwner", isOwner);
+
+
         List<Post> postsPublies = postRepository.findByEtudiantOrderByDatePublicationPostDesc(etudiant);
         List<Republier> republications = republierRepository.findByEtudiantOrderByDateRepublicationDesc(etudiant);
-        List<Post> postsRepartages = republications.stream()
-                .map(Republier::getPost)
-                .toList();
-        
-        
+        List<Post> postsRepartages = republications.stream().map(Republier::getPost).toList();
+
         Set<Post> posts = new LinkedHashSet<>();
         posts.addAll(postsRepartages);
         posts.addAll(postsPublies);
-        
-        
-        // ✅ 格式化时间（法语）
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH:mm", Locale.FRENCH);
         Map<Long, String> postDates = new HashMap<>();
-        
-        
         for (Post post : posts) {
             if (post.getDatePublicationPost() != null) {
                 postDates.put(post.getIdPost(), post.getDatePublicationPost().format(formatter));
             }
         }
-        
-        
+
         model.addAttribute("posts", posts);
-        model.addAttribute("postDates", postDates); // 👈 添加格式化后的时间
+        model.addAttribute("postDates", postDates);
+
+        return "profil";
+    }
+
+    /**
+     * Affiche le profil d'un étudiant spécifique identifié par son ID.
+     *
+     * Ce contrôleur permet de consulter le profil d'un autre étudiant, en affichant ses
+     * publications et republications selon que l'utilisateur soit le propriétaire du profil
+     * ou un ami (isFriend). Si l'utilisateur n'est ni l'un ni l'autre, seuls les posts publics
+     * sont visibles.
+     *
+     * Le modèle est enrichi avec les informations de l'étudiant consulté, la liste de ses posts,
+     * les dates de publication formatées, et des indicateurs booleens indiquant si le profil
+     * consulté est celui de l'utilisateur ou un ami.
+     *
+     * @param id      L'identifiant de l'étudiant à afficher.
+     * @param model   Le modèle pour transmettre les données à la vue.
+     * @param session La session HTTP contenant l'étudiant connecté.
+     * @return La page de profil ("profil.html").
+     */
+    @GetMapping("/profil/{id}")
+    public String afficherProfilParId(@PathVariable Long id, Model model, HttpSession session) {
+        Etudiant etudiantSession = (Etudiant) session.getAttribute("etudiantConnecte");
+
+        Optional<Etudiant> optionalEtudiant = etudiantRepository.findById(id);
+        if (optionalEtudiant.isEmpty()) {
+            model.addAttribute("messageConnexion", "Profil introuvable.");
+            model.addAttribute("etudiant", null);
+            model.addAttribute("posts", Collections.emptyList());
+            model.addAttribute("postDates", Collections.emptyMap());
+            model.addAttribute("isOwner", false);
+            model.addAttribute("isFriend", false);
+            return "profil";
+        }
+
+        Etudiant etudiant = optionalEtudiant.get();
+
+
+        etudiant.getUniversites().size();
+        etudiant.getCentresInteret().size();
+        etudiant.getAmis().size();
+
+        model.addAttribute("etudiant", etudiant);
+
+
+        boolean isOwner = etudiantSession != null && etudiantSession.getIdEtudiant().equals(id);
+        model.addAttribute("isOwner", isOwner);
+
+
+        boolean isFriend = false;
+        if (etudiantSession != null) {
+            // Recharger etudiantSession depuis la base de données pour initialiser la liste des amis
+            Optional<Etudiant> optSession = etudiantRepository.findById(etudiantSession.getIdEtudiant());
+            if (optSession.isPresent()) {
+                Etudiant sessionLoaded = optSession.get();
+                sessionLoaded.getAmis().size();
+                isFriend = sessionLoaded.getAmis().contains(etudiant);
+            }
+        }
+        model.addAttribute("isFriend", isFriend);
+
+        // 获取帖文列表
+        List<Post> postsPublies;
+        List<Republier> republications;
+        List<Post> postsRepartages;
+
+        if (isOwner || isFriend) {
+            postsPublies = postRepository.findByEtudiantOrderByDatePublicationPostDesc(etudiant);
+            republications = republierRepository.findByEtudiantOrderByDateRepublicationDesc(etudiant);
+        } else {
+            postsPublies = postRepository.findByEtudiantAndEstPublicPostTrueOrderByDatePublicationPostDesc(etudiant);
+            republications = Collections.emptyList();
+        }
+
+        postsRepartages = republications.stream().map(Republier::getPost).toList();
+
+        Set<Post> posts = new LinkedHashSet<>();
+        posts.addAll(postsRepartages);
+        posts.addAll(postsPublies);
+
+        // 格式化日期
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH:mm", Locale.FRENCH);
+        Map<Long, String> postDates = new HashMap<>();
+        for (Post post : posts) {
+            if (post.getDatePublicationPost() != null) {
+                postDates.put(post.getIdPost(), post.getDatePublicationPost().format(formatter));
+            }
+        }
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("postDates", postDates);
+
+        return "profil";
+    }
+
+
+
+
+
+
+
+
+    /**
+     * Affiche le formulaire de modification du profil de l'étudiant connecté.
+     *
+     * Ce contrôleur prépare les données nécessaires à l'affichage du formulaire :
+     * - informations personnelles de l'étudiant,
+     * - liste de toutes les universités,
+     * - liste de tous les centres d’intérêt,
+     * - publications et republications de l'étudiant avec dates formatées.
+     *
+     * Si aucun étudiant n'est connecté, des valeurs vides sont transmises au modèle
+     * pour éviter les erreurs d'affichage.
+     *
+     * @param model   Le modèle pour transmettre les données à la vue.
+     * @param session La session contenant l'étudiant connecté.
+     * @return La page de modification de profil ("profil_modifier.html").
+     */
+    @GetMapping("/profil/modifier")
+    public String showEditForm(Model model, HttpSession session) {
+        Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
+        model.addAttribute("etudiant", etudiant);
+
+        if (etudiant == null) {
+            model.addAttribute("posts", Collections.emptyList());
+            model.addAttribute("postDates", Collections.emptyMap());
+            model.addAttribute("toutesUniversites", Collections.emptyList());
+            model.addAttribute("tousCentresInteret", Collections.emptyList()); // ✅ 加这一行
+            return "profil_modifier";
+        }
+
+        List<Post> postsPublies = postRepository.findByEtudiantOrderByDatePublicationPostDesc(etudiant);
+        List<Republier> republications = republierRepository.findByEtudiantOrderByDateRepublicationDesc(etudiant);
+        List<Post> postsRepartages = republications.stream().map(Republier::getPost).toList();
+
+        Set<Post> posts = new LinkedHashSet<>();
+        posts.addAll(postsRepartages);
+        posts.addAll(postsPublies);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH:mm", Locale.FRENCH);
+        Map<Long, String> postDates = new HashMap<>();
+        for (Post post : posts) {
+            if (post.getDatePublicationPost() != null) {
+                postDates.put(post.getIdPost(), post.getDatePublicationPost().format(formatter));
+            }
+        }
+
+        List<Universite> toutesUniversites = universiteRepository.findAll();
+        List<CentreInteret> tousCentresInteret = centreInteretRepository.findAll();
+
+        model.addAttribute("toutesUniversites", toutesUniversites);
+        model.addAttribute("tousCentresInteret", tousCentresInteret);
+        model.addAttribute("posts", posts);
+        model.addAttribute("postDates", postDates);
+
         return "profil_modifier";
     }
-    
-    
+
+
+
+
     /**
-     * Enregistre les modifications du profil étudiant.
+     * Enregistre les modifications apportées au profil de l'étudiant connecté.
      *
-     * @param etudiant   L'objet étudiant contenant les données modifiées.
-     * @param photoFile  Le fichier photo envoyé via le formulaire (optionnel).
-     * @return Le nom de la vue à afficher après sauvegarde, ici "profil".
-     * @throws IOException En cas d’erreur lors de la lecture du fichier photo.
+     * Ce contrôleur met à jour :
+     * - les informations personnelles de l'étudiant,
+     * - la photo de profil (si fournie),
+     * - les universités (créées si inexistantes),
+     * - les centres d’intérêt (créés si inexistants).
+     *
+     * Les anciennes associations (universités et centres) sont remplacées.
+     * Une fois les données sauvegardées, la session est mise à jour et
+     * l'utilisateur est redirigé vers la page de profil avec un message de succès.
+     *
+     * @param universiteNoms      Liste des noms d'universités sélectionnées.
+     * @param centresNoms         Liste des centres d’intérêt sélectionnés.
+     * @param photoFile           Fichier photo du profil.
+     * @param session             Session contenant l’étudiant connecté.
+     * @param redirectAttributes  Attributs pour transmettre un message flash.
+     * @param etudiantForm        Données du formulaire de l'étudiant modifié.
+     * @return Redirection vers la page de profil.
+     * @throws IOException En cas d'erreur lors du traitement du fichier photo.
      */
 
     @PostMapping("/profil/modifier")
-    public String saveProfile(@ModelAttribute Etudiant etudiant,
+    public String saveProfile(@RequestParam(value = "universites", required = false) List<String> universiteNoms,
+                              @RequestParam(value = "centresInteret", required = false) List<String> centresNoms,
                               @RequestParam("photo") MultipartFile photoFile,
-                              HttpSession session) throws IOException {
+                              HttpSession session,
+                              RedirectAttributes redirectAttributes,
+                              @ModelAttribute("etudiantForm") Etudiant etudiantForm) throws IOException {
 
-        System.out.println(etudiant);
-        // 🔍 先查找这个学生
-        Optional<Etudiant> optionalEtudiant =  etudiantRepository.findByEmailEtudiant(etudiant.getEmailEtudiant());
+        Etudiant sessionEtudiant = (Etudiant) session.getAttribute("etudiantConnecte");
+        if (sessionEtudiant == null) return "redirect:/connexion";
 
-        if (optionalEtudiant.isPresent()) {
-            Etudiant existingEtudiant = optionalEtudiant.get();
+        Optional<Etudiant> optionalEtudiant = etudiantRepository.findById(sessionEtudiant.getIdEtudiant());
+        if (optionalEtudiant.isEmpty()) return "redirect:/connexion";
 
-            // 更新字段
-            existingEtudiant.setNomEtudiant(etudiant.getNomEtudiant());
-            existingEtudiant.setPrenomEtudiant(etudiant.getPrenomEtudiant());
-            existingEtudiant.setEmailEtudiant(etudiant.getEmailEtudiant());
-            existingEtudiant.setDateNaissanceEtudiant(etudiant.getDateNaissanceEtudiant());
-            existingEtudiant.setSexeEtudiant(etudiant.getSexeEtudiant());
-            existingEtudiant.setDescriptionEtudiant(etudiant.getDescriptionEtudiant());
+        Etudiant existingEtudiant = optionalEtudiant.get();
 
-            // 更新照片（如果上传了新照片）
-            if (!photoFile.isEmpty()) {
-                byte[] photoBytes = photoFile.getBytes();
-                String base64 = Base64.getEncoder().encodeToString(photoBytes);
-                existingEtudiant.setPhotoEtudiant("data:image/jpeg;base64," + base64);
-            }
+        //  Mettre à jour les informations personnelles
+        existingEtudiant.setNomEtudiant(etudiantForm.getNomEtudiant());
+        existingEtudiant.setPrenomEtudiant(etudiantForm.getPrenomEtudiant());
+        existingEtudiant.setEmailEtudiant(etudiantForm.getEmailEtudiant());
+        existingEtudiant.setDateNaissanceEtudiant(etudiantForm.getDateNaissanceEtudiant());
+        existingEtudiant.setSexeEtudiant(etudiantForm.getSexeEtudiant());
+        existingEtudiant.setDescriptionEtudiant(etudiantForm.getDescriptionEtudiant());
 
-            // 保存更新后的实体
-            etudiantRepository.save(existingEtudiant);
-            session.setAttribute("etudiantConnecte", existingEtudiant);
+        // Télécharger la photo de profil (si fournie)
+        if (!photoFile.isEmpty()) {
+            byte[] photoBytes = photoFile.getBytes();
+            String base64 = Base64.getEncoder().encodeToString(photoBytes);
+            existingEtudiant.setPhotoEtudiant("data:image/jpeg;base64," + base64);
         }
 
+        // Enregistrer les universités (si non vides)
+        if (universiteNoms != null) {
+            List<Universite> universites = new ArrayList<>();
+            for (String nom : universiteNoms) {
+                Universite u = universiteRepository.findByNomUnivIgnoreCase(nom)
+                        .orElseGet(() -> {
+                            Universite nouvelle = new Universite();
+                            nouvelle.setNomUniv(nom);
+                            return universiteRepository.save(nouvelle);
+                        });
+                universites.add(u);
+            }
+            existingEtudiant.setUniversites(universites);
+        } else {
+            existingEtudiant.setUniversites(new ArrayList<>()); // 清空
+        }
 
+        // Enregistrer les centres d’intérêt (si non vides)
+        if (centresNoms != null) {
+            List<CentreInteret> centres = new ArrayList<>();
+            for (String nom : centresNoms) {
+                CentreInteret c = centreInteretRepository.findByNomCentreInteretIgnoreCase(nom)
+                        .orElseGet(() -> {
+                            CentreInteret nouveau = new CentreInteret();
+                            nouveau.setNomCentreInteret(nom);
+                            return centreInteretRepository.save(nouveau);
+                        });
+                centres.add(c);
+            }
+            existingEtudiant.setCentresInteret(centres);
+        } else {
+            existingEtudiant.setCentresInteret(new ArrayList<>()); // 清空
+        }
+
+        etudiantRepository.save(existingEtudiant);
+        session.setAttribute("etudiantConnecte", existingEtudiant);
+
+        redirectAttributes.addFlashAttribute("success", "Profil mis à jour avec succès.");
         return "redirect:/profil";
     }
 
 
+
+
+
+
+    /**
+     * Gère la publication d’un post par un étudiant depuis la page de profil.
+     *
+     * Cette méthode permet à un étudiant connecté de publier un post avec du texte,
+     * jusqu'à trois images, et de spécifier si le post est public ou non.
+     * Elle effectue les vérifications suivantes :
+     * <ul>
+     *     <li>Vérifie si l’étudiant est connecté ; sinon, redirige avec un message d’erreur.</li>
+     *     <li>Refuse une publication vide (ni texte ni image).</li>
+     *     <li>Limite à 3 images maximum ; refuse au-delà.</li>
+     *     <li>Enregistre les images localement dans <code>static/uploads</code> et stocke leurs URLs.</li>
+     *     <li>Crée et sauvegarde un objet {@link Post} avec toutes les données saisies.</li>
+     * </ul>
+     *
+     * @param contenu Le texte du post (optionnel)
+     * @param images La liste des fichiers image envoyés (optionnel, max. 3 fichiers)
+     * @param estPublic Indique si le post est public ou non (checkbox)
+     * @param session La session HTTP permettant d’identifier l’étudiant connecté
+     * @param redirectAttributes Permet d’ajouter des messages flash lors des redirections
+     * @return une redirection vers la page de profil, avec message de succès ou d'erreur
+     */
     @PostMapping("/profil/publier")
     public String publierPost(
             @RequestParam(value = "contenu", required = false) String contenu,
@@ -221,18 +432,18 @@ public class ProfilController {
         String projectDir = System.getProperty("user.dir");
         try {
             if (images != null) {
-                // 创建目标目录（static/uploads）
+                // Créer le répertoire cible (static/uploads)
                 File uploadDir = new File(projectDir + "/src/main/resources/static/uploads");
                 if (!uploadDir.exists()) uploadDir.mkdirs();
 
                 for (MultipartFile file : images) {
                     if (!file.isEmpty()) {
-                        // 使用时间戳防止重名
+                        // Utiliser un timestamp pour éviter les doublons de nom
                         String filename = System.currentTimeMillis() + "_" + file.getOriginalFilename();
                         File dest = new File(uploadDir, filename);
                         file.transferTo(dest);
 
-                        // 浏览器访问路径：/uploads/filename
+                        // Chemin d'accès depuis le navigateur : /uploads/filename
                         urls.add("/uploads/" + filename);
                     }
                 }
@@ -250,6 +461,23 @@ public class ProfilController {
         return "redirect:/profil";
     }
 
+    /**
+     * Permet à un étudiant connecté de republier un post existant.
+     *
+     * Ce contrôleur :
+     * - vérifie si l'étudiant est connecté,
+     * - vérifie si le post d'origine existe,
+     * - crée une nouvelle entité de republication avec un commentaire et une visibilité (publique ou non),
+     * - enregistre la republication dans la base de données,
+     * - redirige vers la page de profil avec un message de succès ou d'erreur.
+     *
+     * @param postId             L'identifiant du post à republier.
+     * @param commentaire        Le commentaire ajouté à la republication.
+     * @param estPublic          Indique si la republication est publique ou non.
+     * @param session            La session contenant l'étudiant connecté.
+     * @param redirectAttributes Attributs pour transmettre un message flash.
+     * @return Redirection vers la page de profil.
+     */
     @PostMapping("/profil/republication")
     public String republier(
             @RequestParam("postId") Long postId,
@@ -271,10 +499,10 @@ public class ProfilController {
             return "redirect:/profil";
         }
 
-        // 构造复合主键
+        // Construire une clé primaire composée
         RepublierId id = new RepublierId(postId, etudiant.getIdEtudiant());
 
-        // 创建 republication 实体
+        // Créer une entité de republication
         Republier republier = new Republier();
         republier.setId(id);
         republier.setPost(originalPost);
@@ -289,6 +517,19 @@ public class ProfilController {
         return "redirect:/profil";
     }
 
+
+    /**
+     * Active ou désactive un "Like" sur une publication pour l'étudiant connecté.
+     *
+     * Si l'étudiant a déjà liké la publication, le like est retiré.
+     * Sinon, un nouveau like est enregistré (en supprimant toute autre réaction existante comme "Favori").
+     * Redirige vers la publication concernée avec un message flash de succès ou d'erreur.
+     *
+     * @param postId             L'identifiant du post à aimer ou désaimer.
+     * @param session            La session contenant l'étudiant connecté.
+     * @param redirectAttributes Attributs pour transmettre un message flash.
+     * @return Redirection vers l'ancre du post sur la page de profil.
+     */
     @GetMapping("/profil/reaction/like")
     public String toggleLike(@RequestParam Long postId, HttpSession session, RedirectAttributes redirectAttributes) {
         Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
@@ -306,15 +547,15 @@ public class ProfilController {
 
         Post post = postOpt.get();
         ReagirId id = new ReagirId(post.getIdPost(), etudiant.getIdEtudiant());
-        Optional<Reagir> existing = reagirRepository.findById(id);
 
-        if (existing.isPresent() && "Like".equals(existing.get().getStatut())) {
-            reagirRepository.delete(existing.get());
+
+        Optional<Reagir> existingLike = reagirRepository.findByPostIdAndEtudiantIdAndStatut(
+                post.getIdPost(), etudiant.getIdEtudiant(), "Like");
+
+        if (existingLike.isPresent()) {
+            reagirRepository.delete(existingLike.get());
             redirectAttributes.addFlashAttribute("success", "Like retiré.");
         } else {
-            // 删除旧反应（如果是 Favori）
-            existing.ifPresent(reagirRepository::delete);
-
             Reagir r = new Reagir();
             r.setPost(post);
             r.setEtudiant(etudiant);
@@ -328,6 +569,18 @@ public class ProfilController {
 
 
 
+    /**
+     * Active ou désactive un "Favori" sur une publication pour l'étudiant connecté.
+     *
+     * Si l'étudiant a déjà mis la publication en favori, celle-ci est retirée des favoris.
+     * Sinon, elle est ajoutée comme favori (en supprimant toute autre réaction existante comme "Like").
+     * Redirige vers la publication concernée avec un message flash de succès ou d'erreur.
+     *
+     * @param postId             L'identifiant du post à ajouter ou retirer des favoris.
+     * @param session            La session contenant l'étudiant connecté.
+     * @param redirectAttributes Attributs pour transmettre un message flash.
+     * @return Redirection vers l'ancre du post sur la page de profil.
+     */
     @GetMapping("/profil/reaction/favori")
     public String toggleFavori(@RequestParam Long postId, HttpSession session, RedirectAttributes redirectAttributes) {
         Etudiant etudiant = (Etudiant) session.getAttribute("etudiantConnecte");
@@ -344,16 +597,15 @@ public class ProfilController {
         }
 
         Post post = postOpt.get();
-        ReagirId id = new ReagirId(post.getIdPost(), etudiant.getIdEtudiant());
-        Optional<Reagir> existingReaction = reagirRepository.findById(id);
 
-        if (existingReaction.isPresent() && "Favori".equals(existingReaction.get().getStatut())) {
-            reagirRepository.delete(existingReaction.get());
+
+        Optional<Reagir> existingFavori = reagirRepository.findByPostIdAndEtudiantIdAndStatut(
+                post.getIdPost(), etudiant.getIdEtudiant(), "Favori");
+
+        if (existingFavori.isPresent()) {
+            reagirRepository.delete(existingFavori.get());
             redirectAttributes.addFlashAttribute("success", "Favori supprimé.");
         } else {
-            // 删除旧反应（如果是 Like）
-            existingReaction.ifPresent(reagirRepository::delete);
-
             Reagir reaction = new Reagir();
             reaction.setPost(post);
             reaction.setEtudiant(etudiant);
@@ -365,6 +617,21 @@ public class ProfilController {
         return "redirect:/profil#post-" + postId;
     }
 
+
+
+    /**
+     * Permet à un étudiant connecté de commenter une publication.
+     *
+     * Vérifie si l'étudiant est connecté et si le post existe.
+     * Enregistre ensuite un nouveau commentaire associé à la publication.
+     * Redirige vers la publication concernée avec un message flash.
+     *
+     * @param postId             L'identifiant de la publication commentée.
+     * @param commentaire        Le contenu du commentaire.
+     * @param session            La session contenant l'étudiant connecté.
+     * @param redirectAttributes Attributs pour transmettre un message flash.
+     * @return Redirection vers la publication sur la page de profil.
+     */
     @PostMapping("/profil/commenter")
     public String commenter(@RequestParam Long postId,
                             @RequestParam String commentaire,
@@ -397,6 +664,21 @@ public class ProfilController {
         return "redirect:/profil#post-" + postId;
     }
 
+
+
+    /**
+     * Supprime un commentaire publié par l'étudiant connecté.
+     *
+     * Vérifie si l'étudiant est connecté et si le commentaire existe.
+     * Seul l’auteur du commentaire est autorisé à le supprimer.
+     * Redirige vers la publication concernée avec un message de succès ou d’erreur.
+     *
+     * @param postId             L’identifiant de la publication concernée.
+     * @param idCommentaire      L’identifiant du commentaire à supprimer.
+     * @param session            La session contenant l’étudiant connecté.
+     * @param redirectAttributes Attributs pour transmettre un message flash.
+     * @return Redirection vers la publication sur la page de profil.
+     */
     @Transactional
     @PostMapping("/profil/commenter/supprimer")
     public String supprimerCommentaire(@RequestParam Long postId,
@@ -430,6 +712,21 @@ public class ProfilController {
         return "redirect:/profil#post-" + postId;
     }
 
+
+
+    /**
+     * Supprime un post publié ou repartagé par l’étudiant connecté.
+     *
+     * Si l’étudiant est l’auteur du post, tous les éléments liés sont supprimés :
+     * commentaires, réactions, republications, puis le post lui-même.
+     * Si l’étudiant a simplement repartagé le post, seule la republication est supprimée.
+     * Sinon, l’accès est refusé.
+     *
+     * @param postId             L’identifiant du post à supprimer.
+     * @param session            La session contenant l’étudiant connecté.
+     * @param redirectAttributes Attributs pour transmettre un message flash.
+     * @return Redirection vers la page de profil.
+     */
     @Transactional
     @PostMapping("/profil/post/supprimer")
     public String supprimerPost(@RequestParam Long postId, HttpSession session, RedirectAttributes redirectAttributes) {
@@ -448,48 +745,39 @@ public class ProfilController {
 
         Post post = postOpt.get();
 
-        // 🧾 当前用户是否是这个帖子的作者
+        // Vérifier si l'utilisateur est l’auteur du post
         boolean isAuteur = post.getEtudiant().getIdEtudiant().equals(etudiant.getIdEtudiant());
 
-        // 🔁 当前用户是否转发了这个帖子
+        // Vérifier si l'utilisateur a repartagé le post
         Optional<Republier> repubOpt = republierRepository.findByPostAndEtudiant(post, etudiant);
 
         if (isAuteur) {
-            // ✅ 是原作者：先删除依赖（可用 cascade，也可手动）
+            // Si auteur : supprimer les dépendances (manuellement ou via cascade)
 
-            // 删除评论
+            // Supprimer les commentaires
             commenterRepository.deleteAllByPost(post);
 
-            // 删除点赞、收藏（Reagir）
+            // Supprimer les réactions (Like/Favori)
             reagirRepository.deleteAllByPost(post);
 
-            // 删除所有转发
+            // Supprimer les republications
             republierRepository.deleteAllByPost(post);
 
-            // 最后删除原始帖子
+            // Supprimer la publication
             postRepository.delete(post);
 
             redirectAttributes.addFlashAttribute("success", "Post supprimé avec succès !");
         } else if (repubOpt.isPresent()) {
-            // ✅ 是转发者：只删除该转发
+            // Si republicateur : supprimer uniquement la republication
             republierRepository.delete(repubOpt.get());
             redirectAttributes.addFlashAttribute("success", "Républication supprimée !");
         } else {
-            // ❌ 无权限
+            // Accès non autorisé
             redirectAttributes.addFlashAttribute("error", "Vous n'avez pas le droit de supprimer ce post.");
         }
 
         return "redirect:/profil";
     }
-
-
-
-
-
-
-
-
-
 
 
 

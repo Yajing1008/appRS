@@ -1,8 +1,10 @@
 package com.ut1.miage.appRS.model;
 
-import java.util.*;
-
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Représente une université dans le système.  
@@ -23,13 +25,8 @@ public class Universite {
     /**
      * Liste des étudiants associés à cette université via la table de jointure "ETUDIER".
      */
-    @ManyToMany
-    @JoinTable(
-        name = "ETUDIER", 
-        joinColumns = @JoinColumn(name = "id_univ"),
-        inverseJoinColumns = @JoinColumn(name = "id_etudiant")
-    )
-    private List<Etudiant> etudiant = new ArrayList<>();
+    @ManyToMany(mappedBy = "universites")
+    private List<Etudiant> etudiants = new ArrayList<>();
 
     /** Constructeur sans argument requis pour JPA. */
     public Universite() {}
@@ -39,12 +36,12 @@ public class Universite {
      * 
      * @param idUniv l'identifiant de l'université
      * @param nomUniv le nom de l'université
-     * @param etudiant la liste des étudiants associés
+     * @param etudiants la liste des étudiants associés
      */
-    public Universite(Long idUniv, String nomUniv, List<Etudiant> etudiant) {
+    public Universite(Long idUniv, String nomUniv, List<Etudiant> etudiants) {
         this.idUniv = idUniv;
         this.nomUniv = nomUniv;
-        this.etudiant = etudiant;
+        this.etudiants = etudiants;
     }
 
     /**
@@ -88,17 +85,19 @@ public class Universite {
      * 
      * @return liste des étudiants
      */
-    public List<Etudiant> getEtudiant() {
-        return etudiant;
+    public List<Etudiant> getEtudiants() {
+        return etudiants;
     }
+
+
 
     /**
      * Définit la liste des étudiants associés à cette université.
      * 
-     * @param etudiant liste des étudiants
+     * @param etudiants liste des étudiants
      */
-    public void setEtudiant(List<Etudiant> etudiant) {
-        this.etudiant = etudiant;
+    public void setEtudiants(List<Etudiant> etudiants) {
+        this.etudiants = etudiants;
     }
 
     /**
@@ -112,7 +111,7 @@ public class Universite {
         int result = 1;
         result = prime * result + ((idUniv == null) ? 0 : idUniv.hashCode());
         result = prime * result + ((nomUniv == null) ? 0 : nomUniv.hashCode());
-        result = prime * result + ((etudiant == null) ? 0 : etudiant.hashCode());
+        result = prime * result + ((etudiants == null) ? 0 : etudiants.hashCode());
         return result;
     }
 
@@ -131,6 +130,6 @@ public class Universite {
         Universite other = (Universite) obj;
         return Objects.equals(idUniv, other.idUniv)
             && Objects.equals(nomUniv, other.nomUniv)
-            && Objects.equals(etudiant, other.etudiant);
+            && Objects.equals(etudiants, other.etudiants);
     }
 }

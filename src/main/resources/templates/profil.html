@@ -270,11 +270,9 @@
 
 
                             <div class="card-body p-0 position-relative">
-
                                 <!-- 已登录 -->
                                 <div th:if="${etudiant != null}">
-                                    <figure class="avatar position-absolute w100 z-index-1"
-                                            style="top:-40px; left: 30px;">
+                                    <figure class="avatar position-absolute w100 z-index-1" style="top:-40px; left: 30px;">
                                         <img th:src="${etudiant.photoEtudiant != null ? etudiant.photoEtudiant : '/assets/img/user-default.jpg'}"
                                              alt="photo de profil"
                                              class="float-right p-1 bg-white rounded-circle w-100">
@@ -286,30 +284,35 @@
                                               th:text="${etudiant.emailEtudiant}">email@example.com</span>
                                     </h4>
 
-                                    <div class="d-flex align-items-center justify-content-center position-absolute-md right-15 top-0 me-2">
+                                    <!-- 仅本人可见的修改按钮 -->
+                                    <div class="d-flex align-items-center justify-content-center position-absolute-md right-15 top-0 me-2"
+                                         th:if="${isOwner}">
                                         <a th:href="@{/profil/modifier}"
-                                           class="bg-primary text-white p-3 z-index-1 rounded-3 font-xsssss text-uppercase fw-700 ls-3">Modifier</a>
+                                           class="bg-primary text-white p-3 z-index-1 rounded-3 font-xsssss text-uppercase fw-700 ls-3">
+                                            Modifier
+                                        </a>
                                     </div>
                                 </div>
 
                                 <!-- 未登录 -->
                                 <div th:unless="${etudiant != null}">
-                                    <figure class="avatar position-absolute w100 z-index-1"
-                                            style="top:-40px; left: 30px;">
+                                    <figure class="avatar position-absolute w100 z-index-1" style="top:-40px; left: 30px;">
                                         <img src="/assets/img/user-default.jpg" alt="default user"
                                              class="float-right p-1 bg-white rounded-circle w-100">
                                     </figure>
 
-                                    <h4 class="fw-700 font-sm mt-2 mb-lg-5 mb-4 pl-15 text-grey-500">Utilisateur anonyme
+                                    <h4 class="fw-700 font-sm mt-2 mb-lg-5 mb-4 pl-15 text-grey-500">
+                                        Utilisateur anonyme
                                         <span class="fw-500 font-xssss text-grey-400 mt-1 mb-3 d-block">Veuillez vous connecter</span>
                                     </h4>
 
                                     <div class="d-flex align-items-center justify-content-center position-absolute-md right-15 top-0 me-2">
                                         <a th:href="@{/connexion}"
-                                           class="bg-warning text-white p-3 z-index-1 rounded-3 font-xsssss text-uppercase fw-700 ls-3">Connexion</a>
+                                           class="bg-warning text-white p-3 z-index-1 rounded-3 font-xsssss text-uppercase fw-700 ls-3">
+                                            Connexion
+                                        </a>
                                     </div>
                                 </div>
-
                             </div>
 
 
@@ -399,6 +402,35 @@
                                             -</p>
                                     </div>
 
+                                    <div class="mb-3">
+                                        <label class="font-xssss text-grey-700 fw-700">Universités</label>
+                                        <ul class="list-unstyled">
+                                            <li th:each="univ : ${etudiant.universites}" class="font-xssss text-grey-900">
+                                                <i class="feather-home me-2"></i>
+                                                <span th:text="${univ.nomUniv}">Université inconnue</span>
+                                            </li>
+                                            <li th:if="${#lists.isEmpty(etudiant.universites)}" class="font-xssss text-grey-500">
+                                                Aucune université renseignée.
+                                            </li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="font-xssss text-grey-700 fw-700">Centres d’intérêt</label>
+                                        <ul class="list-unstyled">
+                                            <li th:each="interet : ${etudiant.centresInteret}" class="font-xssss text-grey-900">
+                                                <i class="feather-star me-2"></i>
+                                                <span th:text="${interet.nomCentreInteret}">Centre d’intérêt inconnu</span>
+                                            </li>
+                                            <li th:if="${#lists.isEmpty(etudiant.centresInteret)}" class="font-xssss text-grey-500">
+                                                Aucun centre d’intérêt renseigné.
+                                            </li>
+                                        </ul>
+                                    </div>
+
+
+
+
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label class="font-xssss text-grey-700 fw-700">Date de naissance</label>
@@ -416,10 +448,11 @@
                                         <p class="font-xssss text-grey-900" th:text="${etudiant.emailEtudiant}">-</p>
                                     </div>
 
-                                    <div class="text-end mt-4">
+                                    <div class="text-end mt-4" th:if="${isOwner}">
                                         <a th:href="@{/profil/modifier}"
-                                           class="bg-primary text-white p-2 ps-4 pe-4 lh-24 font-xssss rounded-xl fw-700 border-0">Modifier
-                                            mon profil</a>
+                                           class="bg-primary text-white p-2 ps-4 pe-4 lh-24 font-xssss rounded-xl fw-700 border-0">
+                                            Modifier mon profil
+                                        </a>
                                     </div>
                                 </div>
 

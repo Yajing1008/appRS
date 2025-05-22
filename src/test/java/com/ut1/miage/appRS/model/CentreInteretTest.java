@@ -42,10 +42,10 @@ class CentreInteretTest {
         etudiants.add(e2);
 
         CentreInteret centre = new CentreInteret();
-        centre.setEtudiant(etudiants);
+        centre.setEtudiants(etudiants);
 
-        assertEquals(2, centre.getEtudiant().size());
-        assertEquals(10L, centre.getEtudiant().get(0).getIdEtudiant());
+        assertEquals(2, centre.getEtudiants().size());
+        assertEquals(10L, centre.getEtudiants().get(0).getIdEtudiant());
     }
 
     /**

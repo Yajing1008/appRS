@@ -1,13 +1,13 @@
 package com.ut1.miage.appRS.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+import java.util.Optional;
 
-import com.ut1.miage.appRS.model.Etudiant;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.util.List;
-import java.util.Optional;
+import com.ut1.miage.appRS.model.Etudiant;
 
 /**
  * Interface de dépôt pour l'entité {@link Etudiant}.
