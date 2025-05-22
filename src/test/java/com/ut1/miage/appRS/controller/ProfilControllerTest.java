@@ -1,40 +1,47 @@
 package com.ut1.miage.appRS.controller;
 
-import com.ut1.miage.appRS.model.Etudiant;
-import com.ut1.miage.appRS.model.Post;
-import com.ut1.miage.appRS.model.Republier;
+import com.ut1.miage.appRS.model.*;
 import com.ut1.miage.appRS.repository.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.mock.web.MockHttpSession;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.hamcrest.Matchers.anEmptyMap;
-import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 
-@WebMvcTest(controllers = ProfilController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
 class ProfilControllerTest {
+
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private EtudiantRepository etudiantRepository;
 
     @Autowired
     private PostRepository postRepository;
@@ -43,340 +50,415 @@ class ProfilControllerTest {
     private RepublierRepository republierRepository;
 
     @Autowired
-    private EtudiantRepository etudiantRepository;
+    private UniversiteRepository universiteRepository;
+
+    @Autowired
+    private CentreInteretRepository centreInteretRepository;
 
     private Etudiant etudiant;
-
-    /**
-     * Fournit des beans mock pour remplacer les dépendances de ProfilController.
-     */
-    @TestConfiguration
-    static class MockConfig {
-        @Bean
-        public PostRepository postRepository() {
-            return Mockito.mock(PostRepository.class);
-        }
-
-        @Bean
-        public RepublierRepository republierRepository() {
-            return Mockito.mock(RepublierRepository.class);
-        }
-
-        @Bean
-        public EtudiantRepository etudiantRepository() {
-            return Mockito.mock(EtudiantRepository.class);
-        }
-
-        @Bean
-        public ReagirRepository reagirRepository() {
-            return Mockito.mock(ReagirRepository.class);
-        }
-
-        @Bean
-        public CommenterRepository commenterRepository() {
-            return Mockito.mock(CommenterRepository.class);
-        }
-    }
-
+    private Etudiant cible;
+    private Post post;
 
     @BeforeEach
     void setUp() {
+
         etudiant = new Etudiant();
-        etudiant.setIdEtudiant(1L);
         etudiant.setNomEtudiant("Dupont");
         etudiant.setPrenomEtudiant("Jean");
-        etudiant.setDateNaissanceEtudiant(LocalDate.of(2000, 1, 1));
         etudiant.setEmailEtudiant("jean.dupont@example.com");
+        etudiant.setDateNaissanceEtudiant(LocalDate.of(2000, 1, 1));
+        etudiant = etudiantRepository.save(etudiant);
+
+        cible = new Etudiant();
+        cible.setNomEtudiant("Cible");
+        cible.setPrenomEtudiant("Etudiant");
+        cible.setEmailEtudiant("cible@example.com");
+        cible.setDateNaissanceEtudiant(LocalDate.of(2000, 2, 2));
+        cible = etudiantRepository.save(cible);
+
+
+        post = new Post();
+        post.setContenuPost("Contenu original");
+        post.setEtudiant(etudiant);
+        post.setDatePublicationPost(LocalDateTime.now());
+        post = postRepository.save(post);
+
     }
 
-    /**
-     * Teste le scénario où l'étudiant n'est pas connecté.
-     * On s'attend à ce que la page de profil soit affichée avec un message de connexion.
-     */
     @Test
-    void testAfficherProfil_EtudiantNonConnecte() throws Exception {
-        // Given
-        MockHttpSession session = new MockHttpSession();
+    void testAfficherProfil_ConnecteEtProprietaire() throws Exception {
+        Etudiant savedEtudiant = etudiantRepository.save(etudiant);
 
-        // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/profil").session(session))
+        mockMvc.perform(get("/profil").sessionAttr("etudiantConnecte", savedEtudiant))
                 .andExpect(status().isOk())
-                .andExpect(model().attributeExists("messageConnexion"))
-                .andExpect(view().name("profil"));
+                .andExpect(view().name("profil"))
+                .andExpect(model().attribute("etudiant", hasProperty("idEtudiant", is(savedEtudiant.getIdEtudiant()))))
+                .andExpect(model().attribute("isOwner", true));
     }
 
-    /**
-     * Teste le scénario où l'étudiant est connecté mais n'a publié aucun post ni republication.
-     */
     @Test
-    void testAfficherProfil_SansPostsNiRepublications() throws Exception {
-        // Given
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("etudiantConnecte", etudiant);
-
-        when(postRepository.findByEtudiantOrderByDatePublicationPostDesc(etudiant)).thenReturn(List.of());
-        when(republierRepository.findByEtudiantOrderByDateRepublicationDesc(etudiant)).thenReturn(List.of());
-
-        // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/profil").session(session))
+    void testAfficherProfil_NonConnecte() throws Exception {
+        mockMvc.perform(get("/profil"))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("etudiant", etudiant))
-                .andExpect(model().attributeExists("posts"))
-                .andExpect(model().attributeExists("postDates"))
-                .andExpect(view().name("profil"));
+                .andExpect(view().name("profil"))
+                .andExpect(model().attribute("messageConnexion", "Veuillez vous connecter pour voir vos publications."))
+                .andExpect(model().attribute("etudiant", is((Object) null)))
+                .andExpect(model().attribute("posts", is(Collections.emptyList())))
+                .andExpect(model().attribute("postDates", is(Collections.emptyMap())))
+                .andExpect(model().attribute("isOwner", false));
     }
 
-    /**
-     * Teste le scénario où l'étudiant est connecté avec des posts et des republications.
-     */
+    @Test
+    void testAfficherProfil_EtudiantIntrouvable() throws Exception {
+        Etudiant ghost = new Etudiant();
+        ghost.setIdEtudiant(999L);
+        ghost.setPrenomEtudiant("Ghost");
+
+        mockMvc.perform(get("/profil").sessionAttr("etudiantConnecte", ghost))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profil"))
+                .andExpect(model().attribute("messageConnexion", "Profil introuvable."))
+                .andExpect(model().attribute("isOwner", false));
+    }
+
+
     @Test
     void testAfficherProfil_AvecPostsEtRepublications() throws Exception {
-        // Given
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("etudiantConnecte", etudiant);
+
+        Etudiant savedEtudiant = etudiantRepository.save(etudiant);
+
 
         Post post1 = new Post();
-        post1.setIdPost(1L);
-        post1.setDatePublicationPost(LocalDateTime.now().minusDays(1));
-        post1.setEtudiant(etudiant);
+        post1.setEtudiant(savedEtudiant);
+        post1.setContenuPost("Mon premier post");
+        post1.setDatePublicationPost(LocalDateTime.of(2024, 4, 1, 15, 30));
+        post1 = postRepository.save(post1);
+
 
         Post post2 = new Post();
-        post2.setIdPost(2L);
-        post2.setDatePublicationPost(LocalDateTime.now().minusDays(2));
-        post2.setEtudiant(etudiant);
+        post2.setContenuPost("Un autre post");
+        post2.setEtudiant(savedEtudiant);
+        post2.setDatePublicationPost(LocalDateTime.of(2024, 3, 1, 10, 0));
+        post2 = postRepository.save(post2);
+
 
         Republier republication = new Republier();
+        republication.setEtudiant(savedEtudiant);
         republication.setPost(post2);
-        republication.setEtudiant(etudiant);
-        republication.setDateRepublication(LocalDateTime.now());
+        republication.setDateRepublication(LocalDateTime.of(2024, 4, 2, 9, 0));
+        republierRepository.save(republication);
 
-        when(postRepository.findByEtudiantOrderByDatePublicationPostDesc(etudiant)).thenReturn(List.of(post1));
-        when(republierRepository.findByEtudiantOrderByDateRepublicationDesc(etudiant)).thenReturn(List.of(republication));
 
-        // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/profil").session(session))
+        mockMvc.perform(get("/profil").sessionAttr("etudiantConnecte", savedEtudiant))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("etudiant", etudiant))
+                .andExpect(view().name("profil"))
+                .andExpect(model().attribute("etudiant", hasProperty("idEtudiant", is(savedEtudiant.getIdEtudiant()))))
+                .andExpect(model().attribute("isOwner", true))
+                .andExpect(model().attributeExists("posts"))
+                .andExpect(model().attributeExists("postDates"));
+    }
+
+    @Test
+    void testAfficherProfilParId_ProfilInexistant() throws Exception {
+        mockMvc.perform(get("/profil/999999"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profil"))
+                .andExpect(model().attribute("messageConnexion", "Profil introuvable."))
+                .andExpect(model().attribute("etudiant", is((Object) null)))
+                .andExpect(model().attribute("isOwner", false))
+                .andExpect(model().attribute("isFriend", false));
+    }
+
+
+    @Test
+    void testAfficherProfilParId_SansConnexion() throws Exception {
+        mockMvc.perform(get("/profil/" + cible.getIdEtudiant()))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profil"))
+                .andExpect(model().attribute("etudiant", hasProperty("idEtudiant", is(cible.getIdEtudiant()))))
+                .andExpect(model().attribute("isOwner", false))
+                .andExpect(model().attribute("isFriend", false))
+                .andExpect(model().attributeExists("posts"))
+                .andExpect(model().attributeExists("postDates"));
+    }
+
+    @Test
+    void testAfficherProfilParId_EstAmi() throws Exception {
+
+        etudiant.getAmis().add(cible);
+        etudiant = etudiantRepository.save(etudiant);
+
+        mockMvc.perform(get("/profil/" + cible.getIdEtudiant())
+                        .sessionAttr("etudiantConnecte", etudiant))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profil"))
+                .andExpect(model().attribute("isOwner", false))
+                .andExpect(model().attribute("isFriend", true));
+    }
+
+
+    @Test
+    void testAfficherProfilParId_NonAmi() throws Exception {
+        mockMvc.perform(get("/profil/" + cible.getIdEtudiant())
+                        .sessionAttr("etudiantConnecte", etudiant))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profil"))
+                .andExpect(model().attribute("isOwner", false))
+                .andExpect(model().attribute("isFriend", false));
+    }
+
+    @Test
+    void testShowEditForm_SansConnexion() throws Exception {
+        mockMvc.perform(get("/profil/modifier"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profil_modifier"))
+                .andExpect(model().attribute("etudiant", nullValue()))
+                .andExpect(model().attribute("posts", is(Collections.emptyList())))
+                .andExpect(model().attribute("postDates", is(Collections.emptyMap())))
+                .andExpect(model().attribute("toutesUniversites", is(Collections.emptyList())))
+                .andExpect(model().attribute("tousCentresInteret", is(Collections.emptyList())));
+    }
+
+    @Test
+    void testShowEditForm_ConnecteAvecDonnees() throws Exception {
+        // 添加帖文
+        Post post = new Post();
+        post.setEtudiant(etudiant);
+        post.setContenuPost("Bonjour !");
+        post.setDatePublicationPost(LocalDateTime.of(2025, 5, 1, 10, 0));
+        post = postRepository.save(post);
+
+        // 添加大学
+        Universite universite = new Universite();
+        universite.setNomUniv("Université de Test");
+        universite = universiteRepository.save(universite);
+
+        // 添加兴趣
+        CentreInteret interet = new CentreInteret();
+        interet.setNomCentreInteret("Informatique");
+        interet = centreInteretRepository.save(interet);
+
+        mockMvc.perform(get("/profil/modifier")
+                        .sessionAttr("etudiantConnecte", etudiant))
+                .andExpect(status().isOk())
+                .andExpect(view().name("profil_modifier"))
+                .andExpect(model().attribute("etudiant", hasProperty("idEtudiant", is(etudiant.getIdEtudiant()))))
                 .andExpect(model().attributeExists("posts"))
                 .andExpect(model().attributeExists("postDates"))
-                .andExpect(view().name("profil"));
+                .andExpect(model().attribute("toutesUniversites", hasItem(hasProperty("nomUniv", is("Université de Test")))))
+                .andExpect(model().attribute("tousCentresInteret", hasItem(hasProperty("nomCentreInteret", is("Informatique")))));
+
     }
 
-
-    /**
-     * Teste l'accès à la page de modification du profil lorsque l'étudiant n'est pas connecté.
-     * On attend une vue vide avec des listes vides pour posts et postDates.
-     */
     @Test
-    void testShowEditForm_EtudiantNonConnecte() throws Exception {
-        // Given
-        MockHttpSession session = new MockHttpSession();
+    void testSaveProfile_ModifieAvecUniversitesEtInterets() throws Exception {
 
-        // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/profil/modifier").session(session))
-                .andExpect(status().isOk())
-                .andExpect(model().attributeDoesNotExist("etudiant"))
-                .andExpect(model().attribute("posts", empty()))
-                .andExpect(model().attribute("postDates", anEmptyMap()))
-                .andExpect(view().name("profil_modifier"));
-    }
+        etudiant = etudiantRepository.save(etudiant);
 
-    /**
-     * Teste l'accès à la page de modification du profil avec publications et republications.
-     */
-    @Test
-    void testShowEditForm_AvecPostsEtRepublications() throws Exception {
-        // Given
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("etudiantConnecte", etudiant);
-
-        Post post1 = new Post();
-        post1.setIdPost(1L);
-        post1.setEtudiant(etudiant);
-        post1.setDatePublicationPost(LocalDateTime.now().minusDays(1));
-
-        Post post2 = new Post();
-        post2.setIdPost(2L);
-        post2.setEtudiant(etudiant);
-        post2.setDatePublicationPost(LocalDateTime.now().minusDays(2));
-
-        Republier republication = new Republier();
-        republication.setEtudiant(etudiant);
-        republication.setPost(post2);
-        republication.setDateRepublication(LocalDateTime.now());
-
-        Mockito.when(postRepository.findByEtudiantOrderByDatePublicationPostDesc(etudiant)).thenReturn(List.of(post1));
-        Mockito.when(republierRepository.findByEtudiantOrderByDateRepublicationDesc(etudiant)).thenReturn(List.of(republication));
-
-        // When & Then
-        mockMvc.perform(MockMvcRequestBuilders.get("/profil/modifier").session(session))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("etudiant", etudiant))
-                .andExpect(model().attributeExists("posts"))
-                .andExpect(model().attributeExists("postDates"))
-                .andExpect(view().name("profil_modifier"));
-    }
-
-    /**
-     * Teste la mise à jour complète du profil avec une nouvelle photo.
-     */
-    @Test
-    void testSaveProfile_MiseAJourAvecPhoto() throws Exception {
-        // Given
-        MockHttpSession session = new MockHttpSession();
-
-        when(etudiantRepository.findByEmailEtudiant(etudiant.getEmailEtudiant()))
-                .thenReturn(Optional.of(etudiant));
 
         MockMultipartFile photoFile = new MockMultipartFile(
-                "photo", "photo.jpg", "image/jpeg", "fake-image".getBytes()
+                "photo", "photo.jpg", "image/jpeg", "fake-image-data".getBytes()
         );
 
-        // When & Then
+
+        String nouvelleUniversite = "Université Paris-Saclay";
+        String nouvelInteret = "Intelligence Artificielle";
+
         mockMvc.perform(multipart("/profil/modifier")
                         .file(photoFile)
-                        .param("emailEtudiant", etudiant.getEmailEtudiant())
+                        .sessionAttr("etudiantConnecte", etudiant)
                         .param("nomEtudiant", "Durand")
-                        .param("prenomEtudiant", "Marc")
-                        .param("dateNaissanceEtudiant", "1999-12-31")
-                        .param("sexeEtudiant", "Homme")
-                        .param("descriptionEtudiant", "Nouveau profil")
-                        .session(session))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/profil"));
-
-        // Vérifie que l'étudiant a été sauvegardé
-        verify(etudiantRepository, times(1)).save(any(Etudiant.class));
-    }
-
-
-/**
- * Teste le cas où l'étudiant n'est pas trouvé dans la base (aucune mise à jour).
- */
-@Test
-void testSaveProfile_EtudiantInexistant() throws Exception {
-    // Given
-    String emailInexistant = "inconnu@example.com";
-    when(etudiantRepository.findByEmailEtudiant(emailInexistant))
-            .thenReturn(Optional.empty());
-
-    // Simule un fichier vide (obligatoire même为空)
-    MockMultipartFile photoFile = new MockMultipartFile(
-            "photo", "", "image/jpeg", new byte[0]
-    );
-
-    // When & Then
-    mockMvc.perform(multipart("/profil/modifier")
-                    .file(photoFile)
-                    .param("emailEtudiant", emailInexistant)
-                    .param("nomEtudiant", "Durand")
-                    .param("prenomEtudiant", "Marc")
-                    .param("dateNaissanceEtudiant", "1999-12-31")
-                    .param("sexeEtudiant", "Homme")
-                    .param("descriptionEtudiant", "Profil inexistant")
-                    .session(new MockHttpSession()))
-            .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/profil"));
-
-    // Vérifie qu'aucune sauvegarde n'a été effectuée
-    verify(etudiantRepository, never()).save(any(Etudiant.class));
-}
-
-    /**
-     * Teste la publication d'un post avec contenu et image par un étudiant connecté.
-     */
-    @Test
-    void testPublierPost_Connecte_AvecContenuEtImage() throws Exception {
-        // Given
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("etudiantConnecte", etudiant);
-
-        MockMultipartFile image = new MockMultipartFile(
-                "images", "image.jpg", "image/jpeg", "fake-image-content".getBytes()
-        );
-
-        // When & Then
-        mockMvc.perform(multipart("/profil/publier")
-                        .file(image)
-                        .param("contenu", "Bonjour à tous !")
-                        .param("estPublic", "true")
-                        .session(session))
+                        .param("prenomEtudiant", "Alice")
+                        .param("emailEtudiant", "alice.durand@example.com")
+                        .param("dateNaissanceEtudiant", "2001-05-21")
+                        .param("sexeEtudiant", "F")
+                        .param("descriptionEtudiant", "Passionnée de tech")
+                        .param("universites", nouvelleUniversite)
+                        .param("centresInteret", nouvelInteret)
+                        .flashAttr("etudiantForm", new Etudiant())) // 模拟 @ModelAttribute
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profil"))
-                .andExpect(flash().attributeExists("success"));
+                .andExpect(flash().attribute("success", "Profil mis à jour avec succès."));
 
-        // Vérifie que le post a été sauvegardé
-        verify(postRepository, times(1)).save(any(Post.class));
+
+        Etudiant updated = etudiantRepository.findById(etudiant.getIdEtudiant()).orElseThrow();
+
+        assertEquals("Durand", updated.getNomEtudiant());
+        assertEquals("Alice", updated.getPrenomEtudiant());
+        assertEquals("alice.durand@example.com", updated.getEmailEtudiant());
+        assertEquals(LocalDate.of(2001, 5, 21), updated.getDateNaissanceEtudiant());
+        assertEquals("F", updated.getSexeEtudiant());
+        assertEquals("Passionnée de tech", updated.getDescriptionEtudiant());
+        assertTrue(updated.getPhotoEtudiant().startsWith("data:image/jpeg;base64,"));
+        assertTrue(updated.getUniversites().stream()
+                .anyMatch(u -> u.getNomUniv().equalsIgnoreCase(nouvelleUniversite)));
+        assertTrue(updated.getCentresInteret().stream()
+                .anyMatch(c -> c.getNomCentreInteret().equalsIgnoreCase(nouvelInteret)));
+    }
+
+    @Test
+    void testSaveProfile_SansUniversitesNiInterets() throws Exception {
+
+        Universite u = new Universite();
+        u.setNomUniv("Ancienne Université");
+        u = universiteRepository.save(u);
+
+        CentreInteret c = new CentreInteret();
+        c.setNomCentreInteret("Ancien Intérêt");
+        c = centreInteretRepository.save(c);
+
+
+        etudiant.setUniversites(new ArrayList<>(List.of(u)));
+        etudiant.setCentresInteret(new ArrayList<>(List.of(c)));
+        etudiant = etudiantRepository.save(etudiant);
+
+        MockMultipartFile photoFile = new MockMultipartFile("photo", "", "image/jpeg", new byte[0]);
+
+        mockMvc.perform(multipart("/profil/modifier")
+                        .file(photoFile)
+                        .sessionAttr("etudiantConnecte", etudiant)
+                        .param("nomEtudiant", "Nouvel")
+                        .param("prenomEtudiant", "Utilisateur")
+                        .param("emailEtudiant", "nouveau@example.com")
+                        .param("dateNaissanceEtudiant", "2002-02-02")
+                        .param("sexeEtudiant", "M")
+                        .param("descriptionEtudiant", "Remise à zéro")
+                        .flashAttr("etudiantForm", new Etudiant()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil"))
+                .andExpect(flash().attribute("success", "Profil mis à jour avec succès."));
+
+        Etudiant updated = etudiantRepository.findById(etudiant.getIdEtudiant()).orElseThrow();
+
+
+        assertEquals(0, updated.getUniversites().size(), "Universités doivent être vidées");
+        assertEquals(0, updated.getCentresInteret().size(), "Centres d’intérêt doivent être vidés");
     }
 
 
-    /**
-     * Teste la tentative de publication sans être connecté (doit échouer).
-     */
     @Test
     void testPublierPost_NonConnecte() throws Exception {
-        MockMultipartFile emptyImage = new MockMultipartFile("images", "", "image/jpeg", new byte[0]);
-
         mockMvc.perform(multipart("/profil/publier")
-                        .file(emptyImage)
-                        .param("contenu", "Bonjour à tous !")
-                        .param("estPublic", "true"))
+                        .param("contenu", "Test sans login"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profil"))
                 .andExpect(flash().attribute("error", "Veuillez vous connecter pour publier."));
-
-        // ✅ 强调断言行为，而不是 save()
-        verifyNoInteractions(postRepository);
     }
-
-
 
     @Test
     void testPublierPost_ContenuVideEtSansImage() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("etudiantConnecte", etudiant);
-
         mockMvc.perform(multipart("/profil/publier")
-                        .param("contenu", "   ")
-                        .param("estPublic", "false")
-                        .session(session))
+                        .sessionAttr("etudiantConnecte", etudiant)
+                        .param("contenu", " ")) // 空格内容
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profil"))
                 .andExpect(flash().attribute("error", "Le contenu ne peut pas être vide."));
-
-        verifyNoInteractions(postRepository);  // ✅ 更安全，不会误报
     }
-
-
-
 
     @Test
     void testPublierPost_TropDImages() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("etudiantConnecte", etudiant);
 
-        List<MockMultipartFile> images = List.of(
-                new MockMultipartFile("images", "1.jpg", "image/jpeg", "1".getBytes()),
-                new MockMultipartFile("images", "2.jpg", "image/jpeg", "2".getBytes()),
-                new MockMultipartFile("images", "3.jpg", "image/jpeg", "3".getBytes()),
-                new MockMultipartFile("images", "4.jpg", "image/jpeg", "4".getBytes())
-        );
+        MockMultipartFile file1 = new MockMultipartFile("images", "img1.jpg", "image/jpeg", "data1".getBytes());
+        MockMultipartFile file2 = new MockMultipartFile("images", "img2.jpg", "image/jpeg", "data2".getBytes());
+        MockMultipartFile file3 = new MockMultipartFile("images", "img3.jpg", "image/jpeg", "data3".getBytes());
+        MockMultipartFile file4 = new MockMultipartFile("images", "img4.jpg", "image/jpeg", "data4".getBytes());
 
-        // ✅ 正确顺序：先用 multipart 创建请求构建器
+
         MockMultipartHttpServletRequestBuilder request = multipart("/profil/publier");
 
-        // ✅ 依次添加参数、文件、session
-        request.param("contenu", "Test trop d’images");
-        request.param("estPublic", "true");
-        images.forEach(request::file);
-        request.session(session); // ⚠️ 不要链式写在 .param() 后面！
+
+        request.file(file1).file(file2).file(file3).file(file4);
+
+
+        request.param("contenu", "Post avec trop d’images");
+        request.sessionAttr("etudiantConnecte", etudiant);
+
 
         mockMvc.perform(request)
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profil"))
                 .andExpect(flash().attribute("error", "Maximum 3 images autorisées."));
+    }
 
-        verifyNoInteractions(postRepository); // ✅ 避免 save 被误调用
+
+    @Test
+    void testPublierPost_SuccesAvecImageEtContenu() throws Exception {
+        MockMultipartFile image = new MockMultipartFile("images", "test.jpg", "image/jpeg", "image-data".getBytes());
+
+        mockMvc.perform(multipart("/profil/publier")
+                        .file(image)
+                        .param("contenu", "Mon premier post")
+                        .param("estPublic", "true")
+                        .sessionAttr("etudiantConnecte", etudiant))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil"))
+                .andExpect(flash().attribute("success", "Publication réussie !"));
+
+
+        List<Post> posts = postRepository.findByEtudiantOrderByDatePublicationPostDesc(etudiant);
+        assertFalse(posts.isEmpty());
+        assertEquals("Mon premier post", posts.get(0).getContenuPost());
+        assertTrue(posts.get(0).isEstPublicPost());
+        assertFalse(posts.get(0).getUrlsPhotosPost().isEmpty());
+    }
+
+    @Test
+    void testPublierPost_ErreurUploadImage() throws Exception {
+
+        MultipartFile realFile = new MockMultipartFile("images", "img.jpg", "image/jpeg", "data".getBytes());
+
+
+        MultipartFile spyFile = spy(realFile);
+        doThrow(new IOException("Fake I/O error")).when(spyFile).transferTo(any(File.class));
+
+
+        mockMvc.perform(multipart("/profil/publier")
+                        .file((MockMultipartFile) spyFile)
+                        .param("contenu", "Test image erreur")
+                        .sessionAttr("etudiantConnecte", etudiant))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil"))
+                .andExpect(flash().attribute("error", "Erreur lors de l'envoi des images."));
+    }
+
+    @Test
+    void testRepublier_NonConnecte() throws Exception {
+        mockMvc.perform(post("/profil/republication")
+                        .param("postId", post.getIdPost().toString())
+                        .param("commentaire", "Super !")
+                        .param("estPublic", "true"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil"))
+                .andExpect(flash().attribute("error", "Veuillez vous connecter pour republier."));
+    }
+
+    @Test
+    void testRepublier_PostInexistant() throws Exception {
+        mockMvc.perform(post("/profil/republication")
+                        .sessionAttr("etudiantConnecte", etudiant)
+                        .param("postId", "999999")
+                        .param("commentaire", "Je republie !")
+                        .param("estPublic", "false"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil"))
+                .andExpect(flash().attribute("error", "Publication introuvable."));
+    }
+
+    @Test
+    void testRepublier_Succes() throws Exception {
+        mockMvc.perform(post("/profil/republication")
+                        .sessionAttr("etudiantConnecte", etudiant)
+                        .param("postId", post.getIdPost().toString())
+                        .param("commentaire", "Je republie ce super post !")
+                        .param("estPublic", "true"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/profil"))
+                .andExpect(flash().attribute("success", "Républication réussie !"));
+
+
+        Optional<Republier> opt = republierRepository.findById(new RepublierId(post.getIdPost(), etudiant.getIdEtudiant()));
+        assertTrue(opt.isPresent(), "La républication doit être présente en base.");
+        assertEquals("Je republie ce super post !", opt.get().getCommentaireRepublication());
     }
 
 
@@ -390,12 +472,6 @@ void testSaveProfile_EtudiantInexistant() throws Exception {
 
 
 
-
-
-
-
 }
-
-
 
 
