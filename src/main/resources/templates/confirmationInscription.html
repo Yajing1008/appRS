@@ -3,21 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <title>Inscription réussie</title>
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/images/favicon.png}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/themify-icons.css}">
     <link rel="stylesheet" th:href="@{/css/feather.css}">
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .center-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f4f8; /* 淡蓝背景 */
+        }
+
+        .card-custom {
+            max-width: 500px;
+            width: 100%;
+            padding: 3rem;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .btn-custom {
+            display: block;
+            width: 200px;
+            margin: 20px auto 0 auto; /* 水平自动居中 + 顶部间距 */
+            padding: 10px 20px;
+            background: linear-gradient(to right, #667eea, #764ba2); /* 渐变按钮 */
+            color: white;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .btn-custom:hover {
+            background: linear-gradient(to right, #5a67d8, #6b46c1);
+        }
+    </style>
 </head>
 <body class="color-theme-blue mont-font">
 
-<div class="main-content bg-lightblue">
-    <div class="middle-sidebar-bottom">
-        <div class="middle-sidebar-left">
-            <div class="card w-100 shadow-xss rounded-xxl border-0 p-5 text-center bg-white mt-5">
-                <h2 class="fw-700 mb-4 text-grey-900 font-xxl">Inscription réussie 🎉</h2>
-                <p class="fw-500 text-grey-600 font-xsss mb-4">Votre compte étudiant a bien été créé.</p>
-                <a th:href="@{'/'}" class="p-2 lh-20 w150 bg-primary-gradiant text-white text-center font-xssss fw-600 ls-1 rounded-xl d-inline-block">Retour à l'accueil</a>
-            </div>
-        </div>
+<div class="center-container">
+    <div class="card-custom">
+        <h2 class="fw-700 mb-4 text-grey-900 font-xxl">Inscription réussie 🎉</h2>
+        <p class="fw-500 text-grey-600 font-xsss mb-4">Votre compte étudiant a bien été créé.</p>
+        <a th:href="@{'/'}" class="btn-custom">Retour à l'accueil</a>
     </div>
 </div>
 

@@ -2,68 +2,62 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Connexion</title>
+    <title>Réinitialiser mot de passe</title>
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/images/favicon.png}">
     <link rel="stylesheet" th:href="@{/css/themify-icons.css}">
     <link rel="stylesheet" th:href="@{/css/feather.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" th:href="@{/css/emoji.css}">
     <link rel="stylesheet" th:href="@{/css/lightbox.css}">
+    <link rel="stylesheet" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
 </head>
 
-<body class="color-theme-blue mont-font">
+<body class="bg-light mont-font">
 
-<div class="main-wrapper">
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="col-md-6 bg-white shadow rounded p-5">
+        <h2 class="fw-700 mb-4 text-center">Réinitialiser le mot de passe</h2>
 
+        <form th:action="@{/motdepasse/reinitialiser}" method="post" class="form-group">
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-        <div class="middle-sidebar-bottom">
-            <div class="middle-sidebar-left">
-                <div class="card w-100 border-0 bg-white shadow-xs p-4 mb-3 rounded-xxl">
-                    <h2 class="fw-700 mb-4 text-center">Réinitialiser le mot de passe</h2>
-
-                    <form th:action="@{/motdepasse/reinitialiser}" method="post" class="form-group">
-
-                        <!-- ✅ 成功或错误提示 -->
-                        <div th:if="${message}" class="alert alert-success text-center" role="alert">
-                            <p th:text="${message}"></p>
-                        </div>
-                        <div th:if="${erreur}" class="alert alert-danger text-center" role="alert">
-                            <p th:text="${erreur}"></p>
-                        </div>
-
-                        <!-- 📧 Email -->
-                        <div class="mb-3">
-                            <label class="form-label">Adresse e-mail</label>
-                            <input type="email" name="email" class="form-control" placeholder="Votre adresse e-mail" required>
-                        </div>
-
-                        <!-- 🔐 Nouveau mot de passe -->
-                        <div class="mb-3">
-                            <label class="form-label">Nouveau mot de passe</label>
-                            <input type="password" name="nouveauMotDePasse" class="form-control" placeholder="Nouveau mot de passe" required>
-                        </div>
-
-                        <!-- ✅ Confirmation -->
-                        <div class="mb-3">
-                            <label class="form-label">Confirmer le mot de passe</label>
-                            <input type="password" name="confirmation" class="form-control" placeholder="Confirmer le mot de passe" required>
-                        </div>
-
-                        <!-- 🔘 按钮 -->
-                        <div class="text-center">
-                            <button type="submit" class="btn bg-primary text-white fw-600 rounded-xl px-5">Réinitialiser</button>
-                        </div>
-
-                        <!-- 🔙 返回主页链接（可选） -->
-                        <div class="text-center mt-3">
-                            <a th:href="@{/connexion}" class="font-xsss text-grey-700">Retour à la connexion</a>
-                        </div>
-                    </form>
-                </div>
+            <!-- ✅ 成功或错误提示 -->
+            <div th:if="${message}" class="alert alert-success text-center" role="alert">
+                <p th:text="${message}"></p>
             </div>
-        </div>
+            <div th:if="${erreur}" class="alert alert-danger text-center" role="alert">
+                <p th:text="${erreur}"></p>
+            </div>
+
+            <!-- 📧 Email -->
+            <div class="mb-3">
+                <label class="form-label">Adresse e-mail</label>
+                <input type="email" name="email" class="form-control form-control-lg" placeholder="Votre adresse e-mail" required>
+            </div>
+
+            <!-- 🔐 Nouveau mot de passe -->
+            <div class="mb-3">
+                <label class="form-label">Nouveau mot de passe</label>
+                <input type="password" name="nouveauMotDePasse" class="form-control form-control-lg" placeholder="Nouveau mot de passe" required>
+            </div>
+
+            <!-- ✅ Confirmation -->
+            <div class="mb-4">
+                <label class="form-label">Confirmer le mot de passe</label>
+                <input type="password" name="confirmation" class="form-control form-control-lg" placeholder="Confirmer le mot de passe" required>
+            </div>
+
+            <!-- 🔘 按钮 -->
+            <div class="d-grid mb-3">
+                <button type="submit" class="btn btn-primary btn-lg w-100">Réinitialiser</button>
+            </div>
+
+            <!-- 🔙 返回主页链接 -->
+            <div class="text-center">
+                <a th:href="@{/connexion}" class="font-xsss text-grey-700">Retour à la connexion</a>
+            </div>
+        </form>
     </div>
+</div>
 
 <script th:src="@{/js/plugin.js}"></script>
 <script th:src="@{/js/lightbox.js}"></script>

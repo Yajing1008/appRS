@@ -3,38 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <title>Inscription Étudiant</title>
+    <link rel="icon" type="image/png" sizes="16x16" th:href="@{/images/favicon.png}">
     <link rel="stylesheet" th:href="@{/vendor/bootstrap/css/bootstrap.min.css}">
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body class="bg-light">
 
-    <div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-        <div class="col-md-6 bg-white shadow rounded p-5">
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+    <div class="row w-100 justify-content-center">
+        <div class="col-md-6 col-lg-5 bg-white shadow rounded p-5">
             <h2 class="text-center mb-4">Créer un compte étudiant</h2>
 
             <form th:action="@{/inscription}" th:object="${etudiant}" method="post">
 
+                <!-- Message d'erreur -->
                 <div th:if="${erreur}" class="alert alert-danger text-center" role="alert">
                     <p th:text="${erreur}"></p>
                 </div>
 
-                <div class="form-group mb-3">
+                <!-- Email -->
+                <div class="mb-3">
                     <label class="form-label">Adresse e-mail</label>
                     <input type="email" th:field="*{emailEtudiant}" class="form-control form-control-lg" placeholder="email@domaine.com" required>
                 </div>
 
-                <div class="form-group mb-4">
+                <!-- Mot de passe -->
+                <div class="mb-3">
                     <label class="form-label">Mot de passe</label>
                     <input type="password" th:field="*{motDePass}" class="form-control form-control-lg" placeholder="********" required>
                 </div>
 
-                <div class="d-grid">
+                <!-- Bouton -->
+                <div class="d-grid mb-3">
                     <button type="submit" class="btn btn-primary btn-lg w-100">S'inscrire</button>
                 </div>
 
+                <!-- Lien retour -->
+                <div class="text-center">
+                    <a th:href="@{/connexion}" class="btn btn-link">Déjà inscrit ? Se connecter</a>
+                </div>
             </form>
         </div>
     </div>
+</div>
 
 </body>
 </html>
