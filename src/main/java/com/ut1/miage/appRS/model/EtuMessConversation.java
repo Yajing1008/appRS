@@ -41,8 +41,7 @@ public class EtuMessConversation {
      * Date et heure d'envoi du message.
      */
     private LocalDateTime dateHeureMessage;
-    
-    // --- Getters & Setters ---
+
     
     /**
      * Retourne l'identifiant du message.

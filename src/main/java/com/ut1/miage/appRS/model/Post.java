@@ -187,7 +187,11 @@ public class Post {
         this.urlsPhotosPost = urlsPhotosPost;
     }
 
-
+    /**
+     * Retourne la liste des réactions de type "Favori" associées à l'étudiant.
+     *
+     * @return la liste des réactions marquées comme favoris
+     */
     public List<Reagir> getFavoris() {
         List<Reagir> favoris = new ArrayList<>();
         for (Reagir r : reactions) {
@@ -197,7 +201,11 @@ public class Post {
         }
         return favoris;
     }
-
+    /**
+     * Retourne la liste des réactions de type "Like" associées à l'étudiant.
+     *
+     * @return la liste des réactions marquées comme likes
+     */
     public List<Reagir> getLikes() {
         List<Reagir> likes = new ArrayList<>();
         for (Reagir r : reactions) {

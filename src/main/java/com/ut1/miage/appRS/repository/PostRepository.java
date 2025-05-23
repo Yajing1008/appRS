@@ -7,18 +7,43 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+/**
+ * Référentiel Spring Data JPA pour la gestion des entités {@link Post}.
+ *
+ * Fournit les opérations de base (CRUD) ainsi que des méthodes personnalisées
+ * pour interroger les publications selon leur visibilité, leur auteur ou les relations d'amitié.
+ */
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
-
-    // 所有公开帖子
+    /**
+     * Recherche toutes les publications publiques, triées de la plus récente à la plus ancienne.
+     *
+     * @return la liste des publications publiques triées par date de publication décroissante
+     */
     List<Post> findByEstPublicPostTrueOrderByDatePublicationPostDesc();
 
+    /**
+     * Recherche toutes les publications d’un étudiant, triées par date de publication décroissante.
+     *
+     * @param etudiant l'étudiant auteur des publications
+     * @return la liste des publications de l'étudiant
+     */
     List<Post> findByEtudiantOrderByDatePublicationPostDesc(Etudiant etudiant);
 
+    /**
+     * Recherche toutes les publications publiques d’un étudiant, triées par date décroissante.
+     *
+     * @param etudiant l'étudiant concerné
+     * @return la liste des publications publiques de l'étudiant
+     */
     List<Post> findByEtudiantAndEstPublicPostTrueOrderByDatePublicationPostDesc(Etudiant etudiant);
 
-    // ✅ 未登录用户和已登录用户都需要：获取所有公开的帖子（包含公开转发）
+    /**
+     * Recherche toutes les publications publiques, incluant celles repartagées publiquement,
+     * triées par date de publication décroissante.
+     *
+     * @return la liste des publications publiques et repartagées
+     */
     @Query("""
             SELECT DISTINCT p FROM Post p
             WHERE p.estPublicPost = true
@@ -29,29 +54,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                      AND r.post.estPublicPost = true
                )
             ORDER BY p.datePublicationPost DESC
-            """)
+           """)
     List<Post> findAllPublicPostsWithPublicReposts();
 
-
-    // ✅ 已登录用户：自己、朋友的帖子，朋友的转发（包括原帖是公开的或原帖是朋友的私帖）
-//    @Query("""
-//            SELECT DISTINCT p FROM Post p
-//            LEFT JOIN FETCH p.republications r
-//            WHERE
-//                p.etudiant = :etudiant
-//                OR p.estPublicPost = true
-//                OR (p.etudiant IN :amis)
-//                OR (
-//                    (r.etudiant IN :amis AND r.estPublic = true) OR
-//                    (r.etudiant IN :amis AND r.post.etudiant IN :amis)
-//                )
-//            ORDER BY p.datePublicationPost DESC
-//            """)
-//    List<Post> findRelevantPostsForUser(
-//            @Param("etudiant") Etudiant etudiant,
-//            @Param("amis") List<Etudiant> amis
-//    );
-    
+    /**
+     * Recherche les publications visibles pour un étudiant en fonction de ses amis :
+     * soit les publications publiques, soit celles privées mais postées par ses amis.
+     *
+     * @param amis la liste des amis de l'étudiant connecté
+     * @return la liste des publications visibles (publiques ou amicales)
+     */
     @Query("""
        SELECT p
        FROM Post p
@@ -59,8 +71,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
        ORDER BY p.datePublicationPost DESC
        """)
     List<Post> findRelativePosts(List<Etudiant> amis);
-
-
-
 
 }

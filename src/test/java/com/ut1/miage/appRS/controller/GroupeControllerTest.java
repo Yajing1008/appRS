@@ -1,7 +1,10 @@
 package com.ut1.miage.appRS.controller;
 
 import com.ut1.miage.appRS.model.*;
-import com.ut1.miage.appRS.repository.*;
+import com.ut1.miage.appRS.repository.DemandeRejoindreGroupeRepository;
+import com.ut1.miage.appRS.repository.EtudiantRepository;
+import com.ut1.miage.appRS.repository.GroupeRepository;
+import com.ut1.miage.appRS.repository.ParticiperRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,36 +16,51 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+/**
+ * Classe de test d'intégration pour le contrôleur de gestion des groupes.
+ *
+ * Utilise MockMvc pour simuler des requêtes HTTP et valider le comportement
+ * des fonctionnalités liées aux groupes (adhésion, création, demandes, etc.).
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 class GroupeControllerTest {
-
+    /** Objet permettant de simuler des requêtes HTTP dans les tests. */
     @Autowired
     private MockMvc mockMvc;
 
+    /** Référentiel pour gérer les données des étudiants dans les tests. */
     @Autowired
     private EtudiantRepository etudiantRepository;
 
+    /** Référentiel pour accéder aux entités de groupe. */
     @Autowired
     private GroupeRepository groupeRepository;
 
+    /** Référentiel pour gérer les participations aux groupes. */
     @Autowired
     private ParticiperRepository participerRepository;
 
+    /** Référentiel pour gérer les demandes d'adhésion aux groupes. */
     @Autowired
     private DemandeRejoindreGroupeRepository demandeRepository;
 
+    /** Étudiant utilisé dans le cadre du test. */
     private Etudiant etudiant;
-    private MockHttpSession session;
 
+    /** Session simulée représentant un étudiant connecté. */
+    private MockHttpSession session;
+    /**
+     * Initialise l’environnement de test avant chaque exécution de test.
+     *
+     * Vide les tables Participer, DemandeRejoindreGroupe, Groupe et Etudiant,
+     * puis crée un étudiant de test et simule une session active.
+     */
     @BeforeEach
     void setup() {
         participerRepository.deleteAll();
@@ -325,7 +343,7 @@ class GroupeControllerTest {
                 .andExpect(redirectedUrl("/groupe/mes-demandes"));
     }
 
-    // [Test8.5] : Envoi de photo lors de la création de groupe
+    /** [Test8.5] : Envoi de photo lors de la création de groupe*/
     @Test
     void testCreationGroupeAvecPhoto() throws Exception {
         MockMultipartFile photo = new MockMultipartFile(
@@ -344,7 +362,7 @@ class GroupeControllerTest {
         assertTrue(groupe.getPhotoGroupe().startsWith("data:image/jpeg;base64,"));
     }
 
-    //[Test18.2] : Envoi de photo lors de la modification de groupe
+    /**[Test18.2] : Envoi de photo lors de la modification de groupe*/
     @Test
     void testModifierGroupeAvecPhoto() throws Exception {
         Groupe groupe = new Groupe();
@@ -370,7 +388,7 @@ class GroupeControllerTest {
         assertTrue(modifie.getPhotoGroupe().startsWith("data:image/png;base64,"));
     }
 
-    // [Test53.2] : Regrouper correctement mes groupes créés et rejoints
+    /**[Test53.2] : Regrouper correctement mes groupes créés et rejoints*/
     @Test
     void testAfficherGroupesAvecGroupesCreesEtRejoints() throws Exception {
         Groupe groupeCree = new Groupe();

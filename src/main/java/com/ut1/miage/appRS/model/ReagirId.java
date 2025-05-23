@@ -23,7 +23,12 @@ public class ReagirId implements Serializable {
     /** Constructeur par défaut requis pour JPA. */
     public ReagirId() {}
 
-
+    /**
+     * Construit une clé composée avec l'identifiant de l'étudiant et l'identifiant du post.
+     *
+     * @param etudiant l'identifiant de l'étudiant
+     * @param post l'identifiant du post
+     */
     public ReagirId(Long etudiant, Long post) {
         this.idEtudiant = etudiant;
         this.idPost = post;
@@ -75,11 +80,19 @@ public class ReagirId implements Serializable {
     public void setPost(Long post) {
         this.idPost = post;
     }
-
+    /**
+     * Retourne le statut de la réaction (par exemple : "Like", "Favori").
+     *
+     * @return le statut de la réaction
+     */
     public String getStatut() {
         return statut;
     }
-
+    /**
+     * Définit le statut de la réaction (par exemple : "Like", "Favori").
+     *
+     * @param statut le statut de la réaction à définir
+     */
     public void setStatut(String statut) {
         this.statut = statut;
     }

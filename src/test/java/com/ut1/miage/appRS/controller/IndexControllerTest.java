@@ -28,16 +28,39 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class IndexControllerTest {
 
-    @Autowired private MockMvc mockMvc;
-    @Autowired private EtudiantRepository etudiantRepository;
-    @Autowired private PostRepository postRepository;
-    @Autowired private RepublierRepository republierRepository;
-    @Autowired private ReagirRepository reagirRepository;
-    @Autowired private CommenterRepository commenterRepository;
+    /** Permet de simuler des requêtes HTTP dans les tests. */
+    @Autowired
+    private MockMvc mockMvc;
 
+    /** Référentiel pour accéder aux données des étudiants. */
+    @Autowired
+    private EtudiantRepository etudiantRepository;
+
+    /** Référentiel pour accéder aux publications (posts). */
+    @Autowired
+    private PostRepository postRepository;
+
+    /** Référentiel pour gérer les republis des publications. */
+    @Autowired
+    private RepublierRepository republierRepository;
+
+    /** Référentiel pour gérer les réactions aux publications (Like, Favori). */
+    @Autowired
+    private ReagirRepository reagirRepository;
+
+    /** Référentiel pour gérer les commentaires sur les publications. */
+    @Autowired
+    private CommenterRepository commenterRepository;
+
+    /** Étudiant simulé utilisé dans les tests. */
     private Etudiant etudiant;
-    private MockHttpSession session;
 
+    /** Session simulée représentant un étudiant connecté. */
+    private MockHttpSession session;
+    /**
+     * Initialise les données de test avant chaque exécution :
+     * crée un étudiant fictif et simule une session active avec cet étudiant.
+     */
     @BeforeEach
     void setUp() {
         etudiant = new Etudiant();

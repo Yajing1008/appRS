@@ -4,8 +4,16 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Classe de test unitaire pour {@link CommenterId}.
+ *
+ * Vérifie le comportement du constructeur, des accesseurs, de l’égalité et du hashCode.
+ */
 class CommenterIdTest {
 
+    /**
+     * Vérifie que le constructeur par défaut initialise les champs à null.
+     */
     @Test
     void testDefaultConstructor() {
         CommenterId id = new CommenterId();
@@ -14,6 +22,9 @@ class CommenterIdTest {
         assertThat(id.getPost()).isNull();
     }
 
+    /**
+     * Vérifie que le constructeur avec arguments initialise correctement les champs.
+     */
     @Test
     void testAllArgsConstructor() {
         CommenterId id = new CommenterId(1L, 10L);
@@ -21,6 +32,9 @@ class CommenterIdTest {
         assertThat(id.getPost()).isEqualTo(10L);
     }
 
+    /**
+     * Vérifie le bon fonctionnement des getters et setters.
+     */
     @Test
     void testSettersAndGetters() {
         CommenterId id = new CommenterId();
@@ -31,6 +45,9 @@ class CommenterIdTest {
         assertThat(id.getPost()).isEqualTo(20L);
     }
 
+    /**
+     * Vérifie que equals et hashCode fonctionnent correctement avec deux instances égales ou différentes.
+     */
     @Test
     void testEqualsAndHashCode() {
         CommenterId id1 = new CommenterId(3L, 30L);
@@ -44,6 +61,9 @@ class CommenterIdTest {
         assertThat(id1.hashCode()).isNotEqualTo(id3.hashCode());
     }
 
+    /**
+     * Vérifie que equals retourne false si l'objet est null ou d'une autre classe.
+     */
     @Test
     void testEqualsWithNullAndOtherClass() {
         CommenterId id = new CommenterId(5L, 50L);
@@ -52,6 +72,9 @@ class CommenterIdTest {
         assertThat(id.equals("not an id")).isFalse();
     }
 
+    /**
+     * Vérifie que equals retourne true si on compare une instance avec elle-même.
+     */
     @Test
     void testEqualsWithSameInstance() {
         CommenterId id = new CommenterId(6L, 60L);

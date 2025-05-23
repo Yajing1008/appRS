@@ -9,7 +9,10 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "REAGIR")
 public class Reagir {
-
+    /**
+     * Identifiant composé de la réaction, combinant l'étudiant, le post et le statut de réaction.
+     * Utilisé comme clé primaire embarquée.
+     */
     @EmbeddedId
     private ReagirId reagirId = new ReagirId();
 
@@ -63,11 +66,19 @@ public class Reagir {
         this.etudiant = etudiant;
     }
 
-
+    /**
+     * Retourne la clé composée de la réaction.
+     *
+     * @return l'identifiant composite de la réaction
+     */
     public ReagirId getReagirId() {
         return reagirId;
     }
-
+    /**
+     * Définit la clé composée de la réaction.
+     *
+     * @param reagirId l'identifiant composite à définir
+     */
     public void setReagirId(ReagirId reagirId) {
         this.reagirId = reagirId;
     }

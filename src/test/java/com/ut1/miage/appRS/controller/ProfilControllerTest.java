@@ -32,41 +32,66 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
-
+/**
+ * Classe de test d’intégration pour le contrôleur {@link ProfilController}.
+ *
+ * Vérifie les fonctionnalités du profil étudiant telles que l’affichage, les publications,
+ * les commentaires, les interactions sociales et les données associées (universités, centres d’intérêt).
+ */
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
 class ProfilControllerTest {
-
+    /** Objet permettant de simuler des requêtes HTTP dans les tests. */
     @Autowired
     private MockMvc mockMvc;
 
+    /** Référentiel pour les entités Étudiant. */
     @Autowired
     private EtudiantRepository etudiantRepository;
 
+    /** Référentiel pour les entités Post. */
     @Autowired
     private PostRepository postRepository;
 
+    /** Référentiel pour les republis de publications. */
     @Autowired
     private RepublierRepository republierRepository;
 
+    /** Référentiel pour les universités liées aux étudiants. */
     @Autowired
     private UniversiteRepository universiteRepository;
 
+    /** Référentiel pour les centres d’intérêt des étudiants. */
     @Autowired
     private CentreInteretRepository centreInteretRepository;
 
+    /** Référentiel pour les commentaires sur les publications. */
     @Autowired
     private CommenterRepository commenterRepository;
 
+    /** Référentiel pour les réactions sur les publications. */
     @Autowired
     private ReagirRepository reagirRepository;
 
+    /** Étudiant principal simulé dans les tests. */
     private Etudiant etudiant;
+
+    /** Étudiant cible utilisé pour les interactions de test. */
     private Etudiant cible;
+
+    /** Publication créée pour les tests. */
     private Post post;
+
+    /** Commentaire associé à une publication. */
     private Commenter commentaire;
+
+    /** Session simulée représentant un étudiant connecté. */
     private MockHttpSession session;
+    /**
+     * Initialise les données nécessaires avant chaque test :
+     * crée deux étudiants, un post, un commentaire et une session simulée.
+     */
     @BeforeEach
     void setUp() {
 
@@ -111,7 +136,7 @@ class ProfilControllerTest {
         post = postRepository.save(post);
 
     }
-
+    /** Vérifie l'affichage du profil pour un étudiant connecté sur son propre compte. */
     @Test
     void testAfficherProfil_ConnecteEtProprietaire() throws Exception {
         Etudiant savedEtudiant = etudiantRepository.save(etudiant);
@@ -122,7 +147,7 @@ class ProfilControllerTest {
                 .andExpect(model().attribute("etudiant", hasProperty("idEtudiant", is(savedEtudiant.getIdEtudiant()))))
                 .andExpect(model().attribute("isOwner", true));
     }
-
+    /** Vérifie l'affichage du profil lorsqu'aucun utilisateur n'est connecté. */
     @Test
     void testAfficherProfil_NonConnecte() throws Exception {
         mockMvc.perform(get("/profil"))
@@ -134,7 +159,7 @@ class ProfilControllerTest {
                 .andExpect(model().attribute("postDates", is(Collections.emptyMap())))
                 .andExpect(model().attribute("isOwner", false));
     }
-
+    /** Vérifie le comportement lorsqu'un étudiant connecté n'existe pas en base. */
     @Test
     void testAfficherProfil_EtudiantIntrouvable() throws Exception {
         Etudiant ghost = new Etudiant();
@@ -148,7 +173,7 @@ class ProfilControllerTest {
                 .andExpect(model().attribute("isOwner", false));
     }
 
-
+    /** Vérifie l'affichage du profil avec des posts et republications. */
     @Test
     void testAfficherProfil_AvecPostsEtRepublications() throws Exception {
 
@@ -184,7 +209,7 @@ class ProfilControllerTest {
                 .andExpect(model().attributeExists("posts"))
                 .andExpect(model().attributeExists("postDates"));
     }
-
+    /** Vérifie l'affichage du profil par ID lorsqu'il est inexistant. */
     @Test
     void testAfficherProfilParId_ProfilInexistant() throws Exception {
         mockMvc.perform(get("/profil/999999"))
@@ -195,8 +220,7 @@ class ProfilControllerTest {
                 .andExpect(model().attribute("isOwner", false))
                 .andExpect(model().attribute("isFriend", false));
     }
-
-
+    /** Vérifie l'affichage du profil d'un autre étudiant sans être connecté. */
     @Test
     void testAfficherProfilParId_SansConnexion() throws Exception {
         mockMvc.perform(get("/profil/" + cible.getIdEtudiant()))
@@ -208,7 +232,7 @@ class ProfilControllerTest {
                 .andExpect(model().attributeExists("posts"))
                 .andExpect(model().attributeExists("postDates"));
     }
-
+    /** Vérifie que le visiteur connecté est ami avec le propriétaire du profil. */
     @Test
     void testAfficherProfilParId_EstAmi() throws Exception {
 
@@ -223,7 +247,7 @@ class ProfilControllerTest {
                 .andExpect(model().attribute("isFriend", true));
     }
 
-
+    /** Vérifie que le visiteur connecté n'est pas ami avec le propriétaire du profil. */
     @Test
     void testAfficherProfilParId_NonAmi() throws Exception {
         mockMvc.perform(get("/profil/" + cible.getIdEtudiant())
@@ -233,7 +257,7 @@ class ProfilControllerTest {
                 .andExpect(model().attribute("isOwner", false))
                 .andExpect(model().attribute("isFriend", false));
     }
-
+    /** Vérifie l'accès au formulaire de modification sans être connecté. */
     @Test
     void testShowEditForm_SansConnexion() throws Exception {
         mockMvc.perform(get("/profil/modifier"))
@@ -245,7 +269,7 @@ class ProfilControllerTest {
                 .andExpect(model().attribute("toutesUniversites", is(Collections.emptyList())))
                 .andExpect(model().attribute("tousCentresInteret", is(Collections.emptyList())));
     }
-
+    /** Vérifie l'accès au formulaire de modification pour un étudiant connecté. */
     @Test
     void testShowEditForm_ConnecteAvecDonnees() throws Exception {
 
@@ -276,7 +300,7 @@ class ProfilControllerTest {
                 .andExpect(model().attribute("tousCentresInteret", hasItem(hasProperty("nomCentreInteret", is("Informatique")))));
 
     }
-
+    /** Vérifie la modification du profil avec université, centre d’intérêt et photo. */
     @Test
     void testSaveProfile_ModifieAvecUniversitesEtInterets() throws Exception {
 
@@ -322,7 +346,7 @@ class ProfilControllerTest {
         assertTrue(updated.getCentresInteret().stream()
                 .anyMatch(c -> c.getNomCentreInteret().equalsIgnoreCase(nouvelInteret)));
     }
-
+    /** Vérifie la modification du profil sans université ni centre d’intérêt. */
     @Test
     void testSaveProfile_SansUniversitesNiInterets() throws Exception {
 
@@ -362,7 +386,7 @@ class ProfilControllerTest {
         assertEquals(0, updated.getCentresInteret().size(), "Centres d’intérêt doivent être vidés");
     }
 
-
+    /** Vérifie que publier un post échoue si l’utilisateur n’est pas connecté. */
     @Test
     void testPublierPost_NonConnecte() throws Exception {
         mockMvc.perform(multipart("/profil/publier")
@@ -371,7 +395,7 @@ class ProfilControllerTest {
                 .andExpect(redirectedUrl("/profil"))
                 .andExpect(flash().attribute("error", "Veuillez vous connecter pour publier."));
     }
-
+    /** Vérifie que le contenu vide sans image empêche la publication. */
     @Test
     void testPublierPost_ContenuVideEtSansImage() throws Exception {
         mockMvc.perform(multipart("/profil/publier")
@@ -381,7 +405,7 @@ class ProfilControllerTest {
                 .andExpect(redirectedUrl("/profil"))
                 .andExpect(flash().attribute("error", "Le contenu ne peut pas être vide."));
     }
-
+    /** Vérifie que publier avec plus de 3 images est refusé. */
     @Test
     void testPublierPost_TropDImages() throws Exception {
 
@@ -407,7 +431,7 @@ class ProfilControllerTest {
                 .andExpect(flash().attribute("error", "Maximum 3 images autorisées."));
     }
 
-
+    /** Vérifie qu’un post est publié avec succès avec contenu et image. */
     @Test
     void testPublierPost_SuccesAvecImageEtContenu() throws Exception {
         MockMultipartFile image = new MockMultipartFile("images", "test.jpg", "image/jpeg", "image-data".getBytes());
@@ -428,7 +452,7 @@ class ProfilControllerTest {
         assertTrue(posts.get(0).isEstPublicPost());
         assertFalse(posts.get(0).getUrlsPhotosPost().isEmpty());
     }
-
+    /** Vérifie la gestion des erreurs lors de l’envoi des images. */
     @Test
     void testPublierPost_ErreurUploadImage() throws Exception {
 
@@ -447,7 +471,7 @@ class ProfilControllerTest {
                 .andExpect(redirectedUrl("/profil"))
                 .andExpect(flash().attribute("error", "Erreur lors de l'envoi des images."));
     }
-
+    /** Vérifie qu’un utilisateur non connecté ne peut pas republier. */
     @Test
     void testRepublier_NonConnecte() throws Exception {
         mockMvc.perform(post("/profil/republication")
@@ -458,7 +482,7 @@ class ProfilControllerTest {
                 .andExpect(redirectedUrl("/profil"))
                 .andExpect(flash().attribute("error", "Veuillez vous connecter pour republier."));
     }
-
+    /** Vérifie que republier un post inexistant affiche une erreur. */
     @Test
     void testRepublier_PostInexistant() throws Exception {
         mockMvc.perform(post("/profil/republication")
@@ -470,7 +494,7 @@ class ProfilControllerTest {
                 .andExpect(redirectedUrl("/profil"))
                 .andExpect(flash().attribute("error", "Publication introuvable."));
     }
-
+    /** Vérifie qu’un post peut être republicé avec succès. */
     @Test
     void testRepublier_Succes() throws Exception {
         mockMvc.perform(post("/profil/republication")
@@ -487,7 +511,7 @@ class ProfilControllerTest {
         assertTrue(opt.isPresent(), "La républication doit être présente en base.");
         assertEquals("Je republie ce super post !", opt.get().getCommentaireRepublication());
     }
-
+    /** Vérifie qu’un utilisateur non connecté ne peut pas commenter. */
     @Test
     void testCommenter_NonConnecte() throws Exception {
         mockMvc.perform(post("/profil/commenter")
@@ -497,7 +521,7 @@ class ProfilControllerTest {
                 .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
                 .andExpect(flash().attribute("error", "Veuillez vous connecter pour commenter."));
     }
-
+    /** Vérifie que commenter un post inexistant affiche une erreur. */
     @Test
     void testCommenter_PostInexistant() throws Exception {
         mockMvc.perform(post("/profil/commenter")
@@ -508,7 +532,7 @@ class ProfilControllerTest {
                 .andExpect(redirectedUrl("/profil"))
                 .andExpect(flash().attribute("error", "Publication introuvable."));
     }
-
+    /** Vérifie qu’un étudiant connecté peut commenter un post. */
     @Test
     void testCommenter_Succes() throws Exception {
         mockMvc.perform(post("/profil/commenter")
@@ -530,7 +554,7 @@ class ProfilControllerTest {
         assertTrue(trouve, "Le commentaire 'Très bon post !' devrait être enregistré.");
     }
 
-
+    /** Vérifie que seul un utilisateur connecté peut supprimer un commentaire. */
     @Test
     void testSupprimerCommentaire_NonConnecte() throws Exception {
         mockMvc.perform(post("/profil/commenter/supprimer")
@@ -541,7 +565,7 @@ class ProfilControllerTest {
                 .andExpect(flash().attribute("error", "Veuillez vous connecter pour supprimer un commentaire."));
     }
 
-
+    /** Vérifie que la suppression échoue si le commentaire n’existe pas. */
     @Test
     void testSupprimerCommentaire_CommentaireInexistant() throws Exception {
         mockMvc.perform(post("/profil/commenter/supprimer")
@@ -552,7 +576,7 @@ class ProfilControllerTest {
                 .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
                 .andExpect(flash().attribute("error", "Commentaire introuvable."));
     }
-
+    /** Vérifie qu’un utilisateur ne peut supprimer que ses propres commentaires. */
     @Test
     void testSupprimerCommentaire_PasProprietaire() throws Exception {
         mockMvc.perform(post("/profil/commenter/supprimer")
@@ -563,7 +587,7 @@ class ProfilControllerTest {
                 .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
                 .andExpect(flash().attribute("error", "Vous ne pouvez supprimer que vos propres commentaires."));
     }
-
+    /** Vérifie qu’un commentaire est supprimé avec succès. */
     @Test
     void testSupprimerCommentaire_Succes() throws Exception {
         mockMvc.perform(post("/profil/commenter/supprimer")
@@ -577,7 +601,7 @@ class ProfilControllerTest {
         assertFalse(commenterRepository.findById(commentaire.getIdCommentaire()).isPresent(),
                 "Le commentaire devrait être supprimé.");
     }
-
+    /** Vérifie que seul un utilisateur connecté peut aimer une publication. */
     @Test
     void testToggleLike_NonConnecte() throws Exception {
         mockMvc.perform(get("/profil/reaction/like")
@@ -586,7 +610,7 @@ class ProfilControllerTest {
                 .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()))
                 .andExpect(flash().attribute("error", "Veuillez vous connecter pour aimer une publication."));
     }
-
+    /** Vérifie que liker un post inexistant affiche une erreur. */
     @Test
     void testToggleLike_PublicationIntrouvable() throws Exception {
         mockMvc.perform(get("/profil/reaction/like")
@@ -596,7 +620,7 @@ class ProfilControllerTest {
                 .andExpect(redirectedUrl("/profil#post-9999"))
                 .andExpect(flash().attribute("error", "Publication introuvable."));
     }
-
+    /** Vérifie que l’ajout d’un like fonctionne. */
     @Test
     void testToggleLike_AjoutLike() throws Exception {
         mockMvc.perform(get("/profil/reaction/like")
@@ -611,6 +635,7 @@ class ProfilControllerTest {
         assertTrue(like.isPresent());
     }
 
+    /** Vérifie que le retrait d’un like fonctionne. */
     @Test
     void testToggleLike_RetraitLike() throws Exception {
 
@@ -631,7 +656,7 @@ class ProfilControllerTest {
                 post.getIdPost(), etudiant.getIdEtudiant(), "Like");
         assertTrue(deleted.isEmpty());
     }
-
+    /** Vérifie qu’un favori peut être ajouté puis supprimé. */
     @Test
     void testToggleFavori_AjouterEtSupprimer() throws Exception {
 
@@ -662,7 +687,7 @@ class ProfilControllerTest {
         Optional<Reagir> apresSuppression = reagirRepository.findByPostIdAndEtudiantIdAndStatut(post.getIdPost(), etudiant.getIdEtudiant(), "Favori");
         assertTrue(apresSuppression.isEmpty());
     }
-
+    /** Vérifie que seul un utilisateur connecté peut ajouter aux favoris. */
     @Test
     void testToggleFavori_EtudiantNonConnecte() throws Exception {
         mockMvc.perform(get("/profil/reaction/favori")
@@ -670,7 +695,7 @@ class ProfilControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profil#post-" + post.getIdPost()));
     }
-
+    /** Vérifie que l’ajout échoue si la publication est introuvable. */
     @Test
     void testToggleFavori_PostIntrouvable() throws Exception {
         MockHttpSession session = new MockHttpSession();
@@ -682,7 +707,7 @@ class ProfilControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/profil#post-999999"));
     }
-
+    /** Vérifie que l’auteur peut supprimer son post avec tous les liens associés. */
     @Test
     public void testSupprimerPost_parAuteur() throws Exception {
 
