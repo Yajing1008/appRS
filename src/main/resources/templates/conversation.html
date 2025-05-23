@@ -13,6 +13,68 @@
     <!-- Custom Stylesheet -->
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
+        .message-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            max-width: 70%;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .message-item.outgoing-message {
+            align-self: flex-end;
+            align-items: flex-end;
+            text-align: right;
+        }
+
+        .message-user-top {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 5px;
+            align-self: flex-start;
+        }
+
+        .message-user-top figure.avatar {
+            margin: 0;
+        }
+
+        .message-user-top img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .message-user-top h6,
+        .message-user-top .time {
+            margin: 0;
+            line-height: 1.2;
+            font-size: 0.85rem;
+        }
+        .message-user-top .time {
+            color: #999;
+            font-size: 0.75rem;
+        }
+
+
+        .message-wrap {
+            padding: 10px 15px;
+            border-radius: 15px;
+            max-width: 100%;
+            background-color: #f1f1f1;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .outgoing-message .message-wrap {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+
+    <style>
         .chat-wrapper {
             display: flex;
             flex-direction: column;
@@ -79,9 +141,14 @@
         .message-wrap {
             padding: 10px 15px;
             border-radius: 15px;
-            max-width: 60%;
+            max-width: 400px;
             background-color: #f1f1f1;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            word-break: break-word;
+            font-size: 0.95rem;
+            line-height: 1.4;
         }
+
 
         .outgoing-message .message-wrap {
             background-color: #007bff;
@@ -402,20 +469,18 @@
                             </div>
                             <div class="chat-body">
                                 <div class="messages-content">
-                                    <div th:each="msg : ${messages}"
-                                         th:class="'message-item ' + (${msg.etudiant.idEtudiant} == ${utilisateurConnecte.idEtudiant} ? 'outgoing-message' : '')">
-                                        <div class="message-user">
+                                    <div th:each="msg : ${messages}" th:class="'message-item ' + (${msg.etudiant.idEtudiant} == ${utilisateurConnecte.idEtudiant} ? 'outgoing-message' : '')">
+                                        <div class="message-user-top">
                                             <figure class="avatar">
                                                 <img th:src="${msg.etudiant.photoEtudiant != '' ? msg.etudiant.photoEtudiant : '/images/user-1.png'}">
                                             </figure>
-                                            <div>
-                                                <h6 th:text="${msg.etudiant.prenomEtudiant + ' ' + msg.etudiant.nomEtudiant}">Nom</h6>
-                                                <div class="time" th:text="${#temporals.format(msg.dateHeureMessage, 'HH:mm')}">00:00</div>
-                                            </div>
+                                            <h6 th:text="${msg.etudiant.prenomEtudiant + ' ' + msg.etudiant.nomEtudiant}">Nom</h6>
+                                            <div class="time" th:text="${#temporals.format(msg.dateHeureMessage, 'HH:mm')}">00:00</div>
                                         </div>
                                         <div class="message-wrap" th:text="${msg.message}">Message</div>
                                     </div>
                                 </div>
+
                             </div>
 
                             <div class="chat-bottom">
