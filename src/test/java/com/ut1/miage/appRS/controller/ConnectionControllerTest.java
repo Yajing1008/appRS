@@ -153,4 +153,61 @@ public class ConnectionControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
     }
+    /**
+     * Vérifie que la page de réinitialisation du mot de passe s'affiche correctement.
+     */
+    @Test
+    void testAfficherFormulaireReinitialisationMotDePasse() throws Exception {
+        mockMvc.perform(get("/motdepasse/reinitialiser"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("motdepasse_modifier"));
+    }
+    /**
+     * Vérifie qu'un message d'erreur s'affiche si l'e-mail est inconnu.
+     */
+    @Test
+    void testReinitialiserMotDePasse_emailInconnu() throws Exception {
+        mockMvc.perform(post("/motdepasse/reinitialiser")
+                        .param("email", "unknown@example.com")
+                        .param("nouveauMotDePasse", "newpass123")
+                        .param("confirmation", "newpass123"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("motdepasse_modifier"))
+                .andExpect(model().attributeExists("erreur"))
+                .andExpect(model().attribute("erreur", "Aucun compte trouvé avec cette adresse e-mail."));
+    }
+    /**
+     * Vérifie qu'un message d'erreur s'affiche si les mots de passe ne correspondent pas.
+     */
+    @Test
+    void testReinitialiserMotDePasse_motDePasseNonConfirme() throws Exception {
+        mockMvc.perform(post("/motdepasse/reinitialiser")
+                        .param("email", "test@example.com")
+                        .param("nouveauMotDePasse", "newpass123")
+                        .param("confirmation", "differentpass"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("motdepasse_modifier"))
+                .andExpect(model().attributeExists("erreur"))
+                .andExpect(model().attribute("erreur", "La confirmation ne correspond pas au nouveau mot de passe."));
+    }
+    /**
+     * Vérifie que le mot de passe est réinitialisé avec succès quand toutes les conditions sont remplies.
+     */
+    @Test
+    void testReinitialiserMotDePasse_succes() throws Exception {
+        mockMvc.perform(post("/motdepasse/reinitialiser")
+                        .param("email", "test@example.com")
+                        .param("nouveauMotDePasse", "newpassword")
+                        .param("confirmation", "newpassword"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("motdepasse_modifier"))
+                .andExpect(model().attributeExists("message"))
+                .andExpect(model().attribute("message", "Mot de passe réinitialisé avec succès."));
+
+
+        Etudiant updated = etudiantRepository.findByEmailEtudiant("test@example.com").get();
+        assert(updated.getMotDePass().equals("newpassword"));
+    }
+
+
 }

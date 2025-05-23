@@ -2,15 +2,16 @@ package com.ut1.miage.appRS.controller;
 
 import com.ut1.miage.appRS.model.Etudiant;
 import com.ut1.miage.appRS.repository.EtudiantRepository;
-
 import jakarta.servlet.http.HttpSession;
-
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Optional;
 
 /**
  * Contrôleur gérant l'inscription, la connexion et la déconnexion des étudiants.
@@ -97,4 +98,56 @@ public class ConnectionController {
         session.invalidate();
         return "redirect:/";
     }
+
+    /**
+     * Affiche le formulaire de réinitialisation du mot de passe (oubli du mot de passe).
+     *
+     * Cette méthode gère les requêtes HTTP GET vers l'URL "/motdepasse/reinitialiser".
+     * Elle retourne la vue contenant le formulaire permettant à un utilisateur de
+     * réinitialiser son mot de passe en saisissant son adresse e-mail.
+     *
+     * @return Le nom de la vue "motdepasse_reinitialiser".
+     */
+    @GetMapping("/motdepasse/reinitialiser")
+    public String afficherFormulaireReinitialisationMotDePasse() {
+        return "motdepasse_modifier";
+    }
+
+    /**
+     * Traite la demande de réinitialisation du mot de passe par e-mail.
+     *
+     * @param email adresse e-mail de l'utilisateur
+     * @param nouveauMotDePasse nouveau mot de passe saisi
+     * @param confirmation confirmation du nouveau mot de passe
+     * @param model modèle pour afficher les messages à la vue
+     * @return la page de réinitialisation avec un message de succès ou d'erreur
+     */
+    @PostMapping("/motdepasse/reinitialiser")
+    public String reinitialiserMotDePasse(@RequestParam String email,
+                                          @RequestParam String nouveauMotDePasse,
+                                          @RequestParam String confirmation,
+                                          Model model) {
+        // Recherche de l'utilisateur par email
+        Optional<Etudiant> optionalEtudiant = etudiantRepository.findByEmailEtudiant(email);
+
+        if (optionalEtudiant.isEmpty()) {
+            model.addAttribute("erreur", "Aucun compte trouvé avec cette adresse e-mail.");
+            return "motdepasse_modifier";
+        }
+
+        if (!nouveauMotDePasse.equals(confirmation)) {
+            model.addAttribute("erreur", "La confirmation ne correspond pas au nouveau mot de passe.");
+            return "motdepasse_modifier";
+        }
+
+        Etudiant etudiant = optionalEtudiant.get();
+        etudiant.setMotDePass(nouveauMotDePasse);
+        etudiantRepository.save(etudiant);
+
+        model.addAttribute("message", "Mot de passe réinitialisé avec succès.");
+        return "motdepasse_modifier";
+    }
+
+
+
 }
