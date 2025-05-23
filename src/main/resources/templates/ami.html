@@ -50,7 +50,27 @@
                 class="feather-user font-lg alert-primary btn-round-lg theme-dark-bg text-current  "></i></a>
         <a href="shop-2.html" class="p-2 text-center ms-0 menu-icon center-menu-icon"><i
                 class="feather-shopping-bag font-lg bg-greylight btn-round-lg theme-dark-bg text-grey-500 "></i></a>
+        <div class="card-body d-flex align-items-center pt-0 ps-4 pe-4 pb-4 gap-2">
+            <div th:if="${session.etudiantConnecte == null}" class="d-flex gap-2 align-items-center">
+                <a th:href="@{/connexion}"
+                   class="btn btn-primary bg-primary-gradiant text-white fw-600 font-xssss px-4 py-2 rounded-pill border-0">
+                    Se connecter
+                </a>
+                <a th:href="@{/inscription}"
+                   class="btn btn-light bg-grey text-grey-800 fw-600 font-xssss px-4 py-2 rounded-pill border-0">
+                    S'inscrire
+                </a>
+            </div>
 
+
+            <div th:if="${session.etudiantConnecte != null}" class="d-flex gap-2 align-items-center">
+                <span class="text-grey-900 font-xssss fw-600 me-2" th:text="'Bienvenue!'"></span>
+                <a th:href="@{/deconnexion}"
+                   class="btn btn-danger bg-danger text-white fw-600 font-xssss px-4 py-2 rounded-pill border-0">
+                    Se déconnecter
+                </a>
+            </div>
+        </div>
         <a href="#" class="p-2 text-center ms-auto menu-icon" id="dropdownMenu3" data-toggle="dropdown"
            aria-haspopup="true" aria-expanded="false" data-bs-toggle="dropdown"><span
                 class="dot-count bg-warning"></span><i class="feather-bell font-xl text-current"></i></a>
@@ -208,17 +228,17 @@
                     <div class="nav-caption fw-600 font-xssss text-grey-500"><span>New </span>Feeds</div>
                     <ul class="mb-1 top-content">
                         <li class="logo d-none d-xl-block d-lg-block"></li>
-                        <li><a href="index.html" class="nav-content-bttn open-font"><i
+                        <li><a th:href="@{/}" class="nav-content-bttn open-font"><i
                                 class="feather-tv btn-round-md bg-blue-gradiant me-3"></i><span>Newsfeed</span></a></li>
                         <li><a href="default-badge.html" class="nav-content-bttn open-font"><i
                                 class="feather-award btn-round-md bg-red-gradiant me-3"></i><span>Badges</span></a></li>
                         <li><a href="default-storie.html" class="nav-content-bttn open-font"><i
                                 class="feather-globe btn-round-md bg-gold-gradiant me-3"></i><span>Explore Stories</span></a>
                         </li>
-                        <li><a href="default-group.html" class="nav-content-bttn open-font"><i
+                        <li><a th:href="@{/groupe/groupes}"class="nav-content-bttn open-font"><i
                                 class="feather-zap btn-round-md bg-mini-gradiant me-3"></i><span>Popular Groups</span></a>
                         </li>
-                        <li><a href="profil.html" class="nav-content-bttn open-font"><i
+                        <li><a th:href="@{/profil}" class="nav-content-bttn open-font"><i
                                 class="feather-user btn-round-md bg-primary-gradiant me-3"></i><span>Author Profile </span></a>
                         </li>
                     </ul>
@@ -232,8 +252,8 @@
                                 class="circle-count bg-warning mt-1">584</span></a></li>
                         <li><a href="default-hotel.html" class="nav-content-bttn open-font"><i
                                 class="font-xl text-current feather-home me-3"></i><span>Near Hotel</span></a></li>
-                        <li><a href="default-event.html" class="nav-content-bttn open-font"><i
-                                class="font-xl text-current feather-map-pin me-3"></i><span>Latest Event</span></a></li>
+                        <li><a th:href="@{/evenement}" class="nav-content-bttn open-font"><i
+                                class="font-xl text-current feather-map-pin me-3"></i><span>Evenement</span></a></li>
                         <li><a href="default-live-stream.html" class="nav-content-bttn open-font"><i
                                 class="font-xl text-current feather-youtube me-3"></i><span>Live Stream</span></a></li>
                     </ul>
